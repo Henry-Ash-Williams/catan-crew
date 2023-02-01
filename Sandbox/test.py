@@ -24,7 +24,7 @@ bob.ends_turn()
 
 charlie.builds_settlement(location=415)
 charlie.builds_road(location=393)
-charlie.ends_turn(location=)
+charlie.ends_turn()
 
 david.builds_settlement(location=88)
 david.builds_road(location=111)

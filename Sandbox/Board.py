@@ -47,14 +47,14 @@ class Board:
     for cell_num in self.intersections: self.cells[cell_num] = Intersection()
     for cell_num in self.paths:         self.cells[cell_num] = Path()
     
-  def select(self, cell_num, distance, dir_pattern = None, matching = lambda o: True, return_cells=False):
-    if dir_pattern == None: dirs = self.dirs
-    else: dirs = [sum(self.dirs[(i+j)%6]*dir_pattern[j] for j in range(len(dir_pattern)))%self.mod for i in range(6)]
-    out = []
-    for i in range(6):
-      out += [(cell_num + distance*dirs[i] + dirs[(i+2)%6]*j)%self.mod for j in range(distance)]
+  def select(board, location, distance, dir_pattern = None, matching = lambda o: True, return_cells=False):
+  
+    if dir_pattern == None: dirs = board.dirs
+    else: dirs = [sum(board.dirs[(i+j)%6]*dir_pattern[j] for j in range(len(dir_pattern)))%board.mod for i in range(6)]
+    
+    out = [(location + distance*dirs[i] + dirs[(i+2)%6]*j)%board.mod for i in range(6) for j in range(distance)]
     r = list(filter(matching, out))
-    return map(lambda n: self.cells[n], r) if return_cells else r
+    return map(lambda n: board.cells[n], r) if return_cells else r
     
   def has_path(self, cell_num): return type(self.cells[cell_num]).__name__ == 'Path'
   
