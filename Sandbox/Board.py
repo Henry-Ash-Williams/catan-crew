@@ -60,32 +60,40 @@ class Board:
   
   def has_intersection(self, cell_num): return type(self.cells[cell_num]).__name__ == 'Intersection'
   
-  def add_road(self, cell_num, color):
+  def verify_current_player_is(board, color):
+    if color != board.game.current_player.color:
+      raise Exception("Player (%s) can't play as it's (%s)'s turn."%(color,board.game.current_player.color))
+  
+  def add_road(board, cell_num, color):
+  
+    board.verify_current_player_is(color)
     
-    if not self.has_path(cell_num):
+    if not board.has_path(cell_num):
       raise Exception('Given cell is not a path')
     
-    if self.cells[cell_num].has_road:
+    if board.cells[cell_num].has_road:
       raise Exception('There is already a road built at the given path.')
     
-    neighboring_intersections = self.select(cell_num, 1, matching = self.has_intersection, return_cells = True)
+    neighboring_intersections = board.select(cell_num, 1, matching = board.has_intersection, return_cells = True)
     
     for intersection in neighboring_intersections:
     
       if intersection.has_settlement:
         if intersection.settlement.color==color:
-          self.cells[cell_num].build_road(color)
+          board.cells[cell_num].build_road(color)
           return
     
       else:
-        paths_this_side = self.select(cell_num, 1, (1,1), matching = self.has_path, return_cells = True)
+        paths_this_side = board.select(cell_num, 1, (1,1), matching = board.has_path, return_cells = True)
         if color in [path.road.color for path in paths_this_side if path.has_road]:
-          self.cells[cell_num].build_road(color)
+          board.cells[cell_num].build_road(color)
           return
     
     raise Exception("Player can't reach given path")
   
   def add_settlement(board, cell_num, color):
+  
+    board.verify_current_player_is(color)
     
     if not board.has_intersection(cell_num):
       raise Exception('Given cell is not an intersection')
@@ -105,16 +113,16 @@ class Board:
     
     board.cells[cell_num].build_settlement(color)
     
-  def upgrade_settlement(self, cell_num):
+  def upgrade_settlement(board, cell_num):
     
-    if not self.has_intersection(cell_num):
+    if not board.has_intersection(cell_num):
       raise Exception('Given cell is not an intersection.')
     
-    if not self.cells[cell_num].has_settlement:
+    if not board.cells[cell_num].has_settlement:
       raise Exception('No settlement to upgrade at given intersection.')    
     
-    self.cells[cell_num].settlement = City(self.cells[cell_num].settlement.color)
+    board.cells[cell_num].settlement = City(board.cells[cell_num].settlement.color)
   
   # This should return the board state in some format which the board can be initialized from
-  def save_state(self):
+  def save_state(board):
     pass
