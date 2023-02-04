@@ -1,3 +1,4 @@
+import random
 from functools import reduce
 
 def join(l): return list(set(reduce(lambda x,y: x+y, l)))
@@ -74,6 +75,8 @@ class Board:
     number_tokens         = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11]
     board.resources       = (resources     * ((board.resource_number+17)//18))[:board.resource_number]
     board.number_tokens   = (number_tokens * ((board.resource_number+17)//18))[:board.resource_number]
+    random.shuffle(board.resources)
+    random.shuffle(board.number_tokens)
     del resources, number_tokens
     
     for location in board.tiles:
