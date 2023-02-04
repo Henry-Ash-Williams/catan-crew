@@ -2,7 +2,6 @@ from functools import reduce
 
 def join(l): return list(set(reduce(lambda x,y: x+y, l)))
 
-
 class Settlement:
   def __init__(settlement, owner):
     settlement.owner = owner
@@ -32,6 +31,11 @@ class Path:
   def build_road(self, road):
     self.road = road
     self.has_road = True
+
+class Tile:
+  def __init__(tile, resource, number_token):
+    tile.resource = resource
+    tile.number_token = number_token
 
 class Board:
 
@@ -64,6 +68,20 @@ class Board:
     for location in board.intersections: board.cells[location] = Intersection()
     for location in board.paths:         board.cells[location] = Path()
     
+    board.desert_tiles    = [0]
+    board.resource_number = len(board.tiles) - len(board.desert_tiles)
+    resources             = ['grain']*4 + ['wool']*4 + ['lumber']*4 + ['brick']*3 + ['ore']*3
+    number_tokens         = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11]
+    board.resources       = (resources     * ((board.resource_number+17)//18))[:board.resource_number]
+    board.number_tokens   = (number_tokens * ((board.resource_number+17)//18))[:board.resource_number]
+    del resources, number_tokens
+    
+    for location in board.tiles:
+      resource = 'nothing' if (location in board.desert_tiles) else board.resources.pop()
+      number_token = None if (location in board.desert_tiles) else board.number_tokens.pop()
+      tile = Tile(resource, number_token)
+      board.cells[location] = tile
+    
   def select(board, around, distance, dir_pattern = None, matching = lambda o: True, return_cells=False):
   
     if dir_pattern == None: directions = board.cardinal_directions
@@ -73,9 +91,9 @@ class Board:
     r = list(filter(matching, out))
     return map(lambda n: board.cells[n], r) if return_cells else r
     
-  def has_path(board, location): return type(board.cells[location]).__name__ == 'Path'
+  def has_path(board, location): return type(board.cells[location]) is Path
   
-  def has_intersection(board, location): return type(board.cells[location]).__name__ == 'Intersection'
+  def has_intersection(board, location): return type(board.cells[location]) is Intersection
   
   def add_road(board, location, road):
     
