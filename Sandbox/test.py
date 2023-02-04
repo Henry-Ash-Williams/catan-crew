@@ -2,10 +2,7 @@ from Board  import *
 from Player import *
 from Game   import *
 
-newBoard = Board(3)
-
-#for item in [newBoard.tiles, newBoard.harbors, newBoard.intersections, newBoard.paths, newBoard.bridges]:
-#  print(len(item)); print(item); print()
+newBoard = Board(size=3)
 
 alice    = Player('blue')
 bob      = Player('red')
