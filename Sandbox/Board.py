@@ -13,8 +13,8 @@ class Intersection:
   def __init__(intersection):
     intersection.has_settlement = False
   
-  def build_settlement(intersection, owner):
-    intersection.settlement = Settlement(owner)
+  def build_settlement(intersection, settlement):
+    intersection.settlement = settlement
     intersection.has_settlement = True
     
 class City(Settlement): pass
@@ -29,8 +29,8 @@ class Path:
   def __init__(self):
     self.has_road = False
   
-  def build_road(self, owner):
-    self.road = Road(owner)
+  def build_road(self, road):
+    self.road = road
     self.has_road = True
 
 class Board:
@@ -77,7 +77,7 @@ class Board:
   
   def has_intersection(board, location): return type(board.cells[location]).__name__ == 'Intersection'
   
-  def add_road(board, location, owner):
+  def add_road(board, location, road):
     
     if not board.has_path(location):
       raise Exception('Given cell is not a path')
@@ -90,19 +90,19 @@ class Board:
     for intersection in neighboring_intersections:
     
       if intersection.has_settlement:
-        if intersection.settlement.owner == owner:
-          board.cells[location].build_road(owner)
+        if intersection.settlement.owner == road.owner:
+          board.cells[location].build_road(road)
           return
     
       else:
         paths_this_side = board.select(location, 1, (1,1), matching = board.has_path, return_cells = True)
-        if owner in [path.road.owner for path in paths_this_side if path.has_road]:
-          board.cells[location].build_road(owner)
+        if road.owner in [path.road.owner for path in paths_this_side if path.has_road]:
+          board.cells[location].build_road(road)
           return
     
     raise Exception("Player can't reach given path")
   
-  def add_settlement(board, location, owner, allow_disconnected_settlement):
+  def add_settlement(board, location, settlement, allow_disconnected_settlement):
     
     if not board.has_intersection(location):
       raise Exception('Given cell is not an intersection')
@@ -112,7 +112,7 @@ class Board:
     
     adjacent_paths = board.select(location, 1, matching = board.has_path, return_cells = True)
     
-    if not allow_disconnected_settlement and not owner in [path.road.owner for path in adjacent_paths if path.has_road]:
+    if not allow_disconnected_settlement and not settlement.owner in [path.road.owner for path in adjacent_paths if path.has_road]:
       raise Exception("Settlement can't be built because intersection is not connected to a road of the settlement's color.")
     
     neighboring_intersections = board.select(location, 1, (2,), matching = board.has_intersection, return_cells = True)
@@ -120,7 +120,7 @@ class Board:
     if [intersection for intersection in neighboring_intersections if intersection.has_settlement]:
       raise Exception("Settlement can't be built at this intersection because it's too close to another settlement.")
     
-    board.cells[location].build_settlement(owner)
+    board.cells[location].build_settlement(settlement)
     
   def upgrade_settlement(board, location):
     

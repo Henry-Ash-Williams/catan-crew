@@ -29,10 +29,10 @@ class Game:
     game.current_player = game.players[game.current_player_index]
     game.turn_count += 1
   
-  def add_road(game, location, player):
-    game.verify_current_player_is(player)
-    game.board.add_road(location, player)
+  def add_road(game, location, road):
+    game.verify_current_player_is(road.owner)
+    game.board.add_road(location, road)
   
-  def add_settlement(game, location, player):
-    game.verify_current_player_is(player)
-    game.board.add_settlement(location, player, allow_disconnected_settlement = game.is_just_starting)
+  def add_settlement(game, location, settlement):
+    game.verify_current_player_is(settlement.owner)
+    game.board.add_settlement(location, settlement, allow_disconnected_settlement = game.is_just_starting)

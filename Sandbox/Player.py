@@ -21,10 +21,32 @@ class Player:
   #  player.game.board.add_road(location, player)
   
   def builds_settlement(player, location):
-    player.game.add_settlement(location, player)
+  
+    if player.free_settlements:
+      settlement = player.free_settlements.pop()
+    else:
+      raise Exception("Player has no free settlements to build")
+      
+    try:
+      player.game.add_settlement(location, settlement)
+      player.built_settlements.append(settlement)
+    except Exception as e:
+      player.free_settlements.append(settlement)
+      raise e
   
   def builds_road(player, location):
-    player.game.add_road(location, player)
+  
+    if player.free_roads:
+      road = player.free_roads.pop()
+    else:
+      raise Exception("Player has no free roads to build")
+      
+    try:
+      player.game.add_road(location, road)
+      player.built_roads.append(road)
+    except Exception as e:
+      player.free_roads.append(road)
+      raise e
   
   def ends_turn(player):
     player.game.end_turn()
