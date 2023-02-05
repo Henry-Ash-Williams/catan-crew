@@ -29,3 +29,17 @@ david.builds_settlement(location=94)
 david.builds_road(location=117)
 david.ends_turn()
 
+# alice.roll_dice()
+# alice.get_resources(...)
+# alice.view_resources()
+# alice.view_actions
+# alice.view_buildings > return coor
+# alice.ends_turn()
+
+# bob.roll_dice()
+# bob.trade(alice, wood)
+# alice.accept()
+# bob.view_resources()
+# bob.view_actions
+# bob.build...
+# bob.end_turns
