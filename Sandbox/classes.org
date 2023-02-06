@@ -1,0 +1,37 @@
+#+title: Classes
+
+* Player
+** Attributes
+- resources: Dict
+- development_cards: List<DevCard>
+- road_length: int
+- knights_played: int
+- victory_points: int
+** Methods
+
+* Game
+
+* Board
+
+* GameMaster
+** Attributes
+
+** Methods
+- check_longest_road -> Player
+- check_largest_army -> Player
+- distribute_resources(roll: int) -> void
+- handle_trade(trade: Trade)
+* Trade
+** Methods
+- new(from: Player, to: Union[Player, Bank], resources_required: Resources, resources_offered: Resources)
+
+* Resources
+make sure to overload operators for this for easier operations
+- ore: int
+- grain: int
+- lumber: int
+- wool: int
+- brick: int
+
+* Bank
+
