@@ -29,6 +29,13 @@
 
 
 * Game
+** Attributes
+- game_mode: Enum
+- time_limit: Time
+- players: [Player]
+- discard_limit: int
+- vp_to_win: int
+-
 
 * Board
 
@@ -53,6 +60,7 @@
 - add_road(location: int, road: Road) -> bool
 - add_settlement(location: int, settlement: Settlement, allow_disconnected_settlement: bool)
 - save_state() -> serialized
+
 
 * GameMaster
 event driven
