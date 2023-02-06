@@ -1,16 +1,17 @@
-from Board  import *
+from Board import *
 from Player import *
-from Game   import *
+from Game import *
 
 newBoard = Board(size=3)
 
-alice    = Player('blue')
-bob      = Player('red')
-charlie  = Player('green')
-david    = Player('purple')
+alice = Player('blue')
+bob = Player('red')
+charlie = Player('green')
+david = Player('purple')
 
-game = Game(board = newBoard, players = [alice, bob, charlie, david])
+game = Game(board=newBoard, players=[alice, bob, charlie, david])
 
+# Setup phase 1
 alice.builds_settlement(location=419)
 alice.builds_road(location=420)
 alice.ends_turn()
@@ -25,6 +26,8 @@ charlie.ends_turn()
 
 david.builds_settlement(location=88)
 david.builds_road(location=111)
+
+# Setup phase 2
 david.builds_settlement(location=94)
 david.builds_road(location=117)
 david.ends_turn()
