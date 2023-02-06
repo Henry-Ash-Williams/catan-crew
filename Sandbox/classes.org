@@ -54,35 +54,6 @@
 - add_settlement(location: int, settlement: Settlement, allow_disconnected_settlement: bool)
 - save_state() -> serialized
 
-* Intersection
-** Attributes
-- has_settlement: bool
-- settlement: Settlement | None
-** Methods
-- build_settlement(settlement: Settlement) -> void
-
-* Settlement / City
-** Attributes
-- owner: Player
-- color: string
-
-* Path
-** Attributes
-- has_road: bool
-- road: Road | None
-** Methods
-- build_road(road: Road) -> void
-
-* Road
-** Attributes
-- owner: Player
-- color: string
-
-* Tile
-** Attributes
-- resource: string
-- number_token: int
-
 * GameMaster
 event driven
 ** Attributes
@@ -111,3 +82,32 @@ make sure to overload operators for this for easier operations
 
 * Bank
 
+
+* Intersection
+** Attributes
+- has_settlement: bool
+- settlement: Settlement | None
+** Methods
+- build_settlement(settlement: Settlement) -> void
+
+* Settlement / City
+** Attributes
+- owner: Player
+- color: string
+
+* Path
+** Attributes
+- has_road: bool
+- road: Road | None
+** Methods
+- build_road(road: Road) -> void
+
+* Road
+** Attributes
+- owner: Player
+- color: string
+
+* Tile
+** Attributes
+- resource: string
+- number_token: int
