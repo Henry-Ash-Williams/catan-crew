@@ -32,6 +32,28 @@
 
 * Board
 
+** Attributes
+- size: int
+- ^cell_count: int
+- ^cardinal_directions: list[int]
+- ^cells: list[None|Tile|Intersection|Path]
+- ^harbors: list[int]
+- ^bridges: list[int]
+- ^tiles: list[int]
+- ^intersections: list[int]
+- ^paths: list[int]
+- ^desert_tiles: list[int]
+- ^resrouce_number: int
+
+** Methods
+- constructor(size: int, initial_data: serialized) -> void
+- select(location: int, distance: int, dir_pattern: Tuple(int), matching: function, return_cells: bool) -> list[int]
+- has_path(location: int) -> bool
+- has_intersection(location: int) -> bool
+- add_road(location: int, road: Road) -> bool
+- add_settlement(location: int, settlement: Settlement, allow_disconnected_settlement: bool)
+- save_state() -> serialized
+
 * GameMaster
 event driven
 ** Attributes
