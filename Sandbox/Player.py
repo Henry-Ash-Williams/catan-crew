@@ -1,4 +1,5 @@
 from Board import *
+from Resources import Resources
 
 
 class Player:
@@ -14,6 +15,8 @@ class Player:
         player.built_settlements = []
         player.built_cities = []
         player.built_roads = []
+
+        player.resources = Resources()
 
     #def builds_settlement(player, location):
     #  player.game.board.add_settlement(location, player)

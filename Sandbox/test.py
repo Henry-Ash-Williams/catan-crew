@@ -2,6 +2,7 @@ from Board import *
 from Player import *
 from Game import *
 from rich import print
+from random import choice
 
 def main():
     newBoard = Board(size=3)
@@ -18,10 +19,13 @@ def main():
     game = Game(board=newBoard, players=player_order)
 
     game.begin_setup_phase()
+
     for player in player_order + reversed(player_order):
-        player.builds_settlement(location=0)
-        player.builds_road(location=0)
+        # Randomly place settlements and roads on the game board
+        player.builds_settlement(location=choice(game.board.intersections))
+        player.builds_road(location=choice(game.board.paths))
         player.ends_turn()
+
     game.distribute_resources()
     game.end_setup_phase()
 

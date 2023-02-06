@@ -1,8 +1,11 @@
+from Bank import Bank
+
 class Game:
     def __init__(game, board, players):
         game.board = board
         board.game = game
         game.turn_count = 0
+        game.resources = Bank()
 
         requested_colors = set(p.color for p in players)
         if len(requested_colors) != len(players):
@@ -20,8 +23,8 @@ class Game:
 
     def verify_current_player_is(game, player):
         if player != game.current_player:
-            raise Exception("Player (%s) can't play as it's (%s)'s turn." %
-                            (player.color, game.current_player.color))
+            raise Exception(f"Player {player.color} can't play as it's {game.current_player.color}'s turn.")
+
 
     def end_turn(game):
 

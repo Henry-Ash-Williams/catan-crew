@@ -2,25 +2,50 @@
 
 * Player
 ** Attributes
-- resources: Dict
+- resources: Resources
 - development_cards: List<DevCard>
 - road_length: int
 - knights_played: int
 - victory_points: int
+- available_settlements: [Settlement]
+- built_settlement: [Settlement]
+- available_roads: [Road]
+- built_roads: [Road]
+- available_cities: [City]
+- built_cities: [City]
+- exchange_rate: Dict<Dict<int>>
+
 ** Methods
+- view_possible_actions() -> List<Action>
+- build_settlement(location: int)
+- upgrade_settlement(location: int)
+- build_road(location: int)
+- trade(to: Player | Bank, offering: Resources, recieving: Resources)
+- play_knight(location: int)
+- play_monopoly()
+- play_year_of_plenty()
+- play_road_building()
+- end_turn()
+
 
 * Game
 
 * Board
 
 * GameMaster
+event driven
 ** Attributes
-
+- is_setup_phase
 ** Methods
 - check_longest_road -> Player
 - check_largest_army -> Player
 - distribute_resources(roll: int) -> void
 - handle_trade(trade: Trade)
+- select_player() -> Player
+- generate_possible_action_for_player(player: Player) -> List<Action>
+- in_progress() -> bool
+
+
 * Trade
 ** Methods
 - new(from: Player, to: Union[Player, Bank], resources_required: Resources, resources_offered: Resources)
