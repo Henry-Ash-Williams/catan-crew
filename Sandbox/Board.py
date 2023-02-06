@@ -29,14 +29,16 @@ class City(Settlement):
 
 class Road:
 
-    def __init__(road, owner):
+    def __init__(road, location, owner):
+        road.location = location
         road.owner = owner
         road.color = owner.color
 
 
 class Path:
 
-    def __init__(self):
+    def __init__(self, location):
+        self.location = location
         self.has_road = False
 
     def build_road(self, road):
@@ -46,7 +48,8 @@ class Path:
 
 class Tile:
 
-    def __init__(tile, resource, number_token):
+    def __init__(tile, location, resource, number_token):
+        tile.location = location
         tile.resource = resource
         tile.number_token = number_token
 
@@ -84,9 +87,9 @@ class Board:
         board.paths = join(board.select(t, 1, (1, 1)) for t in board.tiles)
 
         for location in board.intersections:
-            board.cells[location] = Intersection()
+            board.cells[location] = Intersection(location)
         for location in board.paths:
-            board.cells[location] = Path()
+            board.cells[location] = Path(location)
 
         board.desert_tiles = [0]
         board.resource_number = len(board.tiles) - len(board.desert_tiles)
@@ -109,7 +112,7 @@ class Board:
                 location in board.desert_tiles) else board.resources.pop()
             number_token = None if (
                 location in board.desert_tiles) else board.number_tokens.pop()
-            tile = Tile(resource, number_token)
+            tile = Tile(location, resource, number_token)
             board.cells[location] = tile
 
     def select(board,
@@ -221,6 +224,17 @@ class Board:
 
         board.cells[location].settlement = City(
             board.cells[location].settlement.owner)
+
+    def get_settlements_and_cities(board):
+        settlement_dict = {player:[] for player in board.game.players}
+        for location in board.intersections:
+            intersection = board.cells[location]
+            if intersection.has_settlement:
+                settlement = intersection.settlement
+                settlement_dict[settlement.owner].append(settlement)
+        return settlement_dict
+
+
 
     # This should return the board state in some format which the board can be initialized from
     def save_state(board):
