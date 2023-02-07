@@ -1,5 +1,6 @@
 import random
 from functools import reduce
+from pickle import Pickler, Unpickler
 
 
 def join(l):
@@ -237,5 +238,12 @@ class Board:
 
 
     # This should return the board state in some format which the board can be initialized from
-    def save_state(self):
-        pass
+    def save_state(self, filename: str):
+        with open(filename, "wb") as file:
+            pickle = Pickler(file)
+            pickle.dump(self)
+
+    def read_state(filename: str):
+        with open(filename, "rb") as file:
+            pickle = Unpickler(file)
+            return pickle.load()
