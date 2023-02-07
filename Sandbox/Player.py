@@ -3,24 +3,28 @@ from Resources import Resources
 
 
 class Player:
+<<<<<<< Updated upstream
     def __init__(self, color):
         self.color = color
+=======
 
-        self.available_settlements = [Settlement(self) for i in range(5)]
-        self.available_cities = [City(self) for i in range(4)]
+    def __init__(player, color):
+
+        player.color = color
+>>>>>>> Stashed changes
+
+        player.free_settlements = [Settlement(player) for i in range(5)]
+        player.free_cities = [City(player) for i in range(4)]
         # TODO: change this so the location of possible roads is accurate
-        self.available_roads = [Road(0, self) for i in range(15)]
+        player.free_roads = [Road(0, player) for i in range(15)]
 
-        # built
-        self.built_settlements = []
-        self.built_cities = []
-        self.built_roads = []
+        player.built_settlements = []
+        player.built_cities = []
+        player.built_roads = []
 
-        # Victory point related
-        self.road_length = 0
-        self.knights_played = 0
-        self.victory_points = 0
+        player.resources = Resources()
 
+<<<<<<< Updated upstream
         self.resources = Resources()
         self.exchange_rate = (
             0  # TODO: defaultdict(defaultdict(int)) -> predefined exchange rate
@@ -29,16 +33,29 @@ class Player:
     def builds_settlement(self, location):
         if self.available_settlements:
             settlement = self.available_settlements.pop()
+=======
+    #def builds_settlement(player, location):
+    #  player.game.board.add_settlement(location, player)
+
+    #def builds_road(player, location):
+    #  player.game.board.add_road(location, player)
+
+    def builds_settlement(player, location):
+
+        if player.free_settlements:
+            settlement = player.free_settlements.pop()
+>>>>>>> Stashed changes
         else:
-            raise Exception("Player has no available settlements to build")
+            raise Exception("Player has no free settlements to build")
 
         try:
-            self.game.add_settlement(location, settlement)
-            self.built_settlements.append(settlement)
+            player.game.add_settlement(location, settlement)
+            player.built_settlements.append(settlement)
         except Exception as e:
-            self.available_settlements.append(settlement)
+            player.free_settlements.append(settlement)
             raise e
 
+<<<<<<< Updated upstream
     def upgrade_settlement(self, location):
         # TODO
         return 0
@@ -46,21 +63,30 @@ class Player:
     def builds_road(self, location):
         if self.available_roads:
             road = self.available_roads.pop()
+=======
+    def builds_road(player, location):
+
+        if player.free_roads:
+            road = player.free_roads.pop()
+>>>>>>> Stashed changes
         else:
-            raise Exception("Player has no available roads to build")
+            raise Exception("Player has no free roads to build")
 
         try:
-            self.game.add_road(location, road)
-            self.built_roads.append(road)
+            player.game.add_road(location, road)
+            player.built_roads.append(road)
         except Exception as e:
-            self.available_roads.append(road)
+            player.free_roads.append(road)
             raise e
+<<<<<<< Updated upstream
 
     # TODO
     def request_trade(
         player,
     ):
         return ""
+=======
+>>>>>>> Stashed changes
 
-    def ends_turn(self):
-        self.game.end_turn()
+    def ends_turn(player):
+        player.game.end_turn()
