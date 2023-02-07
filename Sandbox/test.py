@@ -3,6 +3,7 @@ from Player import *
 from Game import *
 from rich import print
 from random import choice
+import pickle
 
 
 def main():
