@@ -1,45 +1,45 @@
 from Bank import Bank
 
 class Game:
-    def __init__(game, board, players):
-        game.board = board
-        board.game = game
-        game.turn_count = 0
-        game.resources = Bank()
+    def __init__(self, board, players):
+        self.board = board
+        board.game = self
+        self.turn_count = 0
+        self.resources = Bank()
 
         requested_colors = set(p.color for p in players)
         if len(requested_colors) != len(players):
             raise Exception('More than one player have the same color')
 
-        game.players = players
-        game.player_number = len(game.players)
-        for player in game.players:
-            player.game = game
+        self.players = players
+        self.player_number = len(self.players)
+        for player in self.players:
+            player.game = self
 
-        game.current_player_index = 0
-        game.current_player = game.players[game.current_player_index]
+        self.current_player_index = 0
+        self.current_player = self.players[self.current_player_index]
 
-        game.is_just_starting = True
+        self.is_just_starting = True
 
-    def verify_current_player_is(game, player):
-        if player != game.current_player:
-            raise Exception(f"Player {player.color} can't play as it's {game.current_player.color}'s turn.")
+    def verify_current_player_is(self, player):
+        if player != self.current_player:
+            raise Exception(f"Player {player.color} can't play as it's {self.current_player.color}'s turn.")
 
 
-    def end_turn(game):
+    def end_turn(self):
 
-        game.current_player_index = (game.current_player_index +
-                                     1) % game.player_number
-        game.current_player = game.players[game.current_player_index]
-        game.turn_count += 1
+        self.current_player_index = (game.current_player_index +
+                                     1) % self.player_number
+        self.current_player = self.players[self.current_player_index]
+        self.turn_count += 1
 
-    def add_road(game, location, road):
-        game.verify_current_player_is(road.owner)
-        game.board.add_road(location, road)
+    def add_road(self, location, road):
+        self.verify_current_player_is(road.owner)
+        self.board.add_road(location, road)
 
-    def add_settlement(game, location, settlement):
-        game.verify_current_player_is(settlement.owner)
-        game.board.add_settlement(
+    def add_settlement(self, location, settlement):
+        self.verify_current_player_is(settlement.owner)
+        self.board.add_settlement(
             location,
             settlement,
-            allow_disconnected_settlement=game.is_just_starting)
+            allow_disconnected_settlement=self.is_just_starting)

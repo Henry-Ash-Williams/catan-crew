@@ -4,54 +4,49 @@ from Resources import Resources
 
 class Player:
 
-    def __init__(player, color):
+    def __init__(self, color):
 
-        player.color = color
+        self.color = color
 
-        player.free_settlements = [Settlement(player) for i in range(5)]
-        player.free_cities = [City(player) for i in range(4)]
+        self.free_settlements = [Settlement(self) for i in range(5)]
+        self.free_cities = [City(self) for i in range(4)]
         # TODO: change this so the location of possible roads is accurate
-        player.free_roads = [Road(0, player) for i in range(15)]
+        self.free_roads = [Road(0, self) for i in range(15)]
 
-        player.built_settlements = []
-        player.built_cities = []
-        player.built_roads = []
+        self.built_settlements = []
+        self.built_cities = []
+        self.built_roads = []
 
-        player.resources = Resources()
+        self.resources = Resources()
 
-    #def builds_settlement(player, location):
-    #  player.game.board.add_settlement(location, player)
 
-    #def builds_road(player, location):
-    #  player.game.board.add_road(location, player)
+    def builds_settlement(self, location):
 
-    def builds_settlement(player, location):
-
-        if player.free_settlements:
-            settlement = player.free_settlements.pop()
+        if self.free_settlements:
+            settlement = self.free_settlements.pop()
         else:
             raise Exception("Player has no free settlements to build")
 
         try:
-            player.game.add_settlement(location, settlement)
-            player.built_settlements.append(settlement)
+            self.game.add_settlement(location, settlement)
+            self.built_settlements.append(settlement)
         except Exception as e:
-            player.free_settlements.append(settlement)
+            self.free_settlements.append(settlement)
             raise e
 
-    def builds_road(player, location):
+    def builds_road(self, location):
 
-        if player.free_roads:
-            road = player.free_roads.pop()
+        if self.free_roads:
+            road = self.free_roads.pop()
         else:
             raise Exception("Player has no free roads to build")
 
         try:
-            player.game.add_road(location, road)
-            player.built_roads.append(road)
+            self.game.add_road(location, road)
+            self.built_roads.append(road)
         except Exception as e:
-            player.free_roads.append(road)
+            self.free_roads.append(road)
             raise e
 
-    def ends_turn(player):
-        player.game.end_turn()
+    def ends_turn(self):
+        self.game.end_turn()
