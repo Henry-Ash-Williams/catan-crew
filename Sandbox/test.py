@@ -4,8 +4,9 @@ from Game import *
 from rich import print
 from random import choice
 
+
 def main():
-    newBoard = Board(size=3)
+    board = Board(size=3)
 
     alice = Player('blue')
     bob = Player('red')
@@ -16,22 +17,24 @@ def main():
     colors = [player.color for player in player_order]
     print(f"player order: {[f'[bold {color}]{color}[/bold {color}]' for color in colors]}")
 
-    game = Game(board=newBoard, players=player_order)
+    game = Game(board=board, players=player_order)
 
     # TODO game.begin_setup_phase()
 
     for player in player_order + list(reversed(player_order)):
         # Randomly place settlements and roads on the game board
-        player.builds_settlement(location=choice(game.board.intersections))
-        player.builds_road(location=choice(game.board.paths))
+        settlement_location = choice(game.board.intersections)
+        road_location = choice(board.select(settlement_location, 1, matching=board.has_path))
+        player.builds_settlement(location=settlement_location)
+        player.builds_road(location=road_location)
         player.ends_turn()
 
     # TODO game.distribute_resources()
     # TODO game.end_setup_phase()
 
+
 if __name__ == "__main__":
     main()
-
 
 # alice.roll_dice()
 # alice.get_resources(...)
