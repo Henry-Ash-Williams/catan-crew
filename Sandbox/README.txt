@@ -9,6 +9,7 @@ How to test this code:
 The coordinate system:
 
 - The coordinate of any cell in the grid is just an int
+- All size boards have a center tile with coordinate 0
 - See the map.svg file for the coordinates of the tile cells in a size-3 board
 - In the size-3 board,
     - A step in the north-east direction adds 1 to the coordinate
