@@ -20,7 +20,7 @@ def main():
 
     # TODO game.begin_setup_phase()
 
-    for player in player_order + reversed(player_order):
+    for player in player_order + list(reversed(player_order)):
         # Randomly place settlements and roads on the game board
         player.builds_settlement(location=choice(game.board.intersections))
         player.builds_road(location=choice(game.board.paths))
