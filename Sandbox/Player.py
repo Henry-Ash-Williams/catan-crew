@@ -17,7 +17,49 @@ class Player:
         player.built_cities = []
         player.built_roads = []
 
+        # Victory point related
+        player.road_length = 0
+        player.knights_played = 0
+        player.victory_points = 0
+
         player.resources = Resources()
+        player.exchange_rate = {
+            # player side to bank: identical resource to 1 target resource
+            "brick" : {
+                "lumber" : 4,
+                "ore" : 4,
+                "grain" : 4,
+                "wool" : 4
+            }, 
+            "lumber" :{
+                "brick" : 4,
+                "ore" : 4,
+                "grain" : 4,
+                "wool" : 4
+            },
+            "ore" :{
+                "brick" : 4,
+                "lumber" : 4,
+                "grain" : 4,
+                "wool" : 4
+            },
+            "grain" :{
+                "brick" : 4,
+                "ore" : 4,
+                "lumber" : 4,
+                "wool" : 4
+            },
+            "wool" :{
+                "brick" : 4,
+                "ore" : 4,
+                "grain" : 4,
+                "lumber" : 4
+            }
+            # how to handle the harbour
+                # 1. 3:1 harbour: update all 3
+                # 2. 2:1 harbour: update like ore in each to 2
+        }
+
 
     #def builds_settlement(player, location):
     #  player.game.board.add_settlement(location, player)
