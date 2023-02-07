@@ -2,12 +2,14 @@
 from dataclasses import dataclass
 from enum import Enum
 
+
 class ResourceCard(Enum):
     Brick = 0
     Lumber = 1
     Ore = 2
     Grain = 3
     Wool = 4
+
 
 @dataclass
 class Resources:
@@ -18,22 +20,27 @@ class Resources:
     wool: int = 0
 
     def __add__(self, other):
-        return Resources(self.brick + other.brick,
-                         self.lumber + other.lumber,
-                         self.ore + other.ore,
-                         self.grain + other.grain,
-                         self.wool + other.wool)
+        return Resources(
+            self.brick + other.brick,
+            self.lumber + other.lumber,
+            self.ore + other.ore,
+            self.grain + other.grain,
+            self.wool + other.wool,
+        )
 
     def __sub__(self, other):
-        return Resources(self.brick - other.brick,
-                         self.lumber - other.lumber,
-                         self.ore - other.ore,
-                         self.grain - other.grain,
-                         self.wool - other.wool)
+        return Resources(
+            self.brick - other.brick,
+            self.lumber - other.lumber,
+            self.ore - other.ore,
+            self.grain - other.grain,
+            self.wool - other.wool,
+        )
+
 
 RESOURCE_REQUIREMENTS = {
     "road": Resources(brick=1, lumber=1),
     "settlement": Resources(brick=1, lumber=1, wool=1, grain=1),
     "city": Resources(ore=3, grain=2),
-    "development_card": Resources(ore=1, wool=1, grain=1)
+    "development_card": Resources(ore=1, wool=1, grain=1),
 }

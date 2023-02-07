@@ -3,9 +3,7 @@ from Resources import Resources
 
 
 class Player:
-
     def __init__(self, color):
-
         self.color = color
 
         self.available_settlements = [Settlement(self) for i in range(5)]
@@ -24,13 +22,11 @@ class Player:
         self.victory_points = 0
 
         self.resources = Resources()
-        self.exchange_rate = 0 # TODO: defaultdict(defaultdict(int)) -> predefined exchange rate
-
-    
-
+        self.exchange_rate = (
+            0  # TODO: defaultdict(defaultdict(int)) -> predefined exchange rate
+        )
 
     def builds_settlement(self, location):
-
         if self.available_settlements:
             settlement = self.available_settlements.pop()
         else:
@@ -47,11 +43,7 @@ class Player:
         # TODO
         return 0
 
-
-
-
     def builds_road(self, location):
-
         if self.available_roads:
             road = self.available_roads.pop()
         else:
@@ -63,9 +55,11 @@ class Player:
         except Exception as e:
             self.available_roads.append(road)
             raise e
-    
+
     # TODO
-    def request_trade(player, ):
+    def request_trade(
+        player,
+    ):
         return ""
 
     def ends_turn(self):

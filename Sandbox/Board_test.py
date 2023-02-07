@@ -3,6 +3,7 @@
 from Board import *
 import unittest
 
+
 class BoardTester(unittest.TestCase):
     # Read the serialized board from disk and store it in a member variable,
     # `self.board` will always be available for use throughout the testing

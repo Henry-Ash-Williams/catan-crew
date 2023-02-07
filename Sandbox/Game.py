@@ -1,5 +1,6 @@
 from Bank import Bank
 
+
 class Game:
     def __init__(self, board, players):
         self.board = board
@@ -9,7 +10,7 @@ class Game:
 
         requested_colors = set(p.color for p in players)
         if len(requested_colors) != len(players):
-            raise Exception('More than one player have the same color')
+            raise Exception("More than one player have the same color")
 
         self.players = players
         self.player_number = len(self.players)
@@ -23,13 +24,12 @@ class Game:
 
     def verify_current_player_is(self, player):
         if player != self.current_player:
-            raise Exception(f"Player {player.color} can't play as it's {self.current_player.color}'s turn.")
-
+            raise Exception(
+                f"Player {player.color} can't play as it's {self.current_player.color}'s turn."
+            )
 
     def end_turn(self):
-
-        self.current_player_index = (game.current_player_index +
-                                     1) % self.player_number
+        self.current_player_index = (game.current_player_index + 1) % self.player_number
         self.current_player = self.players[self.current_player_index]
         self.turn_count += 1
 
@@ -40,6 +40,5 @@ class Game:
     def add_settlement(self, location, settlement):
         self.verify_current_player_is(settlement.owner)
         self.board.add_settlement(
-            location,
-            settlement,
-            allow_disconnected_settlement=self.is_just_starting)
+            location, settlement, allow_disconnected_settlement=self.is_just_starting
+        )

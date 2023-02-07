@@ -9,15 +9,13 @@ import pickle
 def main():
     board = Board.read_state("board.pickle")
 
-    alice = Player('blue')
-    bob = Player('red')
-    charlie = Player('green')
-    david = Player('purple')
-    player_order = [ alice, bob, charlie, david ]
+    alice = Player("blue")
+    bob = Player("red")
+    charlie = Player("green")
+    david = Player("purple")
+    player_order = [alice, bob, charlie, david]
 
     game = Game(board=board, players=player_order)
-
-
 
 
 if __name__ == "__main__":

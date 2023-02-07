@@ -5,6 +5,7 @@ from Bank import *
 
 import unittest
 
+
 class BankTester(unittest.TestCase):
     def test_bank_distribution(self):
         bank = Bank()
@@ -36,16 +37,25 @@ class BankTester(unittest.TestCase):
         bank = Bank(0)
 
         bank.return_to_bank(RESOURCE_REQUIREMENTS["settlement"])
-        self.assertEqual(bank.available_resources, Resources(brick=1, lumber=1, wool=1, grain=1))
+        self.assertEqual(
+            bank.available_resources, Resources(brick=1, lumber=1, wool=1, grain=1)
+        )
 
         bank.return_to_bank(RESOURCE_REQUIREMENTS["settlement"])
-        self.assertEqual(bank.available_resources, Resources(brick=2, lumber=2, wool=2, grain=2))
+        self.assertEqual(
+            bank.available_resources, Resources(brick=2, lumber=2, wool=2, grain=2)
+        )
 
         bank.return_to_bank(RESOURCE_REQUIREMENTS["road"])
-        self.assertEqual(bank.available_resources, Resources(brick=3, lumber=3, wool=2, grain=2))
+        self.assertEqual(
+            bank.available_resources, Resources(brick=3, lumber=3, wool=2, grain=2)
+        )
 
         bank.return_to_bank(Resources(ore=4))
-        self.assertEqual(bank.available_resources, Resources(brick=3, lumber=3, wool=2, grain=2, ore=4))
+        self.assertEqual(
+            bank.available_resources,
+            Resources(brick=3, lumber=3, wool=2, grain=2, ore=4),
+        )
 
 
 if __name__ == "__main__":
