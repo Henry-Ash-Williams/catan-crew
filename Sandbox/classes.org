@@ -89,7 +89,15 @@ make sure to overload operators for this for easier operations
 - brick: int
 
 * Bank
-
+** Attributes
+- available_resources: Resources
+** Methods
+- distribute_brick(amount: int) -> Resources
+- distribute_lumber(amount: int) -> Resources
+- distribute_ore(amount: int) -> Resources
+- distribute_grain(amount: int) -> Resources
+- distribute_wool(amount: int) -> Resources
+- return_to_bank(returned_resources: Resources)
 
 * Intersection
 ** Attributes

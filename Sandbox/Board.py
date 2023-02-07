@@ -87,7 +87,7 @@ class Board:
         board.paths = join(board.select(t, 1, (1, 1)) for t in board.tiles)
 
         for location in board.intersections:
-            board.cells[location] = Intersection(location)
+            board.cells[location] = Intersection()
         for location in board.paths:
             board.cells[location] = Path(location)
 

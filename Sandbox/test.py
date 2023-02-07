@@ -18,7 +18,7 @@ def main():
 
     game = Game(board=newBoard, players=player_order)
 
-    game.begin_setup_phase()
+    # TODO game.begin_setup_phase()
 
     for player in player_order + reversed(player_order):
         # Randomly place settlements and roads on the game board
@@ -26,8 +26,8 @@ def main():
         player.builds_road(location=choice(game.board.paths))
         player.ends_turn()
 
-    game.distribute_resources()
-    game.end_setup_phase()
+    # TODO game.distribute_resources()
+    # TODO game.end_setup_phase()
 
 if __name__ == "__main__":
     main()

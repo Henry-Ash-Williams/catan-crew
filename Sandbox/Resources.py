@@ -17,6 +17,20 @@ class Resources:
     grain: int = 0
     wool: int = 0
 
+    def __add__(self, other):
+        return Resources(self.brick + other.brick,
+                         self.lumber + other.lumber,
+                         self.ore + other.ore,
+                         self.grain + other.grain,
+                         self.wool + other.wool)
+
+    def __sub__(self, other):
+        return Resources(self.brick - other.brick,
+                         self.lumber - other.lumber,
+                         self.ore - other.ore,
+                         self.grain - other.grain,
+                         self.wool - other.wool)
+
 RESOURCE_REQUIREMENTS = {
     "road": Resources(brick=1, lumber=1),
     "settlement": Resources(brick=1, lumber=1, wool=1, grain=1),

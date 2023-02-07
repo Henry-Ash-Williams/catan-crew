@@ -10,7 +10,8 @@ class Player:
 
         player.free_settlements = [Settlement(player) for i in range(5)]
         player.free_cities = [City(player) for i in range(4)]
-        player.free_roads = [Road(player) for i in range(15)]
+        # TODO: change this so the location of possible roads is accurate
+        player.free_roads = [Road(0, player) for i in range(15)]
 
         player.built_settlements = []
         player.built_cities = []
