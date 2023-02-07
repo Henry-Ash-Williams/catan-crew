@@ -25,7 +25,7 @@ class Player:
         if self.free_settlements:
             settlement = self.free_settlements.pop()
         else:
-            raise Exception("Player has no free settlements to build")
+            raise Exception("Player has no available settlements to build")
 
         try:
             self.game.add_settlement(location, settlement)
@@ -39,7 +39,7 @@ class Player:
         if self.free_roads:
             road = self.free_roads.pop()
         else:
-            raise Exception("Player has no free roads to build")
+            raise Exception("Player has no available roads to build")
 
         try:
             self.game.add_road(location, road)
@@ -47,6 +47,10 @@ class Player:
         except Exception as e:
             self.free_roads.append(road)
             raise e
+    
+    # TODO
+    def request_trade(player, ):
+        return ""
 
     def ends_turn(self):
         self.game.end_turn()
