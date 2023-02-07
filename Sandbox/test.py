@@ -7,31 +7,17 @@ import pickle
 
 
 def main():
-    board = Board(size=3)
+    board = Board.read_state("board.pickle")
 
     alice = Player('blue')
     bob = Player('red')
     charlie = Player('green')
     david = Player('purple')
-
-    player_order = [alice, bob, charlie, david]
-    colors = [player.color for player in player_order]
-    print(f"player order: {[f'[bold {color}]{color}[/bold {color}]' for color in colors]}")
+    player_order = [ alice, bob, charlie, david ]
 
     game = Game(board=board, players=player_order)
 
-    # TODO game.begin_setup_phase()
 
-    for player in player_order + list(reversed(player_order)):
-        # Randomly place settlements and roads on the game board
-        settlement_location = choice(game.board.intersections)
-        road_location = choice(board.select(settlement_location, 1, matching=board.has_path))
-        player.builds_settlement(location=settlement_location)
-        player.builds_road(location=road_location)
-        player.ends_turn()
-
-    # TODO game.distribute_resources()
-    # TODO game.end_setup_phase()
 
 
 if __name__ == "__main__":
