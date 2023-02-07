@@ -11,7 +11,7 @@ The coordinate system:
 - The coordinate of any cell in the grid is just an int
 - All size boards have a center tile with coordinate 0
 - See the map.svg file for the coordinates of the tile cells in a size-3 board
-- In the map.svg file, tile cells are in orange, intersection cells are in blue, paths are in green, and potential bridge locations are in pink
+- In the map.svg file, tile cells are in orange, harbors are in red, intersection cells are in blue, paths are in green, and potential bridge locations are in pink
 - In the size-3 board,
     - A step in the north-east direction adds 1 to the coordinate
     - A step to the north adds 23 to the coordinate
