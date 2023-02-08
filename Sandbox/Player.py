@@ -3,64 +3,97 @@ from Resources import Resources
 
 
 class Player:
-    def __init__(self, color):
-        self.color = color
 
-        self.available_settlements = [Settlement(self) for i in range(5)]
-        self.available_cities = [City(self) for i in range(4)]
+    def __init__(player, color):
+
+        player.color = color
+
+        player.available_settlements = [Settlement(player) for i in range(5)]
+        player.available_cities = [City(player) for i in range(4)]
         # TODO: change this so the location of possible roads is accurate
-        self.available_roads = [Road(0, self) for i in range(15)]
+        player.available_roads = [Road(0, player) for i in range(15)]
 
-        # built
-        self.built_settlements = []
-        self.built_cities = []
-        self.built_roads = []
+        player.built_settlements = []
+        player.built_cities = []
+        player.built_roads = []
 
         # Victory point related
-        self.road_length = 0
-        self.knights_played = 0
-        self.victory_points = 0
+        player.road_length = 0
+        player.knights_played = 0
+        player.victory_points = 0
 
-        self.resources = Resources()
-        self.exchange_rate = (
-            0  # TODO: defaultdict(defaultdict(int)) -> predefined exchange rate
-        )
+        player.resources = Resources()
+        player.exchange_rate = {
+            # player side to bank: identical resource to 1 target resource
+            "brick" : {
+                "lumber" : 4,
+                "ore" : 4,
+                "grain" : 4,
+                "wool" : 4
+            }, 
+            "lumber" :{
+                "brick" : 4,
+                "ore" : 4,
+                "grain" : 4,
+                "wool" : 4
+            },
+            "ore" :{
+                "brick" : 4,
+                "lumber" : 4,
+                "grain" : 4,
+                "wool" : 4
+            },
+            "grain" :{
+                "brick" : 4,
+                "ore" : 4,
+                "lumber" : 4,
+                "wool" : 4
+            },
+            "wool" :{
+                "brick" : 4,
+                "ore" : 4,
+                "grain" : 4,
+                "lumber" : 4
+            }
+            # how to handle the harbour
+                # 1. 3:1 harbour: update all 3
+                # 2. 2:1 harbour: update like ore in each to 2
+        }
 
-    def builds_settlement(self, location):
-        if self.available_settlements:
-            settlement = self.available_settlements.pop()
+
+    #def builds_settlement(player, location):
+    #  player.game.board.add_settlement(location, player)
+
+    #def builds_road(player, location):
+    #  player.game.board.add_road(location, player)
+
+    def builds_settlement(player, location):
+
+        if player.available_settlements:
+            settlement = player.available_settlements.pop()
         else:
             raise Exception("Player has no available settlements to build")
 
         try:
-            self.game.add_settlement(location, settlement)
-            self.built_settlements.append(settlement)
+            player.game.add_settlement(location, settlement)
+            player.built_settlements.append(settlement)
         except Exception as e:
-            self.available_settlements.append(settlement)
+            player.available_settlements.append(settlement)
             raise e
 
-    def upgrade_settlement(self, location):
-        # TODO
-        return 0
+    def builds_road(player, location):
 
-    def builds_road(self, location):
-        if self.available_roads:
-            road = self.available_roads.pop()
+        if player.available_roads:
+            road = player.available_roads.pop()
         else:
             raise Exception("Player has no available roads to build")
 
         try:
-            self.game.add_road(location, road)
-            self.built_roads.append(road)
+            player.game.add_road(location, road)
+            player.built_roads.append(road)
         except Exception as e:
-            self.available_roads.append(road)
+            player.available_roads.append(road)
             raise e
 
-    # TODO
-    def request_trade(
-        player,
-    ):
-        return ""
-
-    def ends_turn(self):
-        self.game.end_turn()
+    def ends_turn(player):
+        player.game.end_turn()
