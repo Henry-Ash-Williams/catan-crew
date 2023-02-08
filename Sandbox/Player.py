@@ -21,8 +21,10 @@ class Player:
         player.road_length = 0
         player.knights_played = 0
         player.victory_points = 0
+        player.hidden_victory_points = 0
 
         player.resources = Resources()
+        player.development_cards = [] # list of card object?
         player.exchange_rate = {
             # player side to bank: identical resource to 1 target resource
             "brick" : {
@@ -67,6 +69,12 @@ class Player:
     #def builds_road(player, location):
     #  player.game.board.add_road(location, player)
 
+    def view_possible_actions():
+        # should return list of devcard
+        # ask gamemaster
+        return []
+    
+
     def builds_settlement(player, location):
 
         if player.available_settlements:
@@ -81,8 +89,25 @@ class Player:
             player.available_settlements.append(settlement)
             raise e
 
+    def upgrade_settlement(player, location):
+        
+        if player.available_cities:
+            city = player.available_cities.pop()
+        else:
+            raise Exception("Player has no available cities to build")
+
+        try:
+            player.game.upgrade_settlement(location, city)
+            player.built_cities.append(city)
+        except Exception as e:
+            player.available_settlements.append(city)
+            raise e
+        
+
     def builds_road(player, location):
 
+        # shall these handel by gamemaster to look over to it
+        # when gamemaster give options for player to choose
         if player.available_roads:
             road = player.available_roads.pop()
         else:
@@ -94,6 +119,21 @@ class Player:
         except Exception as e:
             player.available_roads.append(road)
             raise e
+
+    def request_trade(player, offering: dict, recieving: dict, to_players: str = None ,bank: str = None):
+        # check resource
+        for offering_resource, quantity in offering.items():
+            
+
+        player.game.request()
+        
+
+    def play_knight(player, location):
+        # check dev care
+        
+
+        # should direcly call board to play knight
+        pass
 
     def ends_turn(player):
         player.game.end_turn()
