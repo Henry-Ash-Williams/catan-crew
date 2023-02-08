@@ -1,5 +1,5 @@
 from Board import *
-from Resources import Resources
+from Resources import Resources, RESOURCE_REQUIREMENTS
 from rich.console import Console
 from rich.table import Table
 
@@ -125,3 +125,10 @@ class Player:
         t.add_row("Grain", str(self.resources.grain), style="gold1")
         t.add_row("Wool", str(self.resources.wool), style="grey70")
         c.print(t)
+
+    def view_available_builds(self) -> [str]:
+        return [
+            building
+            for building, cost in RESOURCE_REQUIREMENTS.items()
+            if self.resources.can_build(cost)
+        ]

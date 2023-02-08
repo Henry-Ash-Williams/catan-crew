@@ -19,6 +19,7 @@ def main():
 
     bob.resources = Resources(brick=1, lumber=2, grain=1)
     bob.view_available_resources()
+    # print(bob.view_possible_builds())
 
 
 if __name__ == "__main__":

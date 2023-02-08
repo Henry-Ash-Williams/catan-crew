@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from Resources import Resources
+from Resources import *
 
 
 class Bank:
@@ -10,7 +10,19 @@ class Bank:
 
     # TODO: Maybe refactor the distribution functions so we don't have 5
     # practically identical functions
+    def distribute(self, amount: int, resource_kind: ResourceKind) -> Resources:
+        self.available_resources[resource_kind] -= amount
+        r = Resources()
+        r[resource_kind] = amount
+        return r
+
     def distribute_brick(self, amount: int) -> Resources:
+        """
+        TODO: Idea for how to generalize these functions
+        self.available_resources[resource_kind] -= amount
+        r = Resources()
+        r[resource_kind] = amonut
+        return r"""
         self.available_resources.brick -= amount
         return Resources(brick=amount)
 

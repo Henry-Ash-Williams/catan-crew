@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 
-class ResourceCard(Enum):
+class ResourceKind(Enum):
     Brick = 0
     Lumber = 1
     Ore = 2
@@ -11,7 +11,7 @@ class ResourceCard(Enum):
     Wool = 4
 
 
-@dataclass
+@dataclass(order=True)
 class Resources:
     brick: int = 0
     lumber: int = 0
@@ -36,6 +36,27 @@ class Resources:
             self.grain - other.grain,
             self.wool - other.wool,
         )
+
+    def __iter__(self):
+        # enables iteration over each resource in the class
+        return iter([self.brick, self.lumber, self.ore, self.grain, self.wool])
+
+    def can_build(self, building):
+        return all(pr >= br for pr, br in zip(self, building))
+
+    def __getitem__(self, key: str) -> int:
+        if key.lower() == "brick":
+            return self.brick
+        elif key.lower() == "lumber":
+            return self.lumber
+        elif key.lower() == "ore":
+            return self.ore
+        elif key.lower() == "grain":
+            return self.grain
+        elif key.lower() == "wool":
+            return self.wool
+        else:
+            raise Exception("Unrecognised resource")
 
 
 RESOURCE_REQUIREMENTS = {
