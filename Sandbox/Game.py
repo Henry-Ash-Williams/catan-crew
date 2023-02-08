@@ -29,7 +29,7 @@ class Game:
             )
 
     def end_turn(self):
-        self.current_player_index = (game.current_player_index + 1) % self.player_number
+        self.current_player_index = (self.current_player_index + 1) % self.player_number
         self.current_player = self.players[self.current_player_index]
         self.turn_count += 1
 
