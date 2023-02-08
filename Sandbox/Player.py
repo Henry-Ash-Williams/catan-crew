@@ -123,7 +123,7 @@ class Player:
     def request_trade(player, offering: dict, recieving: dict, to_players: str = None ,bank: str = None):
         # check resource
         for offering_resource, quantity in offering.items():
-            
+            print("")
 
         player.game.request()
         
