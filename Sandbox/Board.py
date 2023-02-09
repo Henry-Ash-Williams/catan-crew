@@ -86,6 +86,8 @@ class Board:
         board.intersections = join(board.select(t, 1, (2, )) for t in board.tiles)
         board.paths         = join(board.select(t, 1, (1, 1)) for t in board.tiles)
 
+        board.available_intersections = set(board.intersections[:])
+        
         for location in board.intersections:
             board.cells[location] = Intersection()
             
@@ -216,6 +218,11 @@ class Board:
             )
 
         board.cells[location].build_settlement(settlement)
+        
+        intersections_to_make_unavailable = set([location] + board.select(location, 1, (2,),
+                                            matching = board.has_intersection))
+                                            
+        board.available_intersections -= intersections_to_make_unavailable
 
     def upgrade_settlement(board, location):
 
