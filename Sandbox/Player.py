@@ -28,10 +28,10 @@ class Player:
 
         player.resources = Resources()
         player.development_cards = {
-            "knight" : 0,
+            "knight": 0,
             "Road Building": 0,
             "Year of Plenty": 0,
-            "Monopoly" : 0
+            "Monopoly": 0,
         }  # TODO: either dict or dataclass
 
         player.exchange_rate = {
@@ -100,7 +100,6 @@ class Player:
             player.available_roads.append(road)
             raise e
 
-
     def play_knight(player, location):
         # check dev card
         if player.development_cards["knight"] <= 0:
@@ -147,13 +146,19 @@ class Player:
         console.print(Columns([Panel(resource_table), Panel(building_table)]))
 
     def propose_trade(
-        self, offered_to, resources_offered: Resources, resources_requested: Resources
+        self,
+        offered_to,
+        resources_offered: Resources,
+        resources_requested: Resources,
     ):
-
         # check resource
-        for offering_resources, player_resources in zip(resources_offered, player.resources):
+        for offering_resources, player_resources in zip(
+            resources_offered, player.resources
+        ):
             if offering_resources > player_resources:
-                raise Exception("player doesn't have enough resources to for this trade")
+                raise Exception(
+                    "player doesn't have enough resources to for this trade"
+                )
 
         t = Trade(
             sender=self,
