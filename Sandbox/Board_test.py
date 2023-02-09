@@ -3,7 +3,7 @@
 from Board import *
 from Player import *
 from Game import *
-import unittest, pickle, random
+import unittest, pickle, random, sys
 
 
 class BoardTester(unittest.TestCase):
@@ -25,34 +25,34 @@ class BoardTester(unittest.TestCase):
     
     
     def test_harbor_count(test):
-      test.assertEqual(len(test.board.harbors),18)
+      test.assertEqual(len(test.board.harbor_locations), 18)
     
     
     def test_count_count(test):
-      test.assertEqual(len(test.board.bridges),108)
+      test.assertEqual(len(test.board.bridge_locations), 108)
     
     
     def test_tile_count(test):
-      test.assertEqual(len(test.board.tiles),19)
+      test.assertEqual(len(test.board.tile_locations), 19)
     
     
     def test_intersection_count(test):
-      test.assertEqual(len(test.board.intersections),54)
+      test.assertEqual(len(test.board.intersection_locations), 54)
     
     
     def test_path_count(test):
-      test.assertEqual(len(test.board.paths),72)
+      test.assertEqual(len(test.board.path_locations), 72)
       
       
     def test_resource_randomness(test):
-      tiles = [test.board.cells[location] for location in test.board.tiles]
+      tiles = [test.board.cells[location] for location in test.board.tile_locations]
       resource_distribution = tuple([tile.resource for tile in tiles])
       test.assertFalse(resource_distribution in test.past_results['resource_distributions'])
       test.past_results['resource_distributions'].append(resource_distribution)
       
       
     def test_resource_type_count(test):
-      tiles = [test.board.cells[location] for location in test.board.tiles]
+      tiles = [test.board.cells[location] for location in test.board.tile_locations]
       resources = tuple([tile.resource for tile in tiles])
       test.assertEqual(resources.count(ResourceKind.Grain),4)
       test.assertEqual(resources.count(ResourceKind.Wool),4)
@@ -63,21 +63,21 @@ class BoardTester(unittest.TestCase):
       
       
     def test_number_token_randomness(test):
-      tiles = [test.board.cells[location] for location in test.board.tiles]
+      tiles = [test.board.cells[location] for location in test.board.tile_locations]
       token_distribution = tuple([tile.number_token for tile in tiles])
       test.assertFalse(token_distribution in test.past_results['token_distributions'])
       test.past_results['token_distributions'].append(token_distribution)
       
       
     def test_token_count(test):
-      tiles = [test.board.cells[location] for location in test.board.tiles]
+      tiles = [test.board.cells[location] for location in test.board.tile_locations]
       tokens = tuple([tile.number_token for tile in tiles])
       test.assertEqual(set(tokens), set([None,2,3,4,5,6,8,9,10,11,12]))
       
       
     def test_add_road(test):
       test_player = Player('blue')
-      for path_location in test.board.paths:
+      for path_location in test.board.path_locations:
         test_road = Road(path_location, test_player)
         with test.assertRaises(PathBuildingException) as e:
           test.board.add_road(path_location, test_road)
@@ -122,4 +122,9 @@ class BoardTester(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+#    unittest.main()
+    for iteration in range(1,101):
+        print('\n\n'+'['*20+'  Test #%i  '%(iteration)+']'*20)
+        wasSuccessful = unittest.main(exit=False).result.wasSuccessful()
+        if not wasSuccessful:
+            sys.exit(1)

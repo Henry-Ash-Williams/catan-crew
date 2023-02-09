@@ -80,22 +80,22 @@ class Board:
         #  of the cell 2 steps away in the southwest direction from cell X
 
         board.cells         = [None] * board.cell_count
-        board.harbors       = board.select(0, size, dir_pattern=(2, 2))
-        board.bridges       = join(board.select(h, 1) for h in board.harbors)
-        board.tiles         = join(board.select(0, i, dir_pattern=(2, 2)) for i in range(n)) + [0]
-        board.intersections = join(board.select(t, 1, (2, )) for t in board.tiles)
-        board.paths         = join(board.select(t, 1, (1, 1)) for t in board.tiles)
+        board.harbor_locations       = board.select(0, size, dir_pattern=(2, 2))
+        board.bridge_locations       = join(board.select(h, 1) for h in board.harbor_locations)
+        board.tile_locations         = join(board.select(0, i, dir_pattern=(2, 2)) for i in range(n)) + [0]
+        board.intersection_locations = join(board.select(t, 1, (2,)) for t in board.tile_locations)
+        board.path_locations         = join(board.select(t, 1, (1, 1)) for t in board.tile_locations)
 
-        board.available_intersections = set(board.intersections[:])
+        board.available_intersections = set(board.intersection_locations[:])
         
-        for location in board.intersections:
+        for location in board.intersection_locations:
             board.cells[location] = Intersection()
             
-        for location in board.paths:
+        for location in board.path_locations:
             board.cells[location] = Path(location)
 
         board.desert_tiles = [0]
-        board.resource_number = len(board.tiles) - len(board.desert_tiles)
+        board.resource_number = len(board.tile_locations) - len(board.desert_tiles)
         resources = [ResourceKind.Grain] * 4 + [ResourceKind.Wool] * 4 + [ResourceKind.Lumber] * 4 + \
                     [ResourceKind.Brick] * 3 + [ResourceKind.Ore] * 3
         number_tokens = [5,2,6,3,8,10,9,12,11,4,8,10,9,4,5,6,3,11]
@@ -113,7 +113,7 @@ class Board:
         
         board.tiles_with_token = [[] for i in range(13)]
 
-        for location in board.tiles:
+        for location in board.tile_locations:
             resource =     None if (location in board.desert_tiles) \
                                  else board.resources.pop()
             number_token = None if (location in board.desert_tiles) \
@@ -237,7 +237,7 @@ class Board:
 
     def get_settlements_and_cities(board):
         settlement_dict = {player:[] for player in board.game.players}
-        for location in board.intersections:
+        for location in board.intersection_locations:
             intersection = board.cells[location]
             if intersection.has_settlement:
                 settlement = intersection.settlement
