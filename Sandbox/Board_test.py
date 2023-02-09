@@ -66,6 +66,23 @@ class BoardTester(unittest.TestCase):
         test_road = Road(path_location, test_player)
         with test.assertRaises(PathBuildingException) as e:
           test.board.add_road(path_location, test_road)
+    
+    def test_tiles_with_token(test):
+      test.assertEqual([len(tiles) for tiles in test.board.tiles_with_token],
+                       [0,0,1,2,2,2,2,0,2,2,2,2,1])
+      for dice_roll in range(2,13):
+        for tile in test.board.tiles_with_token[dice_roll]:
+          test.assertEqual(tile.number_token, dice_roll)
+          
+    def test_settlements_neighboring(test):
+      test_player = Player('blue')
+      settlement1 = Settlement(test_player)
+      settlement2 = Settlement(test_player)
+      test.board.add_settlement(46,  settlement1, True)
+      test.board.add_settlement(505, settlement2, True)
+      neighboring = {location: test.board.settlements_neighboring(test.board.cells[location])
+                     for location in [0, 90, 42, 465]}
+      test.assertEqual(list(map(len,neighboring.values())),[2,1,1,0])
       
     def tearDown(test):
       del test.board

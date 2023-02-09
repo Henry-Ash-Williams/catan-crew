@@ -108,6 +108,8 @@ class Board:
         random.shuffle(board.number_tokens)
         
         del resources, number_tokens
+        
+        board.tiles_with_token = [[] for i in range(13)]
 
         for location in board.tiles:
             resource =     None if (location in board.desert_tiles) \
@@ -116,6 +118,8 @@ class Board:
                                 else board.number_tokens.pop()
             tile = Tile(location, resource, number_token)
             board.cells[location] = tile
+            if number_token:
+                board.tiles_with_token[number_token].append(tile)
 
     def select(board,
                around,
@@ -233,6 +237,15 @@ class Board:
                 settlement_dict[settlement.owner].append(settlement)
         return settlement_dict
 
+
+    def settlements_neighboring(board, tile):
+        intersections = board.select(
+                            around = tile.location, distance=1, dir_pattern = (2,),
+                            matching = board.has_intersection,
+                            return_cells = True)
+        settlements = [intersection.settlement for intersection in intersections \
+                       if intersection.has_settlement]
+        return settlements
 
 
     # This should return the board state in some format which the board can be initialized from

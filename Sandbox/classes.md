@@ -78,7 +78,7 @@
 - [x]   ^paths: list[int]
 - [x]   ^desert_tiles: list[int]
 - [x]   ^resrouce_number: int
-- [ ]   tiles_with_token : [Tile]
+- [x]   tiles_with_token : [Tile]
 
 
 <a id="org2731b9a"></a>
