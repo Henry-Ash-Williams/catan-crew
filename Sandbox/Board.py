@@ -80,20 +80,22 @@ class Board:
         #  of the cell 2 steps away in the southwest direction from cell X
 
         board.cells         = [None] * board.cell_count
-        board.harbors       = board.select(0, size, dir_pattern=(2, 2))
-        board.bridges       = join(board.select(h, 1) for h in board.harbors)
-        board.tiles         = join(board.select(0, i, dir_pattern=(2, 2)) for i in range(n)) + [0]
-        board.intersections = join(board.select(t, 1, (2, )) for t in board.tiles)
-        board.paths         = join(board.select(t, 1, (1, 1)) for t in board.tiles)
+        board.harbor_locations       = board.select(0, size, dir_pattern=(2, 2))
+        board.bridge_locations       = join(board.select(h, 1) for h in board.harbor_locations)
+        board.tile_locations         = join(board.select(0, i, dir_pattern=(2, 2)) for i in range(n)) + [0]
+        board.intersection_locations = join(board.select(t, 1, (2,)) for t in board.tile_locations)
+        board.path_locations         = join(board.select(t, 1, (1, 1)) for t in board.tile_locations)
 
-        for location in board.intersections:
+        board.available_intersections = set(board.intersection_locations[:])
+        
+        for location in board.intersection_locations:
             board.cells[location] = Intersection()
             
-        for location in board.paths:
+        for location in board.path_locations:
             board.cells[location] = Path(location)
 
         board.desert_tiles = [0]
-        board.resource_number = len(board.tiles) - len(board.desert_tiles)
+        board.resource_number = len(board.tile_locations) - len(board.desert_tiles)
         resources = [ResourceKind.Grain] * 4 + [ResourceKind.Wool] * 4 + [ResourceKind.Lumber] * 4 + \
                     [ResourceKind.Brick] * 3 + [ResourceKind.Ore] * 3
         number_tokens = [5,2,6,3,8,10,9,12,11,4,8,10,9,4,5,6,3,11]
@@ -111,7 +113,7 @@ class Board:
         
         board.tiles_with_token = [[] for i in range(13)]
 
-        for location in board.tiles:
+        for location in board.tile_locations:
             resource =     None if (location in board.desert_tiles) \
                                  else board.resources.pop()
             number_token = None if (location in board.desert_tiles) \
@@ -152,10 +154,10 @@ class Board:
     def add_road(board, location, road):
 
         if not board.has_path(location):
-            raise Exception('Given cell is not a path')
+            raise RoadBuildingException('Given cell is not a path')
 
         if board.cells[location].has_road:
-            raise Exception('There is already a road built at the given path.')
+            raise RoadBuildingException('There is already a road built at the given path.')
 
         neighboring_intersections = board.select(
             location, 1, matching=board.has_intersection, return_cells=True)
@@ -179,16 +181,16 @@ class Board:
                     board.cells[location].build_road(road)
                     return
 
-        raise PathBuildingException("Player can't reach given path")
+        raise RoadBuildingException("Player can't reach given path")
 
     def add_settlement(board, location, settlement,
                        allow_disconnected_settlement):
 
         if not board.has_intersection(location):
-            raise Exception('Given cell is not an intersection')
+            raise SettlementBuildingException('Given cell is not an intersection')
 
         if board.cells[location].has_settlement:
-            raise Exception(
+            raise SettlementBuildingException(
                 'There is already a settlement built at the given intersection.'
             )
 
@@ -197,7 +199,7 @@ class Board:
         if not allow_disconnected_settlement and not settlement.owner in [
                 path.road.owner for path in adjacent_paths if path.has_road
         ]:
-            raise Exception(
+            raise SettlementBuildingException(
                 "Settlement can't be built because intersection is not connected to a road of the settlement's color."
             )
 
@@ -211,26 +213,31 @@ class Board:
                 intersection for intersection in neighboring_intersections
                 if intersection.has_settlement
         ]:
-            raise Exception(
+            raise SettlementBuildingException(
                 "Settlement can't be built at this intersection because it's too close to another settlement."
             )
 
         board.cells[location].build_settlement(settlement)
+        
+        intersections_to_make_unavailable = set([location] + board.select(location, 1, (2,),
+                                            matching = board.has_intersection))
+                                            
+        board.available_intersections -= intersections_to_make_unavailable
 
     def upgrade_settlement(board, location):
 
         if not board.has_intersection(location):
-            raise Exception('Given cell is not an intersection.')
+            raise SettlementUpgradeException('Given cell is not an intersection.')
 
         if not board.cells[location].has_settlement:
-            raise Exception('No settlement to upgrade at given intersection.')
+            raise SettlementUpgradeException('No settlement to upgrade at given intersection.')
 
         board.cells[location].settlement = City(
             board.cells[location].settlement.owner)
 
     def get_settlements_and_cities(board):
         settlement_dict = {player:[] for player in board.game.players}
-        for location in board.intersections:
+        for location in board.intersection_locations:
             intersection = board.cells[location]
             if intersection.has_settlement:
                 settlement = intersection.settlement
@@ -260,4 +267,6 @@ class Board:
             return pickle.load()
 
 
-class PathBuildingException(Exception): pass
+class RoadBuildingException(Exception): pass
+class SettlementBuildingException(Exception): pass
+class SettlementUpgradeException(Exception): pass

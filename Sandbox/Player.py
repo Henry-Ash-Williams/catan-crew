@@ -27,7 +27,13 @@ class Player:
         player.hidden_victory_points = 0
 
         player.resources = Resources()
-        player.development_cards = []  # list of card object?
+        player.development_cards = {
+            "knight" : 0,
+            "Road Building": 0,
+            "Year of Plenty": 0,
+            "Monopoly" : 0
+        }  # TODO: either dict or dataclass
+
         player.exchange_rate = {
             # player side to bank: identical resource to 1 target resource
             "brick": {"lumber": 4, "ore": 4, "grain": 4, "wool": 4},
@@ -94,24 +100,15 @@ class Player:
             player.available_roads.append(road)
             raise e
 
-    def request_trade(
-        player,
-        offering: dict,
-        recieving: dict,
-        to_players: str = None,
-        bank: str = None,
-    ):
-        # check resource
-        for offering_resource, quantity in offering.items():
-            print("")
-
-        player.game.request()
 
     def play_knight(player, location):
-        # check dev care
-
-        # should direcly call board to play knight
-        pass
+        # check dev card
+        if player.development_cards["knight"] <= 0:
+            raise Exception("Player has no available knight card to play")
+        else:
+            player.development_cards["knight"] -= 1
+            player.GameMaster.player_knight(player, location)
+            # TODO: need to check if location is valid or not
 
     def ends_turn(player):
         player.game.end_turn()
@@ -152,6 +149,12 @@ class Player:
     def propose_trade(
         self, offered_to, resources_offered: Resources, resources_requested: Resources
     ):
+
+        # check resource
+        for offering_resources, player_resources in zip(resources_offered, player.resources):
+            if offering_resources > player_resources:
+                raise Exception("player doesn't have enough resources to for this trade")
+
         t = Trade(
             sender=self,
             resources_offered=resources_offered,
