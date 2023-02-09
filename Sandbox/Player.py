@@ -2,6 +2,9 @@ from Board import *
 from Resources import Resources, RESOURCE_REQUIREMENTS
 from rich.console import Console
 from rich.table import Table
+from rich.columns import Columns
+from rich.panel import Panel
+from copy import copy
 
 
 class Player:
@@ -36,6 +39,8 @@ class Player:
             # 1. 3:1 harbour: update all 3
             # 2. 2:1 harbour: update like ore in each to 2
         }
+
+        player.proposed_trades = []
 
     # def builds_settlement(player, location):
     #  player.game.board.add_settlement(location, player)
@@ -111,9 +116,11 @@ class Player:
     def ends_turn(player):
         player.game.end_turn()
 
-    def view_available_resources(self):
+    def handle_trade(self, trade):
+        pass
+
+    def view_available_resources(self) -> Table:
         # Display resources owned by the player directly to stdout
-        c = Console()
         t = Table(
             title=f"Player [bold {self.color}]{self.color.upper()}[/bold {self.color}]"
         )
@@ -124,7 +131,7 @@ class Player:
         t.add_row("Ore", str(self.resources.ore), style="grey30")
         t.add_row("Grain", str(self.resources.grain), style="gold1")
         t.add_row("Wool", str(self.resources.wool), style="grey70")
-        c.print(t)
+        return t
 
     def view_available_builds(self) -> [str]:
         return [
@@ -132,3 +139,26 @@ class Player:
             for building, cost in RESOURCE_REQUIREMENTS.items()
             if self.resources.can_build(cost)
         ]
+
+    def get_player_state(self):
+        console = Console()
+        resource_table = self.view_available_resources()
+        available_buildings = self.view_available_builds()
+        building_table = Table(title="Available buildings", width=25)
+        building_table.add_column("[b blue]Building[/b blue]")
+        [building_table.add_row(building) for building in available_buildings]
+        console.print(Columns([Panel(resource_table), Panel(building_table)]))
+
+    def propose_trade(
+        self, offered_to, resources_offered: Resources, resources_requested: Resources
+    ):
+        t = Trade(
+            sender=self,
+            resources_offered=resources_offered,
+            resources_requested=resources_requested,
+        )
+
+        for player in offered_to + [self.bank]:
+            new_trade = copy(t)
+            new_trade.recipient = player
+            player.proposed_trades.append(new_trade)

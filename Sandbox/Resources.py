@@ -45,16 +45,32 @@ class Resources:
         return all(pr >= br for pr, br in zip(self, building))
 
     def __getitem__(self, key: str) -> int:
-        if key.lower() == "brick":
+        key = key.lower()
+        if key == "brick":
             return self.brick
-        elif key.lower() == "lumber":
+        elif key == "lumber":
             return self.lumber
-        elif key.lower() == "ore":
+        elif key == "ore":
             return self.ore
-        elif key.lower() == "grain":
+        elif key == "grain":
             return self.grain
-        elif key.lower() == "wool":
+        elif key == "wool":
             return self.wool
+        else:
+            raise Exception("Unrecognised resource")
+
+    def __setitem__(self, key: str, new_value: int):
+        key = key.lower()
+        if key == "brick":
+            self.brick = new_value
+        elif key == "lumber":
+            self.lumber = new_value
+        elif key == "ore":
+            self.ore = new_value
+        elif key == "grain":
+            self.grain = new_value
+        elif key == "wool":
+            self.wool = new_value
         else:
             raise Exception("Unrecognised resource")
 

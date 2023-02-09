@@ -3,6 +3,7 @@
 from Game import Game
 from Player import Player
 from Bank import Bank
+from Trade import Trade
 
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
@@ -30,3 +31,6 @@ class GameMaster:
                     settlement.distribution_rate, tile.resource
                 )
                 settlement.owner.resources += new_resource
+
+    def handle_trade(self, trade: Trade):
+        pass

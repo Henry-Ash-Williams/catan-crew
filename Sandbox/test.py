@@ -17,9 +17,8 @@ def main():
 
     game = Game(board=board, players=player_order)
 
-    bob.resources = Resources(brick=1, lumber=2, grain=1)
-    bob.view_available_resources()
-    # print(bob.view_possible_builds())
+    bob.resources = Resources(brick=1, lumber=2, grain=1, wool=1, ore=3)
+    bob.get_player_state()
 
 
 if __name__ == "__main__":
