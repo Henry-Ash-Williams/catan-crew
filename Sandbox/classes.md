@@ -16,6 +16,7 @@
 - [x]   knights_played: int
 - [x]   road_length: int
 - [x]   victory_points: int
+- [x]   hidden_victory_points: int
 - [x]   available_settlements: [Settlement]
 - [x]   built_settlement: [Settlement]
 - [x]   available_roads: [Road]
