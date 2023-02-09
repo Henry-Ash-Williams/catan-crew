@@ -8,7 +8,7 @@ class Game:
         self.board = board
         board.game = self
         self.turn_count = 0
-        self.resources = Bank()
+        self.bank = Bank()
 
         requested_colors = set(p.color for p in players)
         if len(requested_colors) != len(players):

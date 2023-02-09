@@ -4,6 +4,7 @@ from Game import Game
 from Player import Player
 from Bank import Bank
 from Trade import Trade
+import random
 
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
@@ -34,3 +35,6 @@ class GameMaster:
 
     def handle_trade(self, trade: Trade):
         pass
+
+    def dice_roll(self):
+        return random.randint(2, 12)
