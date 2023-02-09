@@ -158,7 +158,7 @@ class Player:
             resources_requested=resources_requested,
         )
 
-        for player in offered_to + [self.bank]:
+        for player in offered_to + [self.game.bank]:
             new_trade = copy(t)
             new_trade.recipient = player
             player.proposed_trades.append(new_trade)

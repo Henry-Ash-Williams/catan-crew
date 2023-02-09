@@ -1,6 +1,8 @@
 from Board import *
 from Player import *
 from Game import *
+from GameMaster import GameMaster
+from Bank import Bank
 from rich import print
 from random import choice
 import pickle
@@ -14,11 +16,13 @@ def main():
     charlie = Player("green")
     david = Player("purple")
     player_order = [alice, bob, charlie, david]
-
     game = Game(board=board, players=player_order)
+    bank = Bank()
+    game.bank = bank
+    game_master = GameMaster(game)
 
-    bob.resources = Resources(brick=1, lumber=2, grain=1, wool=1, ore=3)
-    bob.get_player_state()
+    alice.builds_settlement(location=128)
+    alice.builds_road((128 + 23) % 507)
 
 
 if __name__ == "__main__":

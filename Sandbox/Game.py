@@ -1,4 +1,6 @@
 from Bank import Bank
+from Player import Player
+from typing import Union
 
 
 class Game:
@@ -27,6 +29,20 @@ class Game:
             raise Exception(
                 f"Player {player.color} can't play as it's {self.current_player.color}'s turn."
             )
+
+    def begin_setup_phase(self, player_order):
+        pass
+
+    def end_setup_phase(self):
+        pass
+
+    def check_win_condition(self) -> bool:
+        victory_points = [
+            player.victory_points + player.hidden_victory_points
+            for player in self.players
+        ]
+        win_status = [vp >= 10 for vp in victory_points]
+        return any(win_status)
 
     def end_turn(self):
         self.current_player_index = (self.current_player_index + 1) % self.player_number

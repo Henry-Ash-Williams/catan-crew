@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-from Resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS
+from Resources import Resources, ResourceKind
 
 
 class Bank:
+    # In the standard board game, there are 19 of each resource card.
     def __init__(self, available: int = 19):
         self.available_resources = Resources(
             available, available, available, available, available
