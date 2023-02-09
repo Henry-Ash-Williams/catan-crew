@@ -11,34 +11,35 @@
 ## Attributes
 
 - [x]   resources: Resources
-- [ ]   development_cards_: List<DevCard>
-- [x]   road_length_: int
-- [x]   knights_played_: int
+- [x]   development_cards: dict / List<DevCard>
 - [x]   road_length: int
-- [x]   victory_points_: int
-- [x]   available_settlements_: [Settlement]
-- [x]   built_settlement_: [Settlement]
-- [x]   available_roads_: [Road]
-- [x]   built_roads_: [Road]
-- [x]   available_cities_: [City]
-- [x]   built_cities_: [City]
-- [x]   exchange_rate_: Dict<Dict<int>>
+- [x]   knights_played: int
+- [x]   road_length: int
+- [x]   victory_points: int
+- [x]   available_settlements: [Settlement]
+- [x]   built_settlement: [Settlement]
+- [x]   available_roads: [Road]
+- [x]   built_roads: [Road]
+- [x]   available_cities: [City]
+- [x]   built_cities: [City]
+- [x]   exchange_rate: Dict<Dict<int>>
 
 
 <a id="orgc48602c"></a>
 
 ## Methods
 
-- [ ]   view_possible__actions_() -> List<Action>
-- [ ]   build_settlement_(location: int)
-- [ ]   upgrade_settlement_(location: int)
-- [ ]   build_road_(location: int)
-- [ ]   trade(to: Player | Bank, offering: Resources, recieving: Resources)
-- [ ]   play_knight_(location: int)
-- [ ]   play_monopoly_()
-- [ ]   play_year__of__plenty_()
-- [ ]   play_road__building_()
-- [ ]   end_turn_()
+- [x]   view_possible_devcard() -> dict
+- [x]   view_available_builds() -> List<str>
+- [x]   build_settlement(location: int)
+- [x]   upgrade_settlement(location: int)
+- [x]   build_road(location: int)
+- [x]   trade(to: Player | Bank, offering: Resources, recieving: Resources)
+- [x]   play_knight(location: int)
+- [x]   play_monopoly()
+- [x]   play_year_of_plenty()
+- [x]   play_road_building()
+- [x]   end_turn()
 
 
 <a id="orgd15ef1d"></a>

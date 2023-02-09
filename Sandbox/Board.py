@@ -86,7 +86,8 @@ class Board:
         board.intersection_locations = join(board.select(t, 1, (2,)) for t in board.tile_locations)
         board.path_locations         = join(board.select(t, 1, (1, 1)) for t in board.tile_locations)
 
-        board.available_intersections = set(board.intersection_locations[:])
+        board.available_intersection_locations = set(board.intersection_locations)
+        board.available_path_locations = set(board.path_locations)
         
         for location in board.intersection_locations:
             board.cells[location] = Intersection()
@@ -167,6 +168,7 @@ class Board:
             if intersection.has_settlement:
                 if intersection.settlement.owner == road.owner:
                     board.cells[location].build_road(road)
+                    board.available_path_locations.discard(location)
                     return
 
             else:
@@ -179,6 +181,7 @@ class Board:
                         if path.has_road
                 ]:
                     board.cells[location].build_road(road)
+                    board.available_path_locations.discard(location)
                     return
 
         raise RoadBuildingException("Player can't reach given path")
@@ -222,7 +225,7 @@ class Board:
         intersections_to_make_unavailable = set([location] + board.select(location, 1, (2,),
                                             matching = board.has_intersection))
                                             
-        board.available_intersections -= intersections_to_make_unavailable
+        board.available_intersection_locations -= intersections_to_make_unavailable
 
     def upgrade_settlement(board, location):
 

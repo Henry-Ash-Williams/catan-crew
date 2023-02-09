@@ -28,10 +28,17 @@ class Player:
 
         player.resources = Resources()
         player.development_cards = {
+<<<<<<< HEAD
             "knight": 0,
             "Road Building": 0,
             "Year of Plenty": 0,
             "Monopoly": 0,
+=======
+            "knight" : 0,
+            "road building": 0,
+            "year of plenty": 0,
+            "monopoly" : 0
+>>>>>>> 2b8d3097869c85c08f9dcbadcb0270691a897e64
         }  # TODO: either dict or dataclass
 
         player.exchange_rate = {
@@ -54,10 +61,8 @@ class Player:
     # def builds_road(player, location):
     #  player.game.board.add_road(location, player)
 
-    def view_possible_actions():
-        # should return list of devcard
-        # ask gamemaster
-        return []
+    def view_possible_devcard(player):
+        print(player.development_cards)
 
     def builds_settlement(player, location):
         if player.available_settlements:
@@ -106,8 +111,38 @@ class Player:
             raise Exception("Player has no available knight card to play")
         else:
             player.development_cards["knight"] -= 1
-            player.GameMaster.player_knight(player, location)
+            player.GameMaster.play_knight(player, location)
             # TODO: need to check if location is valid or not
+
+    def play_monopoly(player, resource_type: str):
+        # check dev card
+        if player.development_cards["monopoly"] <= 0:
+            raise Exception("Player has no available monopoly card to play")
+        else:
+            player.development_cards["monopoly"] -= 1
+            player.GameMaster.play_monopoly(player, resource_type)
+
+    def play_year_of_plenty(player, resource1: str, resource2: str):
+        # check dev card
+        # FIXME: supply stacks means bank?
+        if player.development_cards["year of plenty"] <= 0:
+            raise Exception("Player has no available year of plenty card to play")
+        else:
+            player.development_cards["year of plenty"] -= 1
+            player.GameMaster.play_monopoly(player, resource1, resource2)
+    
+    def play_road_building(player):
+        # can place 2 roads immediately
+        # check dev card
+        if player.development_cards["road building"] <= 0:
+            raise Exception("Player has no available road building card to play")
+        else:
+            player.development_cards["road building"] -= 1
+            # TODO: return a list of location
+            locations = player.GameMaster.play_road_building(player)
+            print("The availalbe locations: ", locations)
+            player.GameMaster.add_road(location1)
+            player.GameMaster.add_road(location2)
 
     def ends_turn(player):
         player.game.end_turn()
