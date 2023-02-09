@@ -28,17 +28,14 @@ class Player:
 
         player.resources = Resources()
         player.development_cards = {
-<<<<<<< HEAD
             "knight": 0,
             "Road Building": 0,
             "Year of Plenty": 0,
             "Monopoly": 0,
-=======
             "knight" : 0,
             "road building": 0,
             "year of plenty": 0,
             "monopoly" : 0
->>>>>>> 2b8d3097869c85c08f9dcbadcb0270691a897e64
         }  # TODO: either dict or dataclass
 
         player.exchange_rate = {

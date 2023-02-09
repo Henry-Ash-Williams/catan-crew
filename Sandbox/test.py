@@ -9,7 +9,8 @@ import pickle
 
 
 def main():
-    board = Board.read_state("board.pickle")
+    #board = Board.read_state("board.pickle")
+    board = Board()
 
     alice = Player("blue")
     bob = Player("red")
@@ -22,7 +23,7 @@ def main():
     game_master = GameMaster(game)
 
     alice.builds_settlement(location=128)
-    alice.builds_road((128 + 23) % 507)
+    alice.builds_road((128 + 1) % 507)
 
 
 if __name__ == "__main__":
