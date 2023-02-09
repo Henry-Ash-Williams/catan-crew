@@ -2,6 +2,7 @@ import random
 from functools import reduce
 from pickle import Pickler, Unpickler
 
+from Resources import *
 
 def join(l):
     return list(set(reduce(lambda x, y: x + y, l)))
@@ -72,9 +73,7 @@ class Board:
         # The six cardinal directions, represented as integers
         # This array contains, in order: northeast, north, northwest, southwest, south, and southeast
 
-        board.cardinal_directions = d = [
-            pow(6 * n + 5, i, m) for i in range(6)
-        ]
+        board.cardinal_directions = d = [pow(6 * n + 5, i, m) for i in range(6)]
 
         # Using this layout, if X is the index of a cell,
         #  (X + cardinal_directions[3]*2)%board.cell_count would be the index
@@ -95,8 +94,8 @@ class Board:
 
         board.desert_tiles = [0]
         board.resource_number = len(board.tiles) - len(board.desert_tiles)
-        resources = ['grain'] * 4 + ['wool'] * 4 + ['lumber'] * 4 + \
-                    ['brick'] * 3 + ['ore'] * 3
+        resources = [ResourceKind.Grain] * 4 + [ResourceKind.Wool] * 4 + [ResourceKind.Lumber] * 4 + \
+                    [ResourceKind.Brick] * 3 + [ResourceKind.Ore] * 3
         number_tokens = [5,2,6,3,8,10,9,12,11,4,8,10,9,4,5,6,3,11]
         
         board.resources = (resources * (
@@ -111,7 +110,7 @@ class Board:
         del resources, number_tokens
 
         for location in board.tiles:
-            resource = 'nothing' if (location in board.desert_tiles) \
+            resource =     None if (location in board.desert_tiles) \
                                  else board.resources.pop()
             number_token = None if (location in board.desert_tiles) \
                                 else board.number_tokens.pop()
@@ -189,10 +188,7 @@ class Board:
                 'There is already a settlement built at the given intersection.'
             )
 
-        adjacent_paths = board.select(location,
-                                      1,
-                                      matching=board.has_path,
-                                      return_cells=True)
+        adjacent_paths = board.select(location, 1, matching=board.has_path, return_cells=True)
 
         if not allow_disconnected_settlement and not settlement.owner in [
                 path.road.owner for path in adjacent_paths if path.has_road

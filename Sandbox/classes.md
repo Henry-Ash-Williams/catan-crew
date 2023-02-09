@@ -67,17 +67,17 @@
 
 ## Attributes
 
-- [ ]   size: int
-- [ ]   ^cell_count_: int
-- [ ]   ^cardinal_directions_: list[int]
-- [ ]   ^cells: list[None|Tile|Intersection|Path]
-- [ ]   ^harbors: list[int]
-- [ ]   ^bridges: list[int]
-- [ ]   ^tiles: list[int]
-- [ ]   ^intersections: list[int]
-- [ ]   ^paths: list[int]
-- [ ]   ^desert_tiles_: list[int]
-- [ ]   ^resrouce_number_: int
+- [x]   size: int
+- [x]   ^cell_count: int
+- [x]   ^cardinal_directions: list[int]
+- [x]   ^cells: list[None|Tile|Intersection|Path]
+- [x]   ^harbors: list[int]
+- [x]   ^bridges: list[int]
+- [x]   ^tiles: list[int]
+- [x]   ^intersections: list[int]
+- [x]   ^paths: list[int]
+- [x]   ^desert_tiles: list[int]
+- [x]   ^resrouce_number: int
 - [ ]   tiles_with_token : [Tile]
 
 
@@ -85,14 +85,14 @@
 
 ## Methods
 
-- [ ]   constructor(size: int, initial_data_: serialized) -> void
+- [x]   constructor(size: int, initial_data_: serialized) -> void
 - [ ]   settlements_neighboring(tile: Tile) -> [Settlement]
-- [ ]   select(location: int, distance: int, dir_pattern_: Tuple(int), matching: function, return_cells_: bool) -> list[int]
-- [ ]   has_path_(location: int) -> bool
-- [ ]   has_intersection_(location: int) -> bool
-- [ ]   add_road_(location: int, road: Road) -> bool
-- [ ]   add_settlement_(location: int, settlement: Settlement, allow_disconnected__settlement_: bool)
-- [ ]   save_state_() -> serialized
+- [x]   select(location: int, distance: int, dir_pattern_: Tuple(int), matching: function, return_cells_: bool) -> list[int]
+- [x]   has_path(location: int) -> bool
+- [x]   has_intersection(location: int) -> bool
+- [x]   add_road(location: int, road: Road) -> bool
+- [x]   add_settlement(location: int, settlement: Settlement, allow_disconnected__settlement_: bool)
+- [x]   save_state() -> serialized
 
 
 <a id="org62f7657"></a>
@@ -115,11 +115,11 @@ event driven
 
 - [ ]   check_longest__road_ -> Player
 - [ ]   check_largest__army_ -> Player
-- [ ]   distribute_resources_(roll: int) -> void
-- [ ]   handle_trade_(trade: Trade)
-- [ ]   select_player_() -> Player
-- [ ]   generate_possible__action__for__player_(player: Player) -> List<Action>
-- [ ]   in_progress_() -> bool
+- [ ]   distribute_resources(roll: int) -> void
+- [ ]   handle_trade(trade: Trade)
+- [ ]   select_player() -> Player
+- [ ]   generate_possible__action__for__player(player: Player) -> List<Action>
+- [ ]   in_progress() -> bool
 
 
 <a id="org18fee16"></a>
@@ -163,12 +163,12 @@ make sure to overload operators for this for easier operations
 
 ## Methods
 
-- [ ]   distribute_brick_(amount: int) -> Resources
-- [ ]   distribute_lumber_(amount: int) -> Resources
-- [ ]   distribute_ore_(amount: int) -> Resources
-- [ ]   distribute_grain_(amount: int) -> Resources
-- [ ]   distribute_wool_(amount: int) -> Resources
-- [ ]   return_to__bank_(returned_resources_: Resources)
+- [ ]   distribute_brick(amount: int) -> Resources
+- [ ]   distribute_lumber(amount: int) -> Resources
+- [ ]   distribute_ore(amount: int) -> Resources
+- [ ]   distribute_grain(amount: int) -> Resources
+- [ ]   distribute_wool(amount: int) -> Resources
+- [ ]   return_to__bank(returned_resources_: Resources)
 
 
 <a id="orgfe6e2dd"></a>
@@ -188,7 +188,7 @@ make sure to overload operators for this for easier operations
 
 ## Methods
 
-- [ ]   build_settlement_(settlement: Settlement) -> void
+- [ ]   build_settlement(settlement: Settlement) -> void
 
 
 <a id="org84700e2"></a>
@@ -221,7 +221,7 @@ make sure to overload operators for this for easier operations
 
 ## Methods
 
-- [ ]   build_road_(road: Road) -> void
+- [ ]   build_road(road: Road) -> void
 
 
 <a id="orge280f69"></a>

@@ -42,12 +42,12 @@ class BoardTester(unittest.TestCase):
     def test_resource_type_count(test):
       tiles = [test.board.cells[location] for location in test.board.tiles]
       resources = tuple([tile.resource for tile in tiles])
-      test.assertEqual(resources.count('grain'),4)
-      test.assertEqual(resources.count('wool'),4)
-      test.assertEqual(resources.count('lumber'),4)
-      test.assertEqual(resources.count('brick'),3)
-      test.assertEqual(resources.count('ore'),3)
-      test.assertEqual(resources.count('nothing'),1)
+      test.assertEqual(resources.count(ResourceKind.Grain),4)
+      test.assertEqual(resources.count(ResourceKind.Wool),4)
+      test.assertEqual(resources.count(ResourceKind.Lumber),4)
+      test.assertEqual(resources.count(ResourceKind.Brick),3)
+      test.assertEqual(resources.count(ResourceKind.Ore),3)
+      test.assertEqual(resources.count(None),1)
       
     def test_number_token_randomness(test):
       tiles = [test.board.cells[location] for location in test.board.tiles]
@@ -68,6 +68,7 @@ class BoardTester(unittest.TestCase):
           test.board.add_road(path_location, test_road)
       
     def tearDown(test):
+      del test.board
       with open('BoardTestResults.pickle','wb+') as f:
         pickle.dump(test.past_results, f)
 
