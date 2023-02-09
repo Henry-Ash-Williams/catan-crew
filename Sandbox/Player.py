@@ -54,8 +54,20 @@ class Player:
     # def builds_road(player, location):
     #  player.game.board.add_road(location, player)
 
-    def view_possible_devcard(player):
-        print(player.development_cards)
+    def roll_dice(player):
+        player.GameMaster.dice_roll()
+
+    def view_possible_devcard(self):
+        t = Table(
+            title="Available Development Card"
+        )
+        t.add_column("Dev Card")
+        t.add_column("Count")
+        t.add_row("Knight", str(self.development_cards["knight"]), style="#cb4154")
+        t.add_row("Road Building", str(self.development_cards["road building"]), style="green4")
+        t.add_row("Year of Plenty", str(self.development_cards["year of plenty"]), style="grey30")
+        t.add_row("Monopoly", str(self.development_cards["monopoly"]), style="gold1")
+        return t
 
     def builds_settlement(player, location):
         if player.available_settlements:
@@ -157,7 +169,7 @@ class Player:
         t.add_row("Wool", str(self.resources.wool), style="grey70")
         return t
 
-    def view_available_builds(self) -> [str]:
+    def view_available_builds(self) -> list[str]:
         return [
             building
             for building, cost in RESOURCE_REQUIREMENTS.items()
@@ -168,10 +180,11 @@ class Player:
         console = Console()
         resource_table = self.view_available_resources()
         available_buildings = self.view_available_builds()
+        devcard_table = self.view_possible_devcard()
         building_table = Table(title="Available buildings", width=25)
         building_table.add_column("[b blue]Building[/b blue]")
         [building_table.add_row(building) for building in available_buildings]
-        console.print(Columns([Panel(resource_table), Panel(building_table)]))
+        console.print(Columns([Panel(resource_table), Panel(building_table), Panel(devcard_table)]))
 
     def propose_trade(
         self,
