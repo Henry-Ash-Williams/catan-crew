@@ -28,7 +28,7 @@ class BoardTester(unittest.TestCase):
       test.assertEqual(len(test.board.harbor_locations), 18)
     
     
-    def test_count_count(test):
+    def test_bridge_count(test):
       test.assertEqual(len(test.board.bridge_locations), 108)
     
     
@@ -107,12 +107,14 @@ class BoardTester(unittest.TestCase):
       for player in test.players:
         for i in range(2):
           settlement = Settlement(player)
-          location = random.choice(list(test.board.available_intersections))
+          location = random.choice(list(test.board.available_intersection_locations))
           test.board.add_settlement(location, settlement, True)
           target[player].append(settlement)
       result = test.board.get_settlements_and_cities()
       for player in test.players:
         test.assertEqual(set(target[player]), set(result[player]))
+      
+        
       
       
     def tearDown(test):
@@ -128,3 +130,39 @@ if __name__ == "__main__":
         wasSuccessful = unittest.main(exit=False).result.wasSuccessful()
         if not wasSuccessful:
             sys.exit(1)
+
+
+def future_methods():
+    def test_available_settlements_paths(test):
+    
+      created_settlement_locations = []
+      created_road_locations = []
+      
+      for player in test.players:
+      
+        intersection_location = random.choice(list(test.board.available_intersection_locations))
+        settlement = Settlement(player)
+        test.board.add_settlement(intersection_location, settlement, True)
+        created_settlement_locations.append(intersection_location)
+        
+        path_locations = test.board.select(intersection_location, 1, matching=test.board.has_path)
+        path_location_sample = random.sample(path_locations, random.randint(1,len(path_locations)))
+        for path_location in path_location_sample:
+          test.board.add_road(path_location, Road(path_location, player))
+          created_road_locations.append(path_location)
+      
+      
+      unavailable_intersection_locations = \
+            list(set(join(test.board.select(intersection_location, 1, matching = test.board.has_path)
+            for intersection_location in created_settlement_locations)))
+      unavailable_intersection_locations += created_settlement_locations
+      unavailable_intersection_locations = list(set(unavailable_intersection_locations))
+      
+      print(set(unavailable_intersection_locations)|set(test.board.available_intersection_locations) - set(test.board.intersection_locations))
+      
+      test.assertEqual(len(created_settlement_locations), len(test.players))
+      test.assertTrue(len(test.players) <= len(created_road_locations) <= 3*len(test.players))
+      test.assertEqual(len(set(unavailable_intersection_locations)|set(test.board.available_intersection_locations)), len(test.board.intersection_locations))
+      test.assertEqual(len(set(unavailable_intersection_locations)&set(test.board.available_intersection_locations)), 0)
+      test.assertEqual(len(set(created_road_locations)|set(test.board.available_road_locations)), len(test.board.path_locations))
+      test.assertEqual(len(set(created_road_locations)&set(test.board.available_road_locations)), 0)
