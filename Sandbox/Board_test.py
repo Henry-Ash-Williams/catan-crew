@@ -115,24 +115,6 @@ class BoardTester(unittest.TestCase):
         test.assertEqual(set(target[player]), set(result[player]))
       
         
-      
-      
-    def tearDown(test):
-      del test.board
-      with open('BoardTestResults.pickle','wb+') as f:
-        pickle.dump(test.past_results, f)
-
-
-if __name__ == "__main__":
-#    unittest.main()
-    for iteration in range(1,101):
-        print('\n\n'+'['*20+'  Test #%i  '%(iteration)+']'*20)
-        wasSuccessful = unittest.main(exit=False).result.wasSuccessful()
-        if not wasSuccessful:
-            sys.exit(1)
-
-
-def future_methods():
     def test_available_settlements_paths(test):
     
       created_settlement_locations = []
@@ -153,16 +135,33 @@ def future_methods():
       
       
       unavailable_intersection_locations = \
-            list(set(join(test.board.select(intersection_location, 1, matching = test.board.has_path)
+            list(set(join(test.board.select(intersection_location, 1, (2,), matching = test.board.has_intersection)
             for intersection_location in created_settlement_locations)))
       unavailable_intersection_locations += created_settlement_locations
       unavailable_intersection_locations = list(set(unavailable_intersection_locations))
       
-      print(set(unavailable_intersection_locations)|set(test.board.available_intersection_locations) - set(test.board.intersection_locations))
+      #print(created_settlement_locations)
+      #print(unavailable_intersection_locations)
+      #print(set(test.board.intersection_locations) - (set(unavailable_intersection_locations)|set(test.board.available_intersection_locations)))
       
       test.assertEqual(len(created_settlement_locations), len(test.players))
       test.assertTrue(len(test.players) <= len(created_road_locations) <= 3*len(test.players))
       test.assertEqual(len(set(unavailable_intersection_locations)|set(test.board.available_intersection_locations)), len(test.board.intersection_locations))
       test.assertEqual(len(set(unavailable_intersection_locations)&set(test.board.available_intersection_locations)), 0)
-      test.assertEqual(len(set(created_road_locations)|set(test.board.available_road_locations)), len(test.board.path_locations))
-      test.assertEqual(len(set(created_road_locations)&set(test.board.available_road_locations)), 0)
+      test.assertEqual(len(set(created_road_locations)|set(test.board.available_path_locations)), len(test.board.path_locations))
+      test.assertEqual(len(set(created_road_locations)&set(test.board.available_path_locations)), 0)
+      
+      
+    def tearDown(test):
+      del test.board
+      with open('BoardTestResults.pickle','wb+') as f:
+        pickle.dump(test.past_results, f)
+
+
+if __name__ == "__main__":
+#    unittest.main()
+    for iteration in range(1,101):
+        print('\n\n'+'['*20+'  Test #%i  '%(iteration)+']'*20)
+        wasSuccessful = unittest.main(exit=False).result.wasSuccessful()
+        if not wasSuccessful:
+            sys.exit(1)
