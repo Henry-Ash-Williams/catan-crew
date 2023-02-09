@@ -79,7 +79,7 @@ class BoardTester(unittest.TestCase):
       test_player = Player('blue')
       for path_location in test.board.path_locations:
         test_road = Road(path_location, test_player)
-        with test.assertRaises(PathBuildingException) as e:
+        with test.assertRaises(RoadBuildingException) as e:
           test.board.add_road(path_location, test_road)
     
     

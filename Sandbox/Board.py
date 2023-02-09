@@ -154,10 +154,10 @@ class Board:
     def add_road(board, location, road):
 
         if not board.has_path(location):
-            raise Exception('Given cell is not a path')
+            raise RoadBuildingException('Given cell is not a path')
 
         if board.cells[location].has_road:
-            raise Exception('There is already a road built at the given path.')
+            raise RoadBuildingException('There is already a road built at the given path.')
 
         neighboring_intersections = board.select(
             location, 1, matching=board.has_intersection, return_cells=True)
@@ -181,16 +181,16 @@ class Board:
                     board.cells[location].build_road(road)
                     return
 
-        raise PathBuildingException("Player can't reach given path")
+        raise RoadBuildingException("Player can't reach given path")
 
     def add_settlement(board, location, settlement,
                        allow_disconnected_settlement):
 
         if not board.has_intersection(location):
-            raise Exception('Given cell is not an intersection')
+            raise SettlementBuildingException('Given cell is not an intersection')
 
         if board.cells[location].has_settlement:
-            raise Exception(
+            raise SettlementBuildingException(
                 'There is already a settlement built at the given intersection.'
             )
 
@@ -199,7 +199,7 @@ class Board:
         if not allow_disconnected_settlement and not settlement.owner in [
                 path.road.owner for path in adjacent_paths if path.has_road
         ]:
-            raise Exception(
+            raise SettlementBuildingException(
                 "Settlement can't be built because intersection is not connected to a road of the settlement's color."
             )
 
@@ -213,7 +213,7 @@ class Board:
                 intersection for intersection in neighboring_intersections
                 if intersection.has_settlement
         ]:
-            raise Exception(
+            raise SettlementBuildingException(
                 "Settlement can't be built at this intersection because it's too close to another settlement."
             )
 
@@ -227,10 +227,10 @@ class Board:
     def upgrade_settlement(board, location):
 
         if not board.has_intersection(location):
-            raise Exception('Given cell is not an intersection.')
+            raise SettlementUpgradeException('Given cell is not an intersection.')
 
         if not board.cells[location].has_settlement:
-            raise Exception('No settlement to upgrade at given intersection.')
+            raise SettlementUpgradeException('No settlement to upgrade at given intersection.')
 
         board.cells[location].settlement = City(
             board.cells[location].settlement.owner)
@@ -267,4 +267,6 @@ class Board:
             return pickle.load()
 
 
-class PathBuildingException(Exception): pass
+class RoadBuildingException(Exception): pass
+class SettlementBuildingException(Exception): pass
+class SettlementUpgradeException(Exception): pass
