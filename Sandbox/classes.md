@@ -10,19 +10,19 @@
 
 ## Attributes
 
-- [ ]   resources: Resources
+- [x]   resources: Resources
 - [ ]   development_cards_: List<DevCard>
-- [ ]   road_length_: int
-- [ ]   knights_played_: int
-- [ ]   road_length: int
-- [ ]   victory_points_: int
-- [ ]   available_settlements_: [Settlement]
-- [ ]   built_settlement_: [Settlement]
-- [ ]   available_roads_: [Road]
-- [ ]   built_roads_: [Road]
-- [ ]   available_cities_: [City]
-- [ ]   built_cities_: [City]
-- [ ]   exchange_rate_: Dict<Dict<int>>
+- [x]   road_length_: int
+- [x]   knights_played_: int
+- [x]   road_length: int
+- [x]   victory_points_: int
+- [x]   available_settlements_: [Settlement]
+- [x]   built_settlement_: [Settlement]
+- [x]   available_roads_: [Road]
+- [x]   built_roads_: [Road]
+- [x]   available_cities_: [City]
+- [x]   built_cities_: [City]
+- [x]   exchange_rate_: Dict<Dict<int>>
 
 
 <a id="orgc48602c"></a>
