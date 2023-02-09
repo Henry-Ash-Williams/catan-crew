@@ -116,14 +116,14 @@ class Player:
             player.development_cards["monopoly"] -= 1
             player.GameMaster.play_monopoly(player, resource_type)
 
-    def play_year_of_plenty(player):
+    def play_year_of_plenty(player, resource1: str, resource2: str):
         # check dev card
         # FIXME: supply stacks means bank?
         if player.development_cards["year of plenty"] <= 0:
             raise Exception("Player has no available year of plenty card to play")
         else:
             player.development_cards["year of plenty"] -= 1
-            player.GameMaster.play_monopoly(player)
+            player.GameMaster.play_monopoly(player, resource1, resource2)
     
     def play_road_building(player):
         # can place 2 roads immediately
