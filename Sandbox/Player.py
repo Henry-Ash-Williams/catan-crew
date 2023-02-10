@@ -108,7 +108,7 @@ class Player:
 
         try:
             player.game.add_settlement(location, settlement)
-            player.built_settlements.append(settlement)
+            player.built_settlements.append((settlement, location))
         except Exception as e:
             player.available_settlements.append(settlement)
             raise e

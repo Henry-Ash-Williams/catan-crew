@@ -37,4 +37,4 @@ class GameMaster:
         pass
 
     def dice_roll(self):
-        return random.randint(2, 12)
+        return random.randint(1, 6) + random.randint(1, 6)
