@@ -54,8 +54,51 @@ class Player:
     # def builds_road(player, location):
     #  player.game.board.add_road(location, player)
 
-    def view_possible_devcard(player):
-        print(player.development_cards)
+    def roll_dice(player):
+        player.GameMaster.dice_roll()
+
+    def view_possible_devcard(self):
+        t = Table(
+            title="Available Development Card"
+        )
+        t.add_column("Dev Card")
+        t.add_column("Count")
+        t.add_row("Knight", str(self.development_cards["knight"]), style="#cb4154")
+        t.add_row("Road Building", str(self.development_cards["road building"]), style="green4")
+        t.add_row("Year of Plenty", str(self.development_cards["year of plenty"]), style="grey30")
+        t.add_row("Monopoly", str(self.development_cards["monopoly"]), style="gold1")
+        return t
+
+    def view_available_resources(self) -> Table:
+        # Display resources owned by the player directly to stdout
+        t = Table(
+            title=f"Player [bold {self.color}]{self.color.upper()}[/bold {self.color}]"
+        )
+        t.add_column("Resource")
+        t.add_column("Count")
+        t.add_row("Brick", str(self.resources.brick), style="#cb4154")
+        t.add_row("Lumber", str(self.resources.lumber), style="green4")
+        t.add_row("Ore", str(self.resources.ore), style="grey30")
+        t.add_row("Grain", str(self.resources.grain), style="gold1")
+        t.add_row("Wool", str(self.resources.wool), style="grey70")
+        return t
+
+    def view_available_builds(self) -> list[str]:
+        return [
+            building
+            for building, cost in RESOURCE_REQUIREMENTS.items()
+            if self.resources.can_build(cost)
+        ]
+
+    def get_player_state(self):
+        console = Console()
+        resource_table = self.view_available_resources()
+        available_buildings = self.view_available_builds()
+        devcard_table = self.view_possible_devcard()
+        building_table = Table(title="Available buildings", width=25)
+        building_table.add_column("[b blue]Building[/b blue]")
+        [building_table.add_row(building) for building in available_buildings]
+        console.print(Columns([Panel(resource_table), Panel(building_table), Panel(devcard_table)]))
 
     def builds_settlement(player, location):
         # TODO: make this method subtract from player's resources
@@ -66,7 +109,7 @@ class Player:
 
         try:
             player.game.add_settlement(location, settlement)
-            player.built_settlements.append(settlement)
+            player.built_settlements.append((settlement, location))
         except Exception as e:
             player.available_settlements.append(settlement)
             raise e
@@ -148,36 +191,6 @@ class Player:
     def handle_trade(self, trade):
         pass
 
-    def view_available_resources(self) -> Table:
-        # Display resources owned by the player directly to stdout
-        t = Table(
-            title=f"Player [bold {self.color}]{self.color.upper()}[/bold {self.color}]"
-        )
-        t.add_column("Resource")
-        t.add_column("Count")
-        t.add_row("Brick", str(self.resources.brick), style="#cb4154")
-        t.add_row("Lumber", str(self.resources.lumber), style="green4")
-        t.add_row("Ore", str(self.resources.ore), style="grey30")
-        t.add_row("Grain", str(self.resources.grain), style="gold1")
-        t.add_row("Wool", str(self.resources.wool), style="grey70")
-        return t
-
-    def view_available_builds(self) -> [str]:
-        return [
-            building
-            for building, cost in RESOURCE_REQUIREMENTS.items()
-            if self.resources.can_build(cost)
-        ]
-
-    def get_player_state(self):
-        console = Console()
-        resource_table = self.view_available_resources()
-        available_buildings = self.view_available_builds()
-        building_table = Table(title="Available buildings", width=25)
-        building_table.add_column("[b blue]Building[/b blue]")
-        [building_table.add_row(building) for building in available_buildings]
-        console.print(Columns([Panel(resource_table), Panel(building_table)]))
-
     def propose_trade(
         self,
         offered_to,
@@ -203,3 +216,13 @@ class Player:
             new_trade = copy(t)
             new_trade.recipient = player
             player.proposed_trades.append(new_trade)
+
+    def update_exchange_rate(player, speical_harbour: bool, resource_type: str = None):
+        if speical_harbour:
+            for inner_dict in player.exchange_rate.values():
+                inner_dict[resource_type] = 2
+        else:
+            for inner_dict in player.exchange_rate.values():
+                keys = inner_dict.keys()
+                for key in keys:
+                    inner_dict[key] = 3

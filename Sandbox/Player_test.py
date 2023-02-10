@@ -11,3 +11,8 @@ p.development_cards["monopoly"] = 1
 
 p.get_player_state()
 
+print("Exchange Rate",p.exchange_rate)
+p.update_exchange_rate(False)
+print("Updated exchange rate (Not special harbour)", p.exchange_rate)
+p.update_exchange_rate(True, "ore")
+print("Updated exchange rate (special harbour)", p.exchange_rate)
