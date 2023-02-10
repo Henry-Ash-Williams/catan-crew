@@ -79,7 +79,7 @@ class Board:
         #  (X + cardinal_directions[3]*2)%board.cell_count would be the index
         #  of the cell 2 steps away in the southwest direction from cell X
 
-        board.cells         = [None] * board.cell_count
+        board.cells                  = [None] * board.cell_count
         board.harbor_locations       = board.select(0, size, dir_pattern=(2, 2))
         board.bridge_locations       = join(board.select(h, 1) for h in board.harbor_locations)
         board.tile_locations         = join(board.select(0, i, dir_pattern=(2, 2)) for i in range(n)) + [0]

@@ -15,14 +15,18 @@ class Game:
             raise Exception("More than one player have the same color")
 
         self.players = players
-        self.player_number = len(self.players)
+        self.player_number = 0
+        
         for player in self.players:
             player.game = self
+            player.number = self.player_number
+            self.player_number += 1
 
-        self.current_player_index = 0
-        self.current_player = self.players[self.current_player_index]
+        self.current_player_number = 0
+        self.current_player = self.players[self.current_player_number]
 
         self.is_just_starting = True
+        self.is_on = True
 
     def verify_current_player_is(self, player):
         if player != self.current_player:
@@ -45,8 +49,8 @@ class Game:
         return any(win_status)
 
     def end_turn(self):
-        self.current_player_index = (self.current_player_index + 1) % self.player_number
-        self.current_player = self.players[self.current_player_index]
+        self.current_player_number = (self.current_player_number + 1) % self.player_number
+        self.current_player = self.players[self.current_player_number]
         self.turn_count += 1
 
     def add_road(self, location, road):

@@ -58,6 +58,7 @@ class Player:
         print(player.development_cards)
 
     def builds_settlement(player, location):
+        # TODO: make this method subtract from player's resources
         if player.available_settlements:
             settlement = player.available_settlements.pop()
         else:
@@ -71,6 +72,7 @@ class Player:
             raise e
 
     def upgrade_settlement(player, location):
+        # TODO: make this method subtract from player's resources
         if player.available_cities:
             city = player.available_cities.pop()
         else:
@@ -84,8 +86,11 @@ class Player:
             raise e
 
     def builds_road(player, location):
+        # TODO: make this method subtract from player's resources
+        
         # shall these handel by gamemaster to look over to it
         # when gamemaster give options for player to choose
+        
         if player.available_roads:
             road = player.available_roads.pop()
         else:
