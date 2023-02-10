@@ -6,24 +6,27 @@ from Bank import Bank
 from Trade import Trade
 from Board import *
 import random, sys
+from rich.console import Console
+from rich.rule import Rule
 
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 
+
 class Input_getter:
-    
     def __init__(self, filename):
         self.index = 0
-        self.inputs = open(filename,'r+').readlines()
-    
+        self.inputs = open(filename, "r+").readlines()
+
     def get(self, s):
         if self.index < len(self.inputs):
-          inp = self.inputs[self.index].rstrip('\r\n')
-          sys.stdout.write(s)
-          print(inp)
-          self.index +=1
-          return inp
-        else: return input(s)     
+            inp = self.inputs[self.index].rstrip("\r\n")
+            sys.stdout.write(s)
+            print(inp)
+            self.index += 1
+            return inp
+        else:
+            return input(s)
 
 
 class GameMaster:
@@ -31,10 +34,10 @@ class GameMaster:
         board = Board()
         players = []
 
-        player_number = int(get('How many players would like to play? '))
+        player_number = int(get("How many players would like to play? "))
 
-        for i in range(1, player_number+1):
-            color = get("Player #%i's color: "%i)
+        for i in range(1, player_number + 1):
+            color = get("Player #%i's color: " % i)
             players.append(Player(color))
 
         self.game = Game(board, players)
@@ -63,33 +66,36 @@ class GameMaster:
         pass
 
     def dice_roll(self):
-        self.game.dice = random.randint(1,6) + random.randint(1,6)
-        print('Dice rolled. Result: %i'%self.game.dice)
-        
+        self.game.dice = random.randint(1, 6) + random.randint(1, 6)
+        print("Dice rolled. Result: %i" % self.game.dice)
+
     def print_current_player(self):
-        print("\n\n----------------  %s player's turn ----------------"%self.game.current_player.color)
-        
+        player_color = self.game.current_player.color
+        c = Console()
+        r = Rule(f"player [b {player_color}]{player_color}s[/b {player_color}] turn")
+        c.print(r)
+
     def set_turn(self, player):
         self.game.current_player = player
         self.game.current_player_number = player.number
         self.print_current_player()
-        
+
     def prompt_settlement_location(self):
         choice = None
-        while not(choice in self.game.board.available_intersection_locations):
-          choice = int(get('Please pick a location to place a settlement: '))
+        while not (choice in self.game.board.available_intersection_locations):
+            choice = int(get("Please pick a location to place a settlement: "))
         self.game.current_player.builds_settlement(choice)
-        
+
     def prompt_road_location(self):
         choice = None
-        while not(choice in self.game.board.available_path_locations):
-          choice = int(get('Please pick a location to place a road: '))
+        while not (choice in self.game.board.available_path_locations):
+            choice = int(get("Please pick a location to place a road: "))
         self.game.current_player.builds_road(choice)
-    
+
     def start(self):
         self.set_up_board()
         self.game_loop()
-    
+
     def set_up_board(self):
         for player in self.game.players:
             self.set_turn(player)
@@ -101,26 +107,24 @@ class GameMaster:
             self.set_turn(player)
             self.prompt_settlement_location()
             self.prompt_road_location()
-            
-    
+
     def game_loop(self):
         while self.game.is_on:
             self.do_turn()
-    
+
     def do_turn(self):
         self.print_current_player()
         self.dice_roll()
         self.game.is_on = False
-        
-        
+
 
 if __name__ == "__main__":
-    get = Input_getter('settlers.in').get
-    #get = input
+    get = Input_getter("settlers.in").get
+    # get = input
     gamemaster = GameMaster()
 
 
-#iterate over players
+# iterate over players
 #  - roll dice
 #  - give player list of options among
 #    - propose a trade
@@ -131,4 +135,3 @@ if __name__ == "__main__":
 #    - play a development card (multiple kinds)
 #    - end turn
 #   after each action, check to see if player has won
-   
