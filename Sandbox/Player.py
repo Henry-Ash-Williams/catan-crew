@@ -232,3 +232,15 @@ class Player:
     def can_build_settlement(player): return True
     
     def has_resources(player): return True
+    
+    def can_upgrade_settlement(player): return True
+    
+    def can_buy_dev_card(player): return True
+    
+    def has_knight_card(player): return True
+    
+    def has_road_building_card(player): return True
+    
+    def has_year_of_plenty_card(player): return True
+    
+    def has_monopoly_card(player): return True

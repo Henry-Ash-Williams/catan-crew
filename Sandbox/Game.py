@@ -105,17 +105,35 @@ class Game:
     def prompt_settlement_location(self):
         choice = None
         while not (choice in self.board.available_intersection_locations):
-            choice = int(get("Please pick a location to place a settlement: "))
+            choice = int(get("Pick a location to place a settlement: "))
         self.current_player.builds_settlement(choice)
 
     def prompt_road_location(self):
         choice = None
         while not (choice in self.board.available_path_locations):
-            choice = int(get("Please pick a location to place a road: "))
+            choice = int(get("Pick a location to place a road: "))
         self.current_player.builds_road(choice)
         
     def prompt_trade_details(self):
-        details = get('Please enter trade details: ')
+        details = get('Enter trade details: ')
+        
+    def prompt_settlement(self):
+        choice = get('Choose a settlement: ')
+        
+    def prompt_knight(self):
+        choice = get('Pick a tile to place the robber on: ')
+        
+    def prompt_road_building(self):
+        choice = get('Pick a location to place a road: ')
+        
+    def prompt_year_of_plenty(self):
+        choice = get('Pick a resource type: ')
+        
+    def prompt_monopoly(self):
+        choice = get('Pick a resource type: ')
+        
+    def sell_development_card(self):
+        print('Congratulations, you got XXXXXXX')
 
     def start(self):
         self.set_up_board()
@@ -147,25 +165,52 @@ class Game:
         resources_gained = resources_after - resources_before
         print('\nYou got:',resources_gained,'\n')
         
-        self.current_player.get_player_state()
+        self.turn_ongoing = True
         
-        available_actions = []
+        while self.turn_ongoing:
+            print()
         
-        if self.current_player.can_build_road():
-            available_actions.append(('Build a road', self.prompt_road_location))
-        if self.current_player.can_build_settlement():
-            available_actions.append(('Build a settlement', self.prompt_settlement_location))
-        if self.current_player.has_resources():
-            available_actions.append(('Propose a trade', self.prompt_trade_details))
-        available_actions.append(('End turn', self.end_turn))
+            self.current_player.get_player_state()
         
-        print('\nYou can:')
-        for index,(action_name, action_method) in enumerate(available_actions,1):
-          print('%i. %s'%(index, action_name))
+            available_actions = []
         
-        choice = int(get('What would you like to do? ')) - 1
+            if self.current_player.has_resources():
+                available_actions.append(('Propose a trade', self.prompt_trade_details))
         
-        available_actions[choice][1]()
+            if self.current_player.can_build_road():
+                available_actions.append(('Build a road', self.prompt_road_location))
+            
+            if self.current_player.can_build_settlement():
+                available_actions.append(('Build a settlement', self.prompt_settlement_location))
+            
+            if self.current_player.can_upgrade_settlement():
+                available_actions.append(('Upgrade a settlement', self.prompt_settlement))
+            
+            if self.current_player.can_buy_dev_card():
+                available_actions.append(('Buy a development card', self.sell_development_card))
+            
+            if self.current_player.has_knight_card():
+                available_actions.append(('Play Knight card', self.prompt_knight))
+            
+            if self.current_player.has_road_building_card():
+                available_actions.append(('Play Road Building card', self.prompt_road_building))
+            
+            if self.current_player.has_year_of_plenty_card():
+                available_actions.append(('Play Year of Plenty card', self.prompt_year_of_plenty))
+            
+            if self.current_player.has_monopoly_card():
+                available_actions.append(('Play Monopoly card', self.prompt_monopoly))
+        
+            available_actions.append(('End turn', self.end_turn))
+        
+            print('\nYou can:')
+            for index,(action_name, action_method) in enumerate(available_actions,1):
+              print('%i. %s'%(index, action_name))
+        
+            choice = int(get('What would you like to do? ')) - 1
+        
+            available_actions[choice][1]()
+            
         
         #self.is_on = False
         
@@ -190,6 +235,7 @@ class Game:
         return any(win_status)
 
     def end_turn(self):
+        self.turn_ongoing = False
         self.current_player_number = (self.current_player_number + 1) % self.player_number
         self.current_player = self.players[self.current_player_number]
         self.turn_count += 1
