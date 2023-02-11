@@ -151,10 +151,13 @@ class Game:
         resources_after = self.current_player.resources
         resources_gained = resources_after - resources_before
         
-        print('You got:',resources_gained)
-          
+        print('\nYou got:',resources_gained,'\n')
+        
+        self.current_player.get_player_state()
+        
         available_actions = [action for action in self.actions if action.is_available_to(self.current_player)]
         
+        print('\nYou can:')
         for index,action in enumerate(available_actions,1):
           print('%i. %s'%(index, action.name))
         
