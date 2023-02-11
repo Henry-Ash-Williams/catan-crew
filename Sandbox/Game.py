@@ -102,7 +102,7 @@ class Game:
     def print_current_player(self):
         player_color = self.current_player.color
         c = Console()
-        r = Rule(f"player [b {player_color}]{player_color}s[/b {player_color}] turn")
+        r = Rule(f"[b {player_color}]{player_color.capitalize()}'s[/b {player_color}] turn")
         c.print(r)
 
     def set_turn(self, player):
