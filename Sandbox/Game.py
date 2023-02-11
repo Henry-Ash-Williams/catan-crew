@@ -115,24 +115,47 @@ class Game:
         self.current_player.builds_road(choice)
         
     def prompt_trade_details(self):
+        """Called when user chooses to propose a trade.
+        Prompts user for proposed trade details, verifies
+        the trade is valid, then initiates proposed trade."""
         details = get('Enter trade details: ')
         
     def prompt_settlement(self):
+        """Called when user plays Road Building card.
+        Prompts user for settlement they want to upgrade,
+        then initiates upgrade"""
         choice = get('Choose a settlement: ')
         
     def prompt_knight(self):
+        """Called when user plays Road Building card.
+        Prompts user for tile they want to place the robber on,
+        then initiates robbery."""
         choice = get('Pick a tile to place the robber on: ')
         
     def prompt_road_building(self):
+        """Called when user plays Road Building card.
+        Prompts user for the location of a path to build a road on,
+        initiates the building of that road, then repeats this again for
+        second road."""
         choice = get('Pick a location to place a road: ')
         
     def prompt_year_of_plenty(self):
+        """Called when user plays Year of Plenty card.
+        Prompts user for a resource type to get from bank,
+        passes it to them, then repeats this again for second
+        resource type."""
         choice = get('Pick a resource type: ')
         
     def prompt_monopoly(self):
+        """Called when user plays Monopoly card.
+        Prompts user for a resource type to steal from all players,
+        then steals it for them."""
         choice = get('Pick a resource type: ')
         
     def sell_development_card(self):
+        """Called when user chooses to buy a development card.
+        Passes development card to them and prints out which card
+        they got."""
         print('Congratulations, you got XXXXXXX')
 
     def start(self):

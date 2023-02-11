@@ -227,20 +227,39 @@ class Player:
                 for key in keys:
                     inner_dict[key] = 3
     
-    def can_build_road(player): return True
+    def can_build_road(player):
+        """ Returns whether a player can build a road or not."""
+        return True
     
-    def can_build_settlement(player): return True
+    def can_build_settlement(player):
+        """Returns whether a player can build a settlement or not."""
+        return True
     
-    def has_resources(player): return True
+    def has_resources(player):
+        """Returns True if player has any resource to trade."""
+        return True
     
-    def can_upgrade_settlement(player): return True
+    def can_upgrade_settlement(player):
+        """Returns True if player has an un-upgraded settlement and
+        enough resources to upgrade it."""
+        return True
     
-    def can_buy_dev_card(player): return True
+    def can_buy_dev_card(player):
+        """Returns True if player can afford a development card."""
+        return True
     
-    def has_knight_card(player): return True
+    def has_knight_card(player):
+        """Returns True if player has a Knight card."""
+        return True
     
-    def has_road_building_card(player): return True
+    def has_road_building_card(player):
+        """Returns True if player has a Road Building card."""
+        return True
     
-    def has_year_of_plenty_card(player): return True
+    def has_year_of_plenty_card(player):
+        """Returns True if player has a Year of Plenty card."""
+        return True
     
-    def has_monopoly_card(player): return True
+    def has_monopoly_card(player):
+        """Returns True if player has a Monopoly card."""
+        return True
