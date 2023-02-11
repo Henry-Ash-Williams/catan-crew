@@ -10,12 +10,6 @@ def join(l):
     return list(set(reduce(lambda x, y: x + y, l)))
 
 
-class Settlement:
-    def __init__(settlement, owner):
-        settlement.owner = owner
-        settlement.color = owner.color
-
-
 class Intersection:
     def __init__(intersection):
         intersection.has_settlement = False
@@ -25,15 +19,14 @@ class Intersection:
         intersection.has_settlement = True
 
 
-class City(Settlement):
-    pass
+class Settlement:
 
+    def __init__(settlement, owner):
+        settlement.owner = owner
+        settlement.color = owner.color
+        settlement.distribution_rate = 1
 
-class Road:
-    def __init__(road, location, owner):
-        road.location = location
-        road.owner = owner
-        road.color = owner.color
+        city.distribution_rate = 2
 
 
 class Path:
@@ -44,6 +37,14 @@ class Path:
     def build_road(path, road):
         path.road = road
         path.has_road = True
+
+
+class Road:
+
+    def __init__(road, location, owner):
+        road.location = location
+        road.owner = owner
+        road.color = owner.color
 
 
 class Tile:
