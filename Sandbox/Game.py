@@ -44,9 +44,9 @@ class Game:
         self.board.game = self
         self.players = []
 
-        player_number = int(get("How many players would like to play? "))
+        self.player_number = int(get("How many players would like to play? "))
 
-        for i in range(1, player_number + 1):
+        for i in range(1, self.player_number + 1):
             color = get("Player #%i's color: " % i)
             self.players.append(Player(color))
 
@@ -70,7 +70,8 @@ class Game:
         self.turn_count = 0
                         
         self.actions = [Action('Build a road', self.prompt_road_location, self.can_build_road), \
-                        Action('Build a settlement', self.prompt_settlement_location, self.can_build_settlement)]
+                        Action('Build a settlement', self.prompt_settlement_location, self.can_build_settlement), \
+                        Action('End turn', self.end_turn, lambda player: True) ]
 
         self.start()
 
@@ -165,7 +166,7 @@ class Game:
         
         self.actions[choice].do()
         
-        self.is_on = False
+        #self.is_on = False
         
     def can_build_road(self, player): return True
     
