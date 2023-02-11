@@ -226,3 +226,9 @@ class Player:
                 keys = inner_dict.keys()
                 for key in keys:
                     inner_dict[key] = 3
+    
+    def can_build_road(player): return True
+    
+    def can_build_settlement(player): return True
+    
+    def has_resources(player): return True

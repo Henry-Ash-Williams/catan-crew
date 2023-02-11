@@ -30,11 +30,6 @@ class Input_getter:
         else:
             return input(s)
 
-class Action:
-    def __init__(action, name, do, is_available_to):
-        action.name = name
-        action.do = do
-        action.is_available_to = is_available_to
 
 class Game:
     def __init__(self):
@@ -68,10 +63,6 @@ class Game:
         self.is_on = True
         
         self.turn_count = 0
-                        
-        self.actions = [Action('Build a road', self.prompt_road_location, self.can_build_road), \
-                        Action('Build a settlement', self.prompt_settlement_location, self.can_build_settlement), \
-                        Action('End turn', self.end_turn, lambda player: True) ]
 
         self.start()
 
@@ -122,6 +113,9 @@ class Game:
         while not (choice in self.board.available_path_locations):
             choice = int(get("Please pick a location to place a road: "))
         self.current_player.builds_road(choice)
+        
+    def prompt_trade_details(self):
+        details = get('Please enter trade details: ')
 
     def start(self):
         self.set_up_board()
@@ -151,20 +145,27 @@ class Game:
         self.distribute_resources()
         resources_after = self.current_player.resources
         resources_gained = resources_after - resources_before
-        
         print('\nYou got:',resources_gained,'\n')
         
         self.current_player.get_player_state()
         
-        available_actions = [action for action in self.actions if action.is_available_to(self.current_player)]
+        available_actions = []
+        
+        if self.current_player.can_build_road():
+            available_actions.append(('Build a road', self.prompt_road_location))
+        if self.current_player.can_build_settlement():
+            available_actions.append(('Build a settlement', self.prompt_settlement_location))
+        if self.current_player.has_resources():
+            available_actions.append(('Propose a trade', self.prompt_trade_details))
+        available_actions.append(('End turn', self.end_turn))
         
         print('\nYou can:')
-        for index,action in enumerate(available_actions,1):
-          print('%i. %s'%(index, action.name))
+        for index,(action_name, action_method) in enumerate(available_actions,1):
+          print('%i. %s'%(index, action_name))
         
         choice = int(get('What would you like to do? ')) - 1
         
-        self.actions[choice].do()
+        available_actions[choice][1]()
         
         #self.is_on = False
         
