@@ -73,8 +73,8 @@ class Game:
         player = max(self.players, key=lambda player: player.knights_played)
         return player if player.knights_played > ARMY_SIZE_THRESHOLD else None
 
-    def distribute_resources(self, roll: int):
-        tiles = self.board.tiles_with_token[roll]
+    def distribute_resources(self):
+        tiles = self.board.tiles_with_token[self.dice]
         for tile in tiles:
             neighboring_settlements = self.board.settlements_neighboring(tile)
             for settlement in neighboring_settlements:
@@ -136,6 +136,24 @@ class Game:
     def do_turn(self):
         self.print_current_player()
         self.dice_roll()
+        
+        resources_before = self.current_player.resources
+        self.distribute_resources()
+        resources_after = self.current_player.resources
+        resources_gained = resources_after - resources_before
+        
+        print('You got:',resources_gained)
+        
+        available_actions = [('Build a road',self.prompt_road_location),('Build a settlement',self.prompt_settlement_location)]
+        
+        print('\nPossible actions:')
+        for i in range(len(available_actions)):
+          print('%i. %s'%(i+1,available_actions[i][0]))
+        
+        choice = int(get('What would you like to do? ')) - 1
+        
+        available_actions[choice][1]()
+        
         self.is_on = False
         
         
