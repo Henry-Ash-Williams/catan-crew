@@ -8,6 +8,7 @@ from typing import Union
 import random, sys
 from rich.console import Console
 from rich.rule import Rule
+from dataclasses import dataclass
 
 
 ROAD_LENGTH_THRESHOLD = 5
@@ -29,6 +30,11 @@ class Input_getter:
         else:
             return input(s)
 
+class Action:
+    def __init__(action, name, do, is_available_to):
+        action.name = name
+        action.do = do
+        action.is_available_to = is_available_to
 
 class Game:
     def __init__(self):
@@ -62,6 +68,9 @@ class Game:
         self.is_on = True
         
         self.turn_count = 0
+                        
+        self.actions = [Action('Build a road', self.prompt_road_location, self.can_build_road), \
+                        Action('Build a settlement', self.prompt_settlement_location, self.can_build_settlement)]
 
         self.start()
 
@@ -143,19 +152,21 @@ class Game:
         resources_gained = resources_after - resources_before
         
         print('You got:',resources_gained)
+          
+        available_actions = [action for action in self.actions if action.is_available_to(self.current_player)]
         
-        available_actions = [('Build a road',self.prompt_road_location),('Build a settlement',self.prompt_settlement_location)]
-        
-        print('\nPossible actions:')
-        for i in range(len(available_actions)):
-          print('%i. %s'%(i+1,available_actions[i][0]))
+        for index,action in enumerate(available_actions,1):
+          print('%i. %s'%(index, action.name))
         
         choice = int(get('What would you like to do? ')) - 1
         
-        available_actions[choice][1]()
+        self.actions[choice].do()
         
         self.is_on = False
         
+    def can_build_road(self, player): return True
+    
+    def can_build_settlement(self, player): return True
         
         
 
