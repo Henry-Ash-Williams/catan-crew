@@ -11,6 +11,14 @@ class ResourceKind(Enum):
     Wool = 4
 
 
+@dataclass
+class DevelopmentCard:
+    knight = 0
+    road_building = 0
+    year_of_plenty = 0
+    monopoly = 0
+
+
 @dataclass(order=True)
 class Resources:
     brick: int = 0
@@ -18,6 +26,7 @@ class Resources:
     ore: int = 0
     grain: int = 0
     wool: int = 0
+    development_cards: DevelopmentCard = DevelopmentCard()
 
     def __add__(self, other):
         return Resources(

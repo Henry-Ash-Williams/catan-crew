@@ -72,7 +72,9 @@ class GameMaster:
     def print_current_player(self):
         player_color = self.game.current_player.color
         c = Console()
-        r = Rule(f"player [b {player_color}]{player_color}s[/b {player_color}] turn")
+        r = Rule(
+            f"[b]player [{player_color}]{player_color}s[/{player_color}] turn[/b]",
+        )
         c.print(r)
 
     def set_turn(self, player):

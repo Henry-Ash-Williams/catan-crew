@@ -28,10 +28,10 @@ class Player:
 
         player.resources = Resources()
         player.development_cards = {
-            "knight" : 0,
+            "knight": 0,
             "road building": 0,
             "year of plenty": 0,
-            "monopoly" : 0
+            "monopoly": 0,
         }  # TODO: either dict or dataclass
 
         player.exchange_rate = {
@@ -58,14 +58,20 @@ class Player:
         player.GameMaster.dice_roll()
 
     def view_possible_devcard(self):
-        t = Table(
-            title="Available Development Card"
-        )
+        t = Table(title="Available Development Card")
         t.add_column("Dev Card")
         t.add_column("Count")
         t.add_row("Knight", str(self.development_cards["knight"]), style="#cb4154")
-        t.add_row("Road Building", str(self.development_cards["road building"]), style="green4")
-        t.add_row("Year of Plenty", str(self.development_cards["year of plenty"]), style="grey30")
+        t.add_row(
+            "Road Building",
+            str(self.development_cards["road building"]),
+            style="green4",
+        )
+        t.add_row(
+            "Year of Plenty",
+            str(self.development_cards["year of plenty"]),
+            style="grey30",
+        )
         t.add_row("Monopoly", str(self.development_cards["monopoly"]), style="gold1")
         return t
 
@@ -98,7 +104,11 @@ class Player:
         building_table = Table(title="Available buildings", width=25)
         building_table.add_column("[b blue]Building[/b blue]")
         [building_table.add_row(building) for building in available_buildings]
-        console.print(Columns([Panel(resource_table), Panel(building_table), Panel(devcard_table)]))
+        console.print(
+            Columns(
+                [Panel(resource_table), Panel(building_table), Panel(devcard_table)]
+            )
+        )
 
     def builds_settlement(player, location):
         # TODO: make this method subtract from player's resources
@@ -130,10 +140,10 @@ class Player:
 
     def builds_road(player, location):
         # TODO: make this method subtract from player's resources
-        
+
         # shall these handel by gamemaster to look over to it
         # when gamemaster give options for player to choose
-        
+
         if player.available_roads:
             road = player.available_roads.pop()
         else:
@@ -165,13 +175,12 @@ class Player:
 
     def play_year_of_plenty(player, resource1: str, resource2: str):
         # check dev card
-        # FIXME: supply stacks means bank?
         if player.development_cards["year of plenty"] <= 0:
             raise Exception("Player has no available year of plenty card to play")
         else:
             player.development_cards["year of plenty"] -= 1
             player.GameMaster.play_monopoly(player, resource1, resource2)
-    
+
     def play_road_building(player):
         # can place 2 roads immediately
         # check dev card
@@ -199,7 +208,7 @@ class Player:
     ):
         # check resource
         for offering_resources, player_resources in zip(
-            resources_offered, player.resources
+            resources_offered, self.resources
         ):
             if offering_resources > player_resources:
                 raise Exception(
