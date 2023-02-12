@@ -229,37 +229,42 @@ class Player:
     
     def can_build_road(player):
         """ Returns whether a player can build a road or not."""
-        return True
+        return True if player.available_roads > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["road"]) else False
     
     def can_build_settlement(player):
         """Returns whether a player can build a settlement or not."""
-        return True
+        return True if player.available_settlements > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["settlement"]) else False
     
     def has_resources(player):
         """Returns True if player has any resource to trade."""
-        return True
+        for amount in player.resources:
+            if amount > 0:
+                return True
+        return False
     
     def can_upgrade_settlement(player):
         """Returns True if player has an un-upgraded settlement and
         enough resources to upgrade it."""
+
+        # no sure if we upgrade a city, do we pop settlement out of built-settlement
         return True
     
     def can_buy_dev_card(player):
         """Returns True if player can afford a development card."""
-        return True
+        return True if player.resources.can_build(RESOURCE_REQUIREMENTS["development_card"]) else False
     
     def has_knight_card(player):
         """Returns True if player has a Knight card."""
-        return True
+        return True if player.development_cards["knight"] > 1 else False
     
     def has_road_building_card(player):
         """Returns True if player has a Road Building card."""
-        return True
+        return True if player.development_cards["road building"] > 1 else False
     
     def has_year_of_plenty_card(player):
         """Returns True if player has a Year of Plenty card."""
-        return True
+        return True if player.development_cards["year of plenty"] > 1 else False
     
     def has_monopoly_card(player):
         """Returns True if player has a Monopoly card."""
-        return True
+        return True if player.development_cards["monopoly"] > 1 else False
