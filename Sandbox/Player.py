@@ -6,10 +6,10 @@ from rich.columns import Columns
 from rich.panel import Panel
 from copy import copy
 
-
 class Player:
-    def __init__(player, color):
+    def __init__(player, color, game):
         player.color = color
+        player.game = game
 
         player.available_settlements = [Settlement(player) for i in range(5)]
         player.available_cities = [City(player) for i in range(4)]
@@ -101,89 +101,40 @@ class Player:
         console.print(Columns([Panel(resource_table), Panel(building_table), Panel(devcard_table)]))
 
     def builds_settlement(player, location):
-        # TODO: make this method subtract from player's resources
-        if player.available_settlements:
-            settlement = player.available_settlements.pop()
-        else:
-            raise Exception("Player has no available settlements to build")
-
-        try:
-            player.game.add_settlement(location, settlement)
-            player.built_settlements.append((settlement, location))
-        except Exception as e:
-            player.available_settlements.append(settlement)
-            raise e
+        player.resources -= RESOURCE_REQUIREMENTS["settlement"]
+        settlement = player.available_settlements.pop()
+        player.game.add_settlement(location, settlement)
+        player.built_settlements.append((settlement, location))
 
     def upgrade_settlement(player, location):
-        # TODO: make this method subtract from player's resources
-        if player.available_cities:
-            city = player.available_cities.pop()
-        else:
-            raise Exception("Player has no available cities to build")
-
-        try:
-            player.game.upgrade_settlement(location, city)
-            player.built_cities.append(city)
-        except Exception as e:
-            player.available_settlements.append(city)
-            raise e
+        player.resources -= RESOURCE_REQUIREMENTS["city"]
+        city = player.available_cities.pop()
+        player.game.upgrade_settlement(location, city)
+        player.built_cities.append((city, location))           
 
     def builds_road(player, location):
-        # TODO: make this method subtract from player's resources
-        
-        # shall these handel by gamemaster to look over to it
-        # when gamemaster give options for player to choose
-        
-        if player.available_roads:
-            road = player.available_roads.pop()
-        else:
-            raise Exception("Player has no available roads to build")
-
-        try:
-            player.game.add_road(location, road)
-            player.built_roads.append(road)
-        except Exception as e:
-            player.available_roads.append(road)
-            raise e
+        player.resources -= RESOURCE_REQUIREMENTS["road"]    
+        road = player.available_roads.pop()
+        player.game.add_road(location, road)
+        player.built_roads.append((road, location))
 
     def play_knight(player, location):
-        # check dev card
-        if player.development_cards["knight"] <= 0:
-            raise Exception("Player has no available knight card to play")
-        else:
-            player.development_cards["knight"] -= 1
-            player.GameMaster.play_knight(player, location)
-            # TODO: need to check if location is valid or not
+        player.development_cards["knight"] -= 1
+        player.game.play_knight(location)
 
-    def play_monopoly(player, resource_type: str):
-        # check dev card
-        if player.development_cards["monopoly"] <= 0:
-            raise Exception("Player has no available monopoly card to play")
-        else:
-            player.development_cards["monopoly"] -= 1
-            player.GameMaster.play_monopoly(player, resource_type)
+    def play_monopoly(player, resource_type: ResourceKind):
+        player.development_cards["monopoly"] -= 1
+        player.game.play_monopoly(resource_type)
 
-    def play_year_of_plenty(player, resource1: str, resource2: str):
-        # check dev card
-        # FIXME: supply stacks means bank?
-        if player.development_cards["year of plenty"] <= 0:
-            raise Exception("Player has no available year of plenty card to play")
-        else:
-            player.development_cards["year of plenty"] -= 1
-            player.GameMaster.play_monopoly(player, resource1, resource2)
+    def play_year_of_plenty(player, resource1: ResourceKind, resource2: ResourceKind):
+        player.development_cards["year of plenty"] -= 1
+        player.game.play_monopoly(player, resource1, resource2)
     
-    def play_road_building(player):
+    def play_road_building(player, location1: int, location2: int):
         # can place 2 roads immediately
-        # check dev card
-        if player.development_cards["road building"] <= 0:
-            raise Exception("Player has no available road building card to play")
-        else:
-            player.development_cards["road building"] -= 1
-            # TODO: return a list of location
-            locations = player.GameMaster.play_road_building(player)
-            print("The availalbe locations: ", locations)
-            player.GameMaster.add_road(location1)
-            player.GameMaster.add_road(location2)
+        player.development_cards["road building"] -= 1
+        player.game.add_road(location1)
+        player.game.add_road(location2)
 
     def ends_turn(player):
         player.game.end_turn()
@@ -247,7 +198,7 @@ class Player:
         enough resources to upgrade it."""
 
         # no sure if we upgrade a city, do we pop settlement out of built-settlement
-        return True
+        return True if player.resources.can_build(RESOURCE_REQUIREMENTS["city"]) and player.available_cities > 0 and player.built_settlements > 0 else False
     
     def can_buy_dev_card(player):
         """Returns True if player can afford a development card."""
@@ -255,16 +206,16 @@ class Player:
     
     def has_knight_card(player):
         """Returns True if player has a Knight card."""
-        return True if player.development_cards["knight"] > 1 else False
+        return True if player.development_cards["knight"] > 0 else False
     
     def has_road_building_card(player):
         """Returns True if player has a Road Building card."""
-        return True if player.development_cards["road building"] > 1 else False
+        return True if player.development_cards["road building"] > 0 else False
     
     def has_year_of_plenty_card(player):
         """Returns True if player has a Year of Plenty card."""
-        return True if player.development_cards["year of plenty"] > 1 else False
+        return True if player.development_cards["year of plenty"] > 0 else False
     
     def has_monopoly_card(player):
         """Returns True if player has a Monopoly card."""
-        return True if player.development_cards["monopoly"] > 1 else False
+        return True if player.development_cards["monopoly"] > 0 else False

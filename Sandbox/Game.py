@@ -43,7 +43,8 @@ class Game:
 
         for i in range(1, self.player_number + 1):
             color = get("Player #%i's color: " % i)
-            self.players.append(Player(color))
+            self.players.append(Player(color, self)) 
+            # I pass game inside player # Ryu #so player know which game are they in?
 
         requested_colors = set(p.color for p in self.players)
         if len(requested_colors) != len(self.players):
@@ -144,7 +145,8 @@ class Game:
         Prompts user for a resource type to get from bank,
         passes it to them, then repeats this again for second
         resource type."""
-        choice = get('Pick a resource type: ')
+        choice1 = get('Pick a resource type: ')
+        choice2 = get('Pick the second resource type: ')
         
     def prompt_monopoly(self):
         """Called when user plays Monopoly card.
@@ -237,9 +239,9 @@ class Game:
         
         #self.is_on = False
         
-    def can_build_road(self, player): return True
-    
-    def can_build_settlement(self, player): return True
+    # I guess it's redudiant @Ryu
+    # def can_build_road(self, player): return True
+    # def can_build_settlement(self, player): return True
         
         
 
@@ -273,6 +275,25 @@ class Game:
             location, settlement, allow_disconnected_settlement=self.is_just_starting
         )
 
+    def upgrade_settlement(self, location, city):
+        """ upgrade the settlement to city by interacting board"""
+        # TODO: 
+        self.verify_current_player_is(city.owner)
+        self.board.upgrade_settlement(
+            location, city, allow_disconnected_settlement=self.is_just_starting
+        )
+
+    def play_knight(self, location):
+        """ play knight by interacting board"""
+
+    def play_monopoly(self, resource1, resource2):
+        """ play monopoly by interacting with other players"""
+
+    def play_year_of_plenty():
+        """ play year of plenty by interacting with banks"""
+
+    def play_road_building(location1: int, location2: int):
+        """ place two road on board"""
 
 if __name__ == "__main__":
     get = Input_getter("settlers.in").get

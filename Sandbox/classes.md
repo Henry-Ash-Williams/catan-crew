@@ -35,13 +35,22 @@
 - [x]   build_settlement(location: int)
 - [x]   upgrade_settlement(location: int)
 - [x]   build_road(location: int)
-- [x]   trade(to: Player | Bank, offering: Resources, recieving: Resources)
 - [x]   play_knight(location: int)
 - [x]   play_monopoly()
 - [x]   play_year_of_plenty()
 - [x]   play_road_building()
 - [x]   end_turn()
-
+- []   trade(to: Player | Bank, offering: Resources, recieving: Resources)
+- [x]   update_exchange_rate(special_harbour: bool, resource_type: Resourcekind / str)
+- [x]   can_build_road()
+- [x]   can_build_settlement()
+- [x]   has_resources()
+- [x]   can_upgrade_settlement()
+- [x]   can_buy_dev_card()
+- [x]   has_knight_card()
+- [x]   has_road_buiding_card()
+- [x]   has_year_of_plenty_card()
+- [x]   has_monopoly_card()
 
 <a id="orgd15ef1d"></a>
 
