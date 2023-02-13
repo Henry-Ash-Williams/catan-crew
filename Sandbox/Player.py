@@ -28,6 +28,7 @@ class Player:
         player.resources = Resources()
         player.development_cards = {
             "knight": 0,
+            "hidden victory point": 0,
             "road building": 0,
             "year of plenty": 0,
             "monopoly": 0,
