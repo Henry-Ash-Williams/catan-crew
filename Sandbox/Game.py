@@ -139,9 +139,11 @@ class Game:
         self.print_current_player()
         self.dice_roll()
         
-        resources_before = self.current_player.resources
+        player = self.current_player
+        
+        resources_before = player.resources
         self.distribute_resources()
-        resources_after = self.current_player.resources
+        resources_after = player.resources
         resources_gained = resources_after - resources_before
         print('\nYou got:',resources_gained,'\n')
         
@@ -150,36 +152,36 @@ class Game:
         while self.turn_ongoing:
             print()
         
-            self.current_player.get_player_state()
+            player.get_player_state()
         
             available_actions = []
         
-            if self.current_player.has_resources():
-                available_actions.append(('Propose a trade', self.prompt_trade_details))
+            if player.has_resources():
+                available_actions.append(('Propose a trade', player.prompt_trade_details))
         
-            if self.current_player.can_build_road():
-                available_actions.append(('Build a road', self.prompt_road_location))
+            if player.can_build_road():
+                available_actions.append(('Build a road', player.prompt_road_location))
             
-            if self.current_player.can_build_settlement():
-                available_actions.append(('Build a settlement', self.prompt_settlement_location))
+            if player.can_build_settlement():
+                available_actions.append(('Build a settlement', player.prompt_settlement_location))
             
-            if self.current_player.can_upgrade_settlement():
-                available_actions.append(('Upgrade a settlement', self.prompt_settlement))
+            if player.can_upgrade_settlement():
+                available_actions.append(('Upgrade a settlement', player.prompt_settlement))
             
-            if self.current_player.can_buy_dev_card():
-                available_actions.append(('Buy a development card', self.sell_development_card))
+            if player.can_buy_dev_card():
+                available_actions.append(('Buy a development card', player.buy_development_card))
             
-            if self.current_player.has_knight_card():
-                available_actions.append(('Play Knight card', self.prompt_knight))
+            if player.has_knight_card():
+                available_actions.append(('Play Knight card', player.prompt_knight))
             
-            if self.current_player.has_road_building_card():
-                available_actions.append(('Play Road Building card', self.prompt_road_building))
+            if player.has_road_building_card():
+                available_actions.append(('Play Road Building card', player.prompt_road_building))
             
-            if self.current_player.has_year_of_plenty_card():
-                available_actions.append(('Play Year of Plenty card', self.prompt_year_of_plenty))
+            if player.has_year_of_plenty_card():
+                available_actions.append(('Play Year of Plenty card', player.prompt_year_of_plenty))
             
-            if self.current_player.has_monopoly_card():
-                available_actions.append(('Play Monopoly card', self.prompt_monopoly))
+            if player.has_monopoly_card():
+                available_actions.append(('Play Monopoly card', player.prompt_monopoly))
         
             available_actions.append(('End turn', self.end_turn))
         
@@ -190,14 +192,6 @@ class Game:
             choice = int(get('What would you like to do? ')) - 1
         
             available_actions[choice][1]()
-            
-        
-        #self.is_on = False
-        
-    # I guess it's redudiant @Ryu
-    # def can_build_road(self, player): return True
-    # def can_build_settlement(self, player): return True
-        
         
 
     def verify_current_player_is(self, player):
