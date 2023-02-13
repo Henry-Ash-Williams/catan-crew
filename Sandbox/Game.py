@@ -160,10 +160,10 @@ class Game:
                 available_actions.append(('Propose a trade', player.prompt_trade_details))
         
             if player.can_build_road():
-                available_actions.append(('Build a road', player.prompt_road_location))
+                available_actions.append(('Build a road', self.build_road))
             
             if player.can_build_settlement():
-                available_actions.append(('Build a settlement', player.prompt_settlement_location))
+                available_actions.append(('Build a settlement', self.build_settlement))
             
             if player.can_upgrade_settlement():
                 available_actions.append(('Upgrade a settlement', player.prompt_settlement))
