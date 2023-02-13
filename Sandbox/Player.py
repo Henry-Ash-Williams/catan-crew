@@ -180,11 +180,11 @@ class Player:
     
     def can_build_road(player):
         """ Returns whether a player can build a road or not."""
-        return True if player.available_roads > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["road"]) else False
+        return True if len(player.available_roads) > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["road"]) else False
     
     def can_build_settlement(player):
         """Returns whether a player can build a settlement or not."""
-        return True if player.available_settlements > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["settlement"]) else False
+        return True if len(player.available_settlements) > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["settlement"]) else False
     
     def has_resources(player):
         """Returns True if player has any resource to trade."""
