@@ -162,8 +162,8 @@ class Game:
         for player in self.players:
             self.set_turn(player)
             self.build_settlement(for_free=True)
-            self.prompt_road_location(for_free=True)
-            #self.build_road(for_free=True)
+            #self.prompt_road_location(for_free=True)
+            self.build_road(for_free=True)
 
         self.prompt_settlement_location(for_free=True)
         self.prompt_road_location(for_free=True)
