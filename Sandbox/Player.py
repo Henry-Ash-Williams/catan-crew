@@ -111,7 +111,7 @@ class Player:
         )
 
     def builds_settlement(player, location, for_free=False):
-        player.resources -= Resources() if for_free else RESOURCE_REQUIREMENTS["settlement"]
+        player.resources -= RESOURCE_REQUIREMENTS["settlement"] if not for_free else Resources()
         settlement = player.available_settlements.pop()
         player.game.add_settlement(location, settlement)
         player.built_settlements.append((settlement, location))
@@ -243,11 +243,3 @@ class Player:
     def has_monopoly_card(player):
         """Returns True if player has a Monopoly card."""
         return True if player.development_cards["monopoly"] > 0 else False
-        
-        
-        
-        
-class HumanPlayer(Player):
-
-    def prompt_settlement_location(player):
-        return int(get("Pick a location to place a settlement: "))
