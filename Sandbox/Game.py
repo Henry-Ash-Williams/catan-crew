@@ -226,7 +226,6 @@ class Game:
 
     def upgrade_settlement(self, location, city):
         """ upgrade the settlement to city by interacting board"""
-        # TODO: 
         self.verify_current_player_is(city.owner)
         self.board.upgrade_settlement(
             location, city, allow_disconnected_settlement=self.is_just_starting

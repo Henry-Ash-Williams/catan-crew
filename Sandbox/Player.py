@@ -115,6 +115,7 @@ class Player:
         settlement = player.available_settlements.pop()
         player.game.add_settlement(location, settlement)
         player.built_settlements.append((settlement, location))
+        # TODO: settlement.location seems exist, so we may get rid of the tuple
 
     def upgrade_settlement(player, location):
         player.resources -= RESOURCE_REQUIREMENTS["city"]
@@ -225,7 +226,7 @@ class Player:
         enough resources to upgrade it."""
 
         # no sure if we upgrade a city, do we pop settlement out of built-settlement
-        return True if player.resources.can_build(RESOURCE_REQUIREMENTS["city"]) and player.available_cities > 0 and player.built_settlements > 0 else False
+        return True if player.resources.can_build(RESOURCE_REQUIREMENTS["city"]) and len(player.available_cities) > 0 and len(player.built_settlements) > 0 else False
     
     def can_buy_dev_card(player):
         """Returns True if player can afford a development card."""
@@ -281,7 +282,9 @@ class HumanPlayer(Player):
         Prompts user for settlement they want to upgrade,
         then initiates upgrade"""
         choice = None
-        choice = player.get('Choose a settlement: ')
+        while not (choice in [settlement.location for settlement in player.builds_settlement]):
+            choice = int(player.get("Pick one of your settlement to upgrade: "))
+        return choice
         
     def prompt_knight(player):
         """Called when user plays Road Building card.
@@ -310,7 +313,7 @@ class HumanPlayer(Player):
         then steals it for them."""
         choice = player.get('Pick a resource type: ')
         
-    def sell_development_card(player):
+    def buy_development_card(player):
         """Called when user chooses to buy a development card.
         Passes development card to them and prints out which card
         they got."""
