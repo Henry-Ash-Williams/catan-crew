@@ -110,7 +110,7 @@ class Player:
             )
         )
 
-    def builds_settlement(player, location):
+    def builds_settlement(player, location, for_free=False):
         player.resources -= RESOURCE_REQUIREMENTS["settlement"]
         settlement = player.available_settlements.pop()
         player.game.add_settlement(location, settlement)
