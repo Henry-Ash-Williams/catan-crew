@@ -284,7 +284,6 @@ class HumanPlayer(Player):
         Prompts user for tile they want to place the robber on,
         then initiates robbery."""
         choice = None
-        while not (choice in )
         choice = player.get('Pick a tile to place the robber on: ')
         
     def prompt_road_building(player):
