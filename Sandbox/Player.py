@@ -258,8 +258,60 @@ class Player:
         
 class HumanPlayer(Player):
 
-    def prompt_settlement_location(player):
+    def prompt_settlement_location(player, for_free=False):
         choice = None
         while not (choice in player.game.board.available_intersection_locations):
             choice = int(player.get("Pick a location to place a settlement: "))
         return choice
+
+    def prompt_road_location(player, for_free=False):
+        choice = None
+        while not (choice in player.game.board.available_path_locations):
+            choice = int(player.get("Pick a location to place a road: "))
+        return choice
+
+    def prompt_trade_details(player):
+        """Called when user chooses to propose a trade.
+        Prompts user for proposed trade details, verifies
+        the trade is valid, then initiates proposed trade."""
+        details = player.get('Enter trade details: ')
+        
+    def prompt_settlement_for_upgrade(player):
+        """Called when user plays Road Building card.
+        Prompts user for settlement they want to upgrade,
+        then initiates upgrade"""
+        choice = None
+        choice = player.get('Choose a settlement: ')
+        
+    def prompt_knight(player):
+        """Called when user plays Road Building card.
+        Prompts user for tile they want to place the robber on,
+        then initiates robbery."""
+        choice = player.get('Pick a tile to place the robber on: ')
+        
+    def prompt_road_building(player):
+        """Called when user plays Road Building card.
+        Prompts user for the location of a path to build a road on,
+        initiates the building of that road, then repeats this again for
+        second road."""
+        choice = player.get('Pick a location to place a road: ')
+        
+    def prompt_year_of_plenty(player):
+        """Called when user plays Year of Plenty card.
+        Prompts user for a resource type to get from bank,
+        passes it to them, then repeats this again for second
+        resource type."""
+        choice1 = player.get('Pick a resource type: ')
+        choice2 = player.get('Pick the second resource type: ')
+        
+    def prompt_monopoly(player):
+        """Called when user plays Monopoly card.
+        Prompts user for a resource type to steal from all players,
+        then steals it for them."""
+        choice = player.get('Pick a resource type: ')
+        
+    def sell_development_card(player):
+        """Called when user chooses to buy a development card.
+        Passes development card to them and prints out which card
+        they got."""
+        print('Congratulations, you got XXXXXXX')
