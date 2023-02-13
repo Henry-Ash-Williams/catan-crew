@@ -256,7 +256,8 @@ class HumanPlayer(Player):
 
     def prompt_road_location(player, for_free=False):
         choice = None
-        while not (choice in player.game.board.available_path_locations):
+        #TODO: 
+        while not (choice in player.game.board.paths_reachable_by(player)):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
 
