@@ -26,8 +26,6 @@ class Settlement:
         settlement.color = owner.color
         settlement.distribution_rate = 1
 
-        city.distribution_rate = 2
-
 
 class Path:
     def __init__(path, location):
@@ -52,6 +50,11 @@ class Tile:
         tile.location = location
         tile.resource = resource
         tile.number_token = number_token
+
+class City(Settlement):
+    def __init__(self, owner):
+        self.distribution_rate = 2
+        super()
 
 
 class Board:

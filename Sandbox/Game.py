@@ -3,6 +3,7 @@ from Player import Player
 from Player import Player
 from Trade import Trade
 from Board import Intersection, Path, Tile, Settlement, City, Road, Board
+from Resources import Resources
 
 from typing import Union
 import random, sys
@@ -169,12 +170,16 @@ class Game:
             self.set_turn(player)
             self.prompt_settlement_location()
             self.prompt_road_location()
+
         self.prompt_settlement_location()
         self.prompt_road_location()
         for player in self.players[-2::-1]:
             self.set_turn(player)
             self.prompt_settlement_location()
             self.prompt_road_location()
+
+        for player in self.players:
+            player.resources = Resources()
 
     def game_loop(self):
         while self.is_on:

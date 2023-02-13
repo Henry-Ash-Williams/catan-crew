@@ -38,13 +38,17 @@ class Resources:
         )
 
     def __sub__(self, other):
-        return Resources(
+        new_resources = Resources(
             self.brick - other.brick,
             self.lumber - other.lumber,
             self.ore - other.ore,
             self.grain - other.grain,
             self.wool - other.wool,
         )
+        if any(map(lambda r: r < 0, new_resources)):
+            raise Exception("Player cannot have negative resources")
+
+        return new_resources
 
     def __iter__(self):
         # enables iteration over each resource in the class
