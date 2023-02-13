@@ -100,7 +100,7 @@ class Player:
         [building_table.add_row(building) for building in available_buildings]
         console.print(Columns([Panel(resource_table), Panel(building_table), Panel(devcard_table)]))
 
-    def builds_settlement(player, location):
+    def builds_settlement(player, location, for_free=False):
         player.resources -= RESOURCE_REQUIREMENTS["settlement"]
         settlement = player.available_settlements.pop()
         player.game.add_settlement(location, settlement)
@@ -112,7 +112,7 @@ class Player:
         player.game.upgrade_settlement(location, city)
         player.built_cities.append((city, location))           
 
-    def builds_road(player, location):
+    def builds_road(player, location, for_free=False):
         player.resources -= RESOURCE_REQUIREMENTS["road"]    
         road = player.available_roads.pop()
         player.game.add_road(location, road)
