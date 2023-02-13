@@ -7,9 +7,8 @@ from rich.panel import Panel
 from copy import copy
 
 class Player:
-    def __init__(player, color, game, getter = None):
+    def __init__(player, color, getter = None):
         player.color = color
-        player.game = game
         player.get = input if getter==None else getter
 
         player.available_settlements = [Settlement(player) for i in range(5)]
@@ -125,18 +124,8 @@ class Player:
         player.available_settlements.append(Settlement(player))        
 
     def builds_road(player, location, for_free=False):
-        # TODO: make this method subtract from player's resources
-
-        # shall these handel by gamemaster to look over to it
-        # when gamemaster give options for player to choose
-        
         player.resources -= Resources() if for_free else RESOURCE_REQUIREMENTS["road"]
-
-        if player.available_roads:
-            road = player.available_roads.pop()
-        else:
-            raise Exception("Player has no available roads to build")
-            
+        road = player.available_roads.pop()            
         player.game.add_road(location, road)
         player.built_roads.append((road, location))
 

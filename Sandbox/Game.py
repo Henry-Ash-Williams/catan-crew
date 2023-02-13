@@ -43,7 +43,7 @@ class Game:
 
         for i in range(1, self.player_number + 1):
             color = get("Player #%i's color: " % i)
-            self.players.append(HumanPlayer(color, self, getter)) 
+            self.players.append(HumanPlayer(color, getter)) 
             # I pass game inside player # Ryu #so player know which game are they in?
 
         requested_colors = set(p.color for p in self.players)
