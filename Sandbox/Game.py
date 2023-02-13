@@ -157,7 +157,7 @@ class Game:
             available_actions = []
         
             if player.has_resources():
-                available_actions.append(('Propose a trade', player.prompt_trade_details))
+                available_actions.append(('Propose a trade', self.start_trade))
         
             if player.can_build_road():
                 available_actions.append(('Build a road', self.build_road))
@@ -166,22 +166,22 @@ class Game:
                 available_actions.append(('Build a settlement', self.build_settlement))
             
             if player.can_upgrade_settlement():
-                available_actions.append(('Upgrade a settlement', player.prompt_settlement))
+                available_actions.append(('Upgrade a settlement', self.upgrade_settlement))
             
             if player.can_buy_dev_card():
-                available_actions.append(('Buy a development card', player.buy_development_card))
+                available_actions.append(('Buy a development card', self.sell_development_card))
             
             if player.has_knight_card():
-                available_actions.append(('Play Knight card', player.prompt_knight))
+                available_actions.append(('Play Knight card', self.play_knight))
             
             if player.has_road_building_card():
-                available_actions.append(('Play Road Building card', player.prompt_road_building))
+                available_actions.append(('Play Road Building card', self.play_road_building))
             
             if player.has_year_of_plenty_card():
-                available_actions.append(('Play Year of Plenty card', player.prompt_year_of_plenty))
+                available_actions.append(('Play Year of Plenty card', self.play_year_of_plenty))
             
             if player.has_monopoly_card():
-                available_actions.append(('Play Monopoly card', player.prompt_monopoly))
+                available_actions.append(('Play Monopoly card', self.play_monopoly))
         
             available_actions.append(('End turn', self.end_turn))
         
@@ -192,6 +192,28 @@ class Game:
             choice = int(get('What would you like to do? ')) - 1
         
             available_actions[choice][1]()
+            
+    def start_trade(self): pass
+    
+    def sell_development_card(self): pass
+    
+    def upgrade_settlement(self): pass
+
+    def play_knight(self):
+        """ play knight by interacting board"""
+        pass
+
+    def play_monopoly(self):
+        """ play monopoly by interacting with other players"""
+        pass
+
+    def play_year_of_plenty(self):
+        """ play year of plenty by interacting with banks"""
+        pass
+
+    def play_road_building(self):
+        """ place two road on board"""
+        pass
         
 
     def verify_current_player_is(self, player):
@@ -223,25 +245,6 @@ class Game:
         self.board.add_settlement(
             location, settlement, allow_disconnected_settlement=self.is_just_starting
         )
-
-    def upgrade_settlement(self, location, city):
-        """ upgrade the settlement to city by interacting board"""
-        self.verify_current_player_is(city.owner)
-        self.board.upgrade_settlement(
-            location, city, allow_disconnected_settlement=self.is_just_starting
-        )
-
-    def play_knight(self, location):
-        """ play knight by interacting board"""
-
-    def play_monopoly(self, resource1, resource2):
-        """ play monopoly by interacting with other players"""
-
-    def play_year_of_plenty():
-        """ play year of plenty by interacting with banks"""
-
-    def play_road_building(location1: int, location2: int):
-        """ place two road on board"""
 
 if __name__ == "__main__":
     get = Input_getter("settlers.in").get

@@ -295,6 +295,10 @@ class Board:
         with open(filename, "rb") as file:
             pickle = Unpickler(file)
             return pickle.load()
+            
+    def paths_reachable_by(board, player):
+        # TODO: actually write this method
+        return board.available_path_locations
 
 
 class RoadBuildingException(Exception):
