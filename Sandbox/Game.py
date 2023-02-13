@@ -1,6 +1,5 @@
 from Bank import Bank
-from Player import Player
-from Player import Player
+from Player import Player, HumanPlayer
 from Trade import Trade
 from Board import Intersection, Path, Tile, Settlement, City, Road, Board
 from Resources import Resources
@@ -33,7 +32,7 @@ class Input_getter:
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, getter):
     
         self.bank = Bank()
         self.board = Board()
@@ -44,7 +43,7 @@ class Game:
 
         for i in range(1, self.player_number + 1):
             color = get("Player #%i's color: " % i)
-            self.players.append(Player(color, self)) 
+            self.players.append(HumanPlayer(color, self, getter)) 
             # I pass game inside player # Ryu #so player know which game are they in?
 
         requested_colors = set(p.color for p in self.players)
@@ -104,12 +103,6 @@ class Game:
         self.current_player_number = player.number
         self.print_current_player()
 
-    def prompt_settlement_location(self, for_free=False):
-        choice = None
-        while not (choice in self.board.available_intersection_locations):
-            choice = int(get("Pick a location to place a settlement: "))
-        self.current_player.builds_settlement(choice, for_free)
-
     def prompt_road_location(self, for_free=False):
         choice = None
         while not (choice in self.board.available_path_locations):
@@ -168,8 +161,9 @@ class Game:
     def set_up_board(self):
         for player in self.players:
             self.set_turn(player)
-            self.prompt_settlement_location(for_free=True)
+            self.build_settlement(for_free=True)
             self.prompt_road_location(for_free=True)
+            #self.build_road(for_free=True)
 
         self.prompt_settlement_location(for_free=True)
         self.prompt_road_location(for_free=True)
@@ -177,6 +171,14 @@ class Game:
             self.set_turn(player)
             self.prompt_settlement_location(for_free=True)
             self.prompt_road_location(for_free=True)
+    
+    def build_settlement(self, for_free = False):
+        choice = self.current_player.prompt_settlement_location()
+        self.current_player.builds_settlement(choice, for_free)
+    
+    def build_road(self, for_free = False):
+        choice = self.current_player.prompt_road_location()
+        self.current_player.builds_road(choice, for_free)
 
     def game_loop(self):
         while self.is_on:
@@ -300,7 +302,7 @@ class Game:
 if __name__ == "__main__":
     get = Input_getter("settlers.in").get
     # get = input
-    game = Game()
+    game = Game(get)
 
 
 # iterate over players

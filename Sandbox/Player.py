@@ -7,9 +7,10 @@ from rich.panel import Panel
 from copy import copy
 
 class Player:
-    def __init__(player, color, game):
+    def __init__(player, color, game, getter = None):
         player.color = color
         player.game = game
+        player.get = input if getter==None else getter
 
         player.available_settlements = [Settlement(player) for i in range(5)]
         player.available_cities = [City(player) for i in range(4)]
@@ -250,4 +251,7 @@ class Player:
 class HumanPlayer(Player):
 
     def prompt_settlement_location(player):
-        return int(get("Pick a location to place a settlement: "))
+        choice = None
+        while not (choice in player.game.board.available_intersection_locations):
+            choice = int(player.get("Pick a location to place a settlement: "))
+        return choice
