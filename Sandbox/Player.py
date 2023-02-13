@@ -55,7 +55,7 @@ class Player:
     #  player.game.board.add_road(location, player)
 
     def roll_dice(player):
-        player.GameMaster.dice_roll()
+        player.game.dice_roll()
 
     def view_possible_devcard(self):
         t = Table(
@@ -168,8 +168,8 @@ class Player:
             new_trade.recipient = player
             player.proposed_trades.append(new_trade)
 
-    def update_exchange_rate(player, speical_harbour: bool, resource_type: str = None):
-        if speical_harbour:
+    def update_exchange_rate(player, special_harbour: bool, resource_type: str = None):
+        if special_harbour:
             for inner_dict in player.exchange_rate.values():
                 inner_dict[resource_type] = 2
         else:
