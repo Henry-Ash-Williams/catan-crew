@@ -14,7 +14,6 @@ class Player:
 
         player.available_settlements = [Settlement(player) for i in range(5)]
         player.available_cities = [City(player) for i in range(4)]
-        # TODO: change this so the location of possible roads is accurate
         player.available_roads = [Road(0, player) for i in range(15)]
 
         player.built_settlements = []
@@ -24,7 +23,7 @@ class Player:
         # Victory point related
         player.road_length = 0
         player.knights_played = 0
-        player.victory_points = 0
+        player.visible_victory_points = 0
         player.hidden_victory_points = 0
 
         player.resources = Resources()
@@ -121,7 +120,8 @@ class Player:
         player.resources -= RESOURCE_REQUIREMENTS["city"]
         city = player.available_cities.pop()
         player.game.upgrade_settlement(location, city)
-        player.built_cities.append((city, location))           
+        player.built_cities.append((city, location))   
+        player.available_settlements.append(Settlement(player))        
 
     def builds_road(player, location, for_free=False):
         # TODO: make this method subtract from player's resources
@@ -153,9 +153,9 @@ class Player:
             raise Exception("Player has no available year of plenty card to play")
         else:
             player.development_cards["year of plenty"] -= 1
-            player.GameMaster.play_monopoly(player, resource1, resource2)
+            player.game.play_monopoly(player, resource1, resource2)
 
-    def play_road_building(player):
+    def play_road_building(player, location1, location2):
         # can place 2 roads immediately
         player.development_cards["road building"] -= 1
         player.game.add_road(location1)
@@ -202,6 +202,8 @@ class Player:
                 keys = inner_dict.keys()
                 for key in keys:
                     inner_dict[key] = 3
+
+    ####### avavilable actions validation #######
     
     def can_build_road(player):
         """ Returns whether a player can build a road or not."""
@@ -245,8 +247,14 @@ class Player:
         """Returns True if player has a Monopoly card."""
         return True if player.development_cards["monopoly"] > 0 else False
         
-        
-        
+    def calculate_visable_victory_point(player):
+        """ for each action, the game can update this, so that every players can view other players' VP in real time"""
+        player.visible_victory_points = len(player.built_cities) * 2 + len(player.built_settlements) + 2 if player.game.check_longest_road() is player else 0 + 2 if player.game.check_largest_army is player else 0
+        return player.visible_victory_points
+
+    def calculate_total_victory_point(player):
+        """ for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
+        return player.calculate_visable_victory_point + player.hidden_victory_points
         
 class HumanPlayer(Player):
 
