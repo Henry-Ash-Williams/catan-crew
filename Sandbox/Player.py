@@ -113,21 +113,24 @@ class Player:
         player.resources -= Resources() if for_free else RESOURCE_REQUIREMENTS["settlement"]
         settlement = player.available_settlements.pop()
         player.game.add_settlement(location, settlement)
-        player.built_settlements.append((settlement, location))
+        settlement.location = location
+        player.built_settlements.append(settlement)
         # TODO: settlement.location seems exist, so we may get rid of the tuple
 
     def upgrade_settlement(player, location):
         player.resources -= RESOURCE_REQUIREMENTS["city"]
         city = player.available_cities.pop()
         player.game.upgrade_settlement(location, city)
-        player.built_cities.append((city, location))   
+        city.location = location
+        player.built_cities.append(city)   
         player.available_settlements.append(Settlement(player))        
 
     def builds_road(player, location, for_free=False):
         player.resources -= Resources() if for_free else RESOURCE_REQUIREMENTS["road"]
         road = player.available_roads.pop()            
         player.game.add_road(location, road)
-        player.built_roads.append((road, location))
+        road.location = location
+        player.built_roads.append(road)
 
     def play_knight(player, location):
         player.development_cards["knight"] -= 1
@@ -256,7 +259,7 @@ class HumanPlayer(Player):
 
     def prompt_road_location(player, for_free=False):
         choice = None
-        #TODO: 
+        #FIXME: 
         while not (choice in player.game.board.paths_reachable_by(player)):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
@@ -272,7 +275,7 @@ class HumanPlayer(Player):
         Prompts user for settlement they want to upgrade,
         then initiates upgrade"""
         choice = None
-        while not (choice in [settlement.location for settlement in player.builds_settlement]):
+        while not (choice in [settlement.location for settlement in player.built_settlements]):
             choice = int(player.get("Pick one of your settlement to upgrade: "))
         return choice
         
@@ -280,6 +283,8 @@ class HumanPlayer(Player):
         """Called when user plays Road Building card.
         Prompts user for tile they want to place the robber on,
         then initiates robbery."""
+        choice = None
+        while not (choice in )
         choice = player.get('Pick a tile to place the robber on: ')
         
     def prompt_road_building(player):
