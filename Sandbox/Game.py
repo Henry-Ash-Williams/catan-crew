@@ -104,17 +104,17 @@ class Game:
         self.current_player_number = player.number
         self.print_current_player()
 
-    def prompt_settlement_location(self):
+    def prompt_settlement_location(self, for_free=False):
         choice = None
         while not (choice in self.board.available_intersection_locations):
             choice = int(get("Pick a location to place a settlement: "))
-        self.current_player.builds_settlement(choice)
+        self.current_player.builds_settlement(choice, for_free)
 
-    def prompt_road_location(self):
+    def prompt_road_location(self, for_free=False):
         choice = None
         while not (choice in self.board.available_path_locations):
             choice = int(get("Pick a location to place a road: "))
-        self.current_player.builds_road(choice)
+        self.current_player.builds_road(choice, for_free)
         
     def prompt_trade_details(self):
         """Called when user chooses to propose a trade.
@@ -168,18 +168,15 @@ class Game:
     def set_up_board(self):
         for player in self.players:
             self.set_turn(player)
-            self.prompt_settlement_location()
-            self.prompt_road_location()
+            self.prompt_settlement_location(for_free=True)
+            self.prompt_road_location(for_free=True)
 
-        self.prompt_settlement_location()
-        self.prompt_road_location()
+        self.prompt_settlement_location(for_free=True)
+        self.prompt_road_location(for_free=True)
         for player in self.players[-2::-1]:
             self.set_turn(player)
-            self.prompt_settlement_location()
-            self.prompt_road_location()
-
-        for player in self.players:
-            player.resources = Resources()
+            self.prompt_settlement_location(for_free=True)
+            self.prompt_road_location(for_free=True)
 
     def game_loop(self):
         while self.is_on:

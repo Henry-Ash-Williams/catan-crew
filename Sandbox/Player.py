@@ -111,7 +111,7 @@ class Player:
         )
 
     def builds_settlement(player, location, for_free=False):
-        player.resources -= RESOURCE_REQUIREMENTS["settlement"]
+        player.resources -= Resources() if for_free else RESOURCE_REQUIREMENTS["settlement"]
         settlement = player.available_settlements.pop()
         player.game.add_settlement(location, settlement)
         player.built_settlements.append((settlement, location))
@@ -122,16 +122,21 @@ class Player:
         player.game.upgrade_settlement(location, city)
         player.built_cities.append((city, location))           
 
-    def builds_road(player, location):
+    def builds_road(player, location, for_free=False):
         # TODO: make this method subtract from player's resources
 
         # shall these handel by gamemaster to look over to it
         # when gamemaster give options for player to choose
+        
+        player.resources -= Resources() if for_free else RESOURCE_REQUIREMENTS["road"]
 
         if player.available_roads:
             road = player.available_roads.pop()
         else:
             raise Exception("Player has no available roads to build")
+            
+        player.game.add_road(location, road)
+        player.built_roads.append((road, location))
 
     def play_knight(player, location):
         player.development_cards["knight"] -= 1
@@ -238,3 +243,11 @@ class Player:
     def has_monopoly_card(player):
         """Returns True if player has a Monopoly card."""
         return True if player.development_cards["monopoly"] > 0 else False
+        
+        
+        
+        
+class HumanPlayer(Player):
+
+    def prompt_settlement_location(player):
+        return int(get("Pick a location to place a settlement: "))
