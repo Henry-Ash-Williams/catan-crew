@@ -32,9 +32,9 @@
 
 - [x]   view_possible_devcard() -> dict
 - [x]   view_available_builds() -> List<str>
-- [x]   build_settlement(location: int)
+- [x]   build_settlement(location: int, for_free: bool=False)
 - [x]   upgrade_settlement(location: int)
-- [x]   build_road(location: int)
+- [x]   build_road(location: int, for_free: bool=False)
 - [x]   play_knight(location: int)
 - [x]   play_monopoly()
 - [x]   play_year_of_plenty()
@@ -168,6 +168,7 @@ make sure to overload operators for this for easier operations
 ## Attributes
 
 - [ ]   available_resources_: Resources
+- [ ]   development_card_deck: DevelopmentCardKind
 
 
 <a id="org6c3645e"></a>
@@ -180,6 +181,7 @@ make sure to overload operators for this for easier operations
 - [ ]   distribute_grain(amount: int) -> Resources
 - [ ]   distribute_wool(amount: int) -> Resources
 - [ ]   return_to__bank(returned_resources_: Resources)
+- [ ]   get_development_card() -> DevelopmentCardKind
 
 
 <a id="orgfe6e2dd"></a>
