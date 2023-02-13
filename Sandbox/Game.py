@@ -115,7 +115,7 @@ class Game:
         the trade is valid, then initiates proposed trade."""
         details = get('Enter trade details: ')
         
-    def prompt_settlement(self):
+    def prompt_upgrade_settlement(self):
         """Called when user plays Road Building card.
         Prompts user for settlement they want to upgrade,
         then initiates upgrade"""
@@ -162,15 +162,14 @@ class Game:
         for player in self.players:
             self.set_turn(player)
             self.build_settlement(for_free=True)
-            #self.prompt_road_location(for_free=True)
             self.build_road(for_free=True)
 
-        self.prompt_settlement_location(for_free=True)
-        self.prompt_road_location(for_free=True)
+        self.build_settlement(for_free=True)
+        self.build_road(for_free=True)
         for player in self.players[-2::-1]:
             self.set_turn(player)
-            self.prompt_settlement_location(for_free=True)
-            self.prompt_road_location(for_free=True)
+            self.build_settlement(for_free=True)
+            self.build_road(for_free=True)
     
     def build_settlement(self, for_free = False):
         choice = self.current_player.prompt_settlement_location()
