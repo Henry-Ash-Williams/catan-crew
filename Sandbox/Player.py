@@ -1,10 +1,12 @@
-from Board import *
-from Resources import Resources, RESOURCE_REQUIREMENTS
+from copy import copy
+
 from rich.console import Console
 from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
-from copy import copy
+
+from Board import *
+from Resources import Resources, RESOURCE_REQUIREMENTS
 
 class Player:
     def __init__(player, color, getter = None):
@@ -61,16 +63,16 @@ class Player:
         t = Table(title="Available Development Card")
         t.add_column("Dev Card")
         t.add_column("Count")
-        t.add_row("Knight", str(self.development_cards["knight"]), style="#cb4154")
+        t.add_row("Knight", str(self.development_cards["knight"]), style="blue_violet")
         t.add_row(
             "Road Building",
             str(self.development_cards["road building"]),
-            style="green4",
+            style="chartreuse4",
         )
         t.add_row(
             "Year of Plenty",
             str(self.development_cards["year of plenty"]),
-            style="grey30",
+            style="red3",
         )
         t.add_row("Monopoly", str(self.development_cards["monopoly"]), style="gold1")
         return t

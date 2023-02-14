@@ -3,6 +3,7 @@ from Player import Player, HumanPlayer
 from Trade import Trade
 from Board import Intersection, Path, Tile, Settlement, City, Road, Board
 from Resources import Resources
+from clear import clear
 
 from typing import Union
 import random, sys
@@ -34,6 +35,7 @@ class Input_getter:
 
 class Game:
     def __init__(self, getter, players=None):
+        clear()
     
         self.bank = Bank()
         self.board = Board()
@@ -104,6 +106,7 @@ class Game:
         c.print(r)
 
     def display_game_state(self):
+        clear()
         player_data = [
             (player.color, player.visible_victory_points, player.road_length, player.knights_played)
             for player in self.players
@@ -142,13 +145,18 @@ class Game:
             self.build_settlement(for_free=True)
             self.build_road(for_free=True)
 
+        input("Press any key to continue")
+        clear()
+
     def game_loop(self):
         c = Console()
         while self.is_on:
             self.do_turn()
             table = self.display_game_state()
+            clear()
             c.print(table, justify="center")
-            input("Press Enter to Continue...")
+            input()
+            clear()
 
 
     def do_turn(self):
