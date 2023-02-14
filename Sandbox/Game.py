@@ -223,8 +223,14 @@ class Game:
         pass
 
     def play_monopoly(self):
-        """ play monopoly by interacting with other players"""
-        pass
+        resource_name = self.current_player.prompt_monopoly_resource().name.lower()
+        total_gained = 0
+        for player in self.players:
+            if player is self.current_player: continue
+            total_gained += player.resources[resource_name]
+            player.resources[resource_name] = 0
+        self.current_player.resources[resource_name] += total_gained
+        self.current_player.message('Congrats, you got %i %ss!'%(resource_name, total_gained))
 
     def play_year_of_plenty(self):
         """ play year of plenty by interacting with banks"""
