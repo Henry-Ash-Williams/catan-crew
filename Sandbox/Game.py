@@ -148,7 +148,7 @@ class Game:
             self.do_turn()
             table = self.display_game_state()
             c.print(table, justify="center")
-            input()
+            input("Press Enter to Continue...")
 
 
     def do_turn(self):
