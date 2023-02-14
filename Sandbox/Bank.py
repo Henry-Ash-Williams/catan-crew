@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import random
+from Trade import Trade
 from enum import Enum
 from Resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS
 from Player import Player

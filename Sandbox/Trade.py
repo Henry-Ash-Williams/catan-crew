@@ -9,7 +9,8 @@ from typing import Union
 
 @dataclass
 class Trade:
-    sender: Union[Player, Bank]
-    recipient: Player
+    sender: Player
+    proposeess: list[Player]
     resources_offered: Resources
     resources_requested: Resources
+    accepters: list[Player] = []
