@@ -20,7 +20,6 @@ class Intersection:
 
 
 class Settlement:
-
     def __init__(settlement, owner):
         settlement.owner = owner
         settlement.color = owner.color
@@ -38,7 +37,6 @@ class Path:
 
 
 class Road:
-
     def __init__(road, location, owner):
         road.location = location
         road.owner = owner
@@ -50,6 +48,7 @@ class Tile:
         tile.location = location
         tile.resource = resource
         tile.number_token = number_token
+
 
 class City(Settlement):
     def __init__(self, owner):
@@ -295,13 +294,21 @@ class Board:
         with open(filename, "rb") as file:
             pickle = Unpickler(file)
             return pickle.load()
-            
+
     def paths_reachable_by(board, player):
         """Returns paths that player can reach based on their currently built settlements and roads"""
-        adjacent_to_settlement = join(board.select(around=settlement.location, distance=1) for settlement in player.built_settlements)
-        adjacent_to_road = join(board.select(around=road.location, distance=1, dir_pattern=(1,1)) for road in player.built_roads)
-        return list((set(adjacent_to_settlement) | set(adjacent_to_road)) & set(board.available_path_locations))
-        
+        adjacent_to_settlement = join(
+            board.select(around=settlement.location, distance=1)
+            for settlement in player.built_settlements
+        )
+        adjacent_to_road = join(
+            board.select(around=road.location, distance=1, dir_pattern=(1, 1))
+            for road in player.built_roads
+        )
+        return list(
+            (set(adjacent_to_settlement) | set(adjacent_to_road))
+            & set(board.available_path_locations)
+        )
 
 
 class RoadBuildingException(Exception):

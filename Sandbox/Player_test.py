@@ -1,27 +1,24 @@
-from Player import *
-from Resources import *
+from Player import Player
+from Resources import Resources
 
-# p = Player("blue")
+import unittest
 
-# p.resources = Resources(brick=5, wool=5, lumber=5, ore=5, grain=5)
-# p.development_cards["knight"] = 1
-# p.development_cards["year of plenty"] = 1
-# p.development_cards["road building"] = 1
-# p.development_cards["monopoly"] = 1
+class PlayerTester(unittest.TestCase):
+    def setUp(self):
+        self.p = Player("blue")
 
-# p.get_player_state()
+    def test_constructor(self):
+        # TODO
+        pass
 
-# print("Exchange Rate",p.exchange_rate)
-# p.update_exchange_rate(False)
-# print("Updated exchange rate (Not special harbour)", p.exchange_rate)
-# p.update_exchange_rate(True, "ore")
-# print("Updated exchange rate (special harbour)", p.exchange_rate)
+    def test_available_builds(self):
+        self.p.resources = Resources(brick=1, lumber=1)
+        self.assertEqual(self.p.view_available_builds(), ["road"])
+        self.p.resources += Resources(brick=1, lumber=1, wool=1, grain=1)
+        self.assertEqual(self.p.view_available_builds(), ["road", "settlement"])
+        self.p.resources = Resources(ore=3, grain=2)
+        self.assertEqual(self.p.view_available_builds(), ["city"])
 
 
-####### Resource Test ########
-
-r1 = Resources(brick=5, wool=5, lumber=5, ore=5, grain=5)
-r2 = Resources(brick=3, wool=3, lumber=3, ore=3, grain=3)
-r1 -= r2
-
-print([r for r in r1])
+if __name__ == "__main__":
+    unittest.main()

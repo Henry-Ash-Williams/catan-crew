@@ -201,11 +201,11 @@ class Player:
     
     def can_build_road(player):
         """ Returns whether a player can build a road or not."""
-        return True if len(player.available_roads) > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["road"]) else False
+        return len(player.available_roads) > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["road"])
     
     def can_build_settlement(player):
         """Returns whether a player can build a settlement or not."""
-        return True if len(player.available_settlements) > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["settlement"]) else False
+        return len(player.available_settlements) > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["settlement"])
     
     def has_resources(player):
         """Returns True if player has any resource to trade."""
@@ -219,27 +219,27 @@ class Player:
         enough resources to upgrade it."""
 
         # no sure if we upgrade a city, do we pop settlement out of built-settlement
-        return True if player.resources.can_build(RESOURCE_REQUIREMENTS["city"]) and len(player.available_cities) > 0 and len(player.built_settlements) > 0 else False
+        return player.resources.can_build(RESOURCE_REQUIREMENTS["city"]) and len(player.available_cities) > 0 and len(player.built_settlements) > 0
     
     def can_buy_dev_card(player):
         """Returns True if player can afford a development card."""
-        return True if player.resources.can_build(RESOURCE_REQUIREMENTS["development_card"]) else False
+        return player.resources.can_build(RESOURCE_REQUIREMENTS["development_card"])
     
     def has_knight_card(player):
         """Returns True if player has a Knight card."""
-        return True if player.development_cards["knight"] > 0 else False
+        return player.development_cards["knight"] > 0
     
     def has_road_building_card(player):
         """Returns True if player has a Road Building card."""
-        return True if player.development_cards["road building"] > 0 else False
+        return player.development_cards["road building"] > 0
     
     def has_year_of_plenty_card(player):
         """Returns True if player has a Year of Plenty card."""
-        return True if player.development_cards["year of plenty"] > 0 else False
+        return player.development_cards["year of plenty"] > 0
     
     def has_monopoly_card(player):
         """Returns True if player has a Monopoly card."""
-        return True if player.development_cards["monopoly"] > 0 else False
+        return player.development_cards["monopoly"] > 0
         
     def calculate_visable_victory_point(player):
         """ for each action, the game can update this, so that every players can view other players' VP in real time"""
