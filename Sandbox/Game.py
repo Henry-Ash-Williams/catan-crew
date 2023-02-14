@@ -32,23 +32,27 @@ class Input_getter:
 
 
 class Game:
-    def __init__(self, getter):
+    def __init__(self, getter, players=None):
     
         self.bank = Bank()
         self.board = Board()
         self.board.game = self
-        self.players = []
+        
+        if players==None:
+            self.players = []
 
-        self.player_number = int(get("How many players would like to play? "))
+            self.player_number = int(get("How many players would like to play? "))
 
-        for i in range(1, self.player_number + 1):
-            color = get("Player #%i's color: " % i)
-            self.players.append(HumanPlayer(color, getter)) 
-            # I pass game inside player # Ryu #so player know which game are they in?
+            for i in range(1, self.player_number + 1):
+                color = get("Player #%i's color: " % i)
+                self.players.append(HumanPlayer(color, getter)) 
+                # I pass game inside player # Ryu #so player know which game are they in?
 
-        requested_colors = set(p.color for p in self.players)
-        if len(requested_colors) != len(self.players):
-            raise Exception("More than one player have the same color")
+            requested_colors = set(p.color for p in self.players)
+            if len(requested_colors) != len(self.players):
+                raise Exception("More than one player have the same color")
+
+        else: self.players = players
 
         i = 0
         
