@@ -24,6 +24,7 @@ class Bank:
                                 [DevelopmentCardKind.year_of_plenty for i in range(2)] + \
                                 [DevelopmentCardKind.monopoly for i in range(2)]
         random.shuffle(self.development_card_deck)
+        self.color = 'Bank'
 
     def distribute(self, amount: int, resource_kind: ResourceKind) -> Resources:
         self.available_resources[resource_kind.name] -= amount

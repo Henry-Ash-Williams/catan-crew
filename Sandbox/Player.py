@@ -268,7 +268,7 @@ class HumanPlayer(Player):
     def prompt_trade_details(player):
         """Called when user chooses to propose a trade.
         Prompts user for proposed trade details, verifies
-        the trade is valid, then initiates proposed trade."""
+        the trade is valid, then returns trade object."""
         details = player.get('Enter trade details: ')
         
     def prompt_settlement_for_upgrade(player):

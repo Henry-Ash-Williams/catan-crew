@@ -122,14 +122,6 @@ class Game:
             self.set_turn(player)
             self.build_settlement(for_free=True)
             self.build_road(for_free=True)
-    
-    def build_settlement(self, for_free = False):
-        choice = self.current_player.prompt_settlement_location()
-        self.current_player.builds_settlement(choice, for_free)
-    
-    def build_road(self, for_free = False):
-        choice = self.current_player.prompt_road_location()
-        self.current_player.builds_road(choice, for_free)
 
     def game_loop(self):
         while self.is_on:
@@ -192,12 +184,35 @@ class Game:
             choice = int(get('What would you like to do? ')) - 1
         
             available_actions[choice][1]()
+        
+    def start_trade(self):
+        trade = self.current_player.prompt_trade_details()
+        willing_traders = [trader for trader in trade.proposees+[self.bank] if trader.accepts_trade(trade)]
+        
+        if len(willing_traders)==0:
+            self.current_player.message('No trader accepted this trade.')
+            return
             
-    def start_trade(self): pass
+        else:
+            trade.accepters = willing_traders
+            self.current_player.prompt_trade_partner(trade)
+            
+    def build_settlement(self, for_free = False):
+        choice = self.current_player.prompt_settlement_location()
+        self.current_player.builds_settlement(choice, for_free)
     
-    def sell_development_card(self): pass
+    def build_road(self, for_free = False):
+        choice = self.current_player.prompt_road_location()
+        self.current_player.builds_road(choice, for_free)
     
-    def upgrade_settlement(self): pass
+    def sell_development_card(self):
+        self.current_player.buy_development_card()
+    
+    def upgrade_settlement(self):
+        settlement = self.current_player.prompt_settlement_for_upgrade()
+        self.board.cells[settlement.location].settlement = None
+        self.board.cells[settlement.location].has_settlement = False
+        # TODO: finish this
 
     def play_knight(self):
         """ play knight by interacting board"""
