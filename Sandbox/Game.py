@@ -125,9 +125,6 @@ class Game:
         self.current_player_number = player.number
         self.print_current_player()
 
-        
-    
-
     def start(self):
         self.set_up_board()
         self.game_loop()
@@ -246,7 +243,7 @@ class Game:
         pass
 
     def play_monopoly(self):
-        resource_name = self.current_player.prompt_monopoly_resource().name.lower()
+        resource_name = self.current_player.prompt_monopoly_resource().name
         total_gained = 0
         for player in self.players:
             if player is self.current_player: continue
@@ -256,8 +253,12 @@ class Game:
         self.current_player.message('Congrats, you got %i %ss!'%(resource_name, total_gained))
 
     def play_year_of_plenty(self):
-        """ play year of plenty by interacting with banks"""
-        pass
+        for _ in range(2):
+            choice = self.current_player.prompt_YoP_resource()
+            while not self.bank.available_resources[choice.name]:
+                self.current_player.message("Sorry, the bank doesn't have any %s."%choice.name)
+                choice = self.current_player.prompt_YoP_resource()
+            self.current_player.resources += self.bank.distribute_resources(1, choice)
 
     def play_road_building(self):
         """ place two road on board"""
