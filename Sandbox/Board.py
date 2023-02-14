@@ -102,6 +102,7 @@ class Board:
             board.cells[location] = Path(location)
 
         board.desert_tiles = [0]
+        board.robber_location = random.choice(board.desert_tiles)
         board.resource_number = len(board.tile_locations) - len(board.desert_tiles)
         resources = (
             [ResourceKind.grain] * 4

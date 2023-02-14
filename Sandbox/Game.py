@@ -261,10 +261,8 @@ class Game:
             self.current_player.resources += self.bank.distribute_resources(1, choice)
 
     def play_road_building(self):
-        """ place two road on board"""
-        pass
-        
-
+        for _ in range(2): self.build_road(for_free = True)
+            
     def verify_current_player_is(self, player):
         if player != self.current_player:
             raise Exception(
@@ -294,6 +292,22 @@ class Game:
         self.board.add_settlement(
             location, settlement, allow_disconnected_settlement=self.is_just_starting
         )
+    
+    def move_robber(self):
+        tile_choice = self.current_player.prompt_robber_location()
+        self.board.robber_location = choice
+        neighboring_settlements = self.board.settlements_neighboring(tile)
+        neighboring_players = set([settlement.owner for settlement in neighboring_settlements])
+        robbee = self.current_player.prompt_robbing_victim(neighboring_players)
+        if not robbee.has_resources:
+            self.current_player.message('%s has no resources to rob.'%robbee.color.capitalize())
+        else:
+            available_to_steal = filter(lambda r: robbee.resources[r]>0, ['brick','lumber','ore','grain','wool'])
+            resource_to_steal = random.choice(available_to_steal)
+            robbee.resources[resource_to_steal] -= 1
+            self.current_player.resources[resource_to_steal] += 1
+            self.current_player.message('You got a %s.'%resource_to_steal)
+        
 
 if __name__ == "__main__":
     get = Input_getter("settlers.in").get
