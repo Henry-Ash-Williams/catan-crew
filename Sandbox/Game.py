@@ -8,6 +8,7 @@ from typing import Union
 import random, sys
 from rich.console import Console
 from rich.rule import Rule
+from rich.table import Table
 from dataclasses import dataclass
 
 
@@ -102,6 +103,23 @@ class Game:
         r = Rule(f"[b {player_color}]{player_color.capitalize()}'s[/b {player_color}] turn")
         c.print(r)
 
+    def display_game_state(self):
+        player_data = [
+            (player.color, player.visible_victory_points, player.road_length, player.knights_played)
+            for player in self.players
+        ]
+
+        t = Table()
+        t.add_column("Player")
+        t.add_column("Victory Points")
+        t.add_column("Road Length")
+        t.add_column("Army Size")
+
+        for player in player_data:
+            t.add_row(player[0], str(player[1]), str(player[2]), str(player[3]), style=player[0])
+        return t
+
+
     def set_turn(self, player):
         self.current_player = player
         self.current_player_number = player.number
@@ -128,8 +146,13 @@ class Game:
             self.build_road(for_free=True)
 
     def game_loop(self):
+        c = Console()
         while self.is_on:
             self.do_turn()
+            table = self.display_game_state()
+            c.print(table)
+            input()
+
 
     def do_turn(self):
         self.print_current_player()

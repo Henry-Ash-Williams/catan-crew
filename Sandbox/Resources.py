@@ -10,14 +10,13 @@ class ResourceKind(Enum):
     Grain = 3
     Wool = 4
 
-
 @dataclass
 class DevelopmentCard:
-    knight = 0
-    hidden_victory_point = 0
-    road_building = 0
-    year_of_plenty = 0
-    monopoly = 0
+    knight: int = 0
+    hidden_victory_point: int = 0
+    road_building: int = 0
+    year_of_plenty: int = 0
+    monopoly: int = 0
 
 
 @dataclass(order=True)
