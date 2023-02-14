@@ -87,6 +87,31 @@ class Resources:
         else:
             raise Exception("Unrecognised resource")
 
+    def data_rep(self) -> list[(ResourceKind, int)]:
+        return [
+            (ResourceKind.Brick, self.brick),
+            (ResourceKind.Lumber, self.lumber),
+            (ResourceKind.Ore, self.ore),
+            (ResourceKind.Grain, self.grain),
+            (ResourceKind.Wool, self.wool),
+        ]
+
+    def __str__(self):
+        rep = ""
+        if all(map(lambda r: r == 0, self)):
+            return "Nothing!"
+
+        for kind, amount in self.data_rep():
+            if amount == 0:
+                continue
+            rep += f"{amount}x {kind.name}, "
+
+        return rep
+
+
+
+
+
 
 RESOURCE_REQUIREMENTS = {
     "road": Resources(brick=1, lumber=1),

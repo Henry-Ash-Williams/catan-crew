@@ -109,7 +109,7 @@ class Game:
             for player in self.players
         ]
 
-        t = Table()
+        t = Table(title="Player worth")
         t.add_column("Player")
         t.add_column("Victory Points")
         t.add_column("Road Length")
@@ -150,7 +150,7 @@ class Game:
         while self.is_on:
             self.do_turn()
             table = self.display_game_state()
-            c.print(table)
+            c.print(table, justify="center")
             input()
 
 
@@ -164,7 +164,7 @@ class Game:
         self.distribute_resources()
         resources_after = player.resources
         resources_gained = resources_after - resources_before
-        print('\nYou got:',resources_gained,'\n')
+        print('\nYou got:',str(resources_gained),'\n')
         
         self.turn_ongoing = True
         
