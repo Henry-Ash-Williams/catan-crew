@@ -104,11 +104,11 @@ class Board:
         board.desert_tiles = [0]
         board.resource_number = len(board.tile_locations) - len(board.desert_tiles)
         resources = (
-            [ResourceKind.Grain] * 4
-            + [ResourceKind.Wool] * 4
-            + [ResourceKind.Lumber] * 4
-            + [ResourceKind.Brick] * 3
-            + [ResourceKind.Ore] * 3
+            [ResourceKind.grain] * 4
+            + [ResourceKind.wool] * 4
+            + [ResourceKind.lumber] * 4
+            + [ResourceKind.brick] * 3
+            + [ResourceKind.ore] * 3
         )
         number_tokens = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11]
 

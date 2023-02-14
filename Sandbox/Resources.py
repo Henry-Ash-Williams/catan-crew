@@ -4,11 +4,14 @@ from enum import Enum
 
 
 class ResourceKind(Enum):
-    Brick = 0
-    Lumber = 1
-    Ore = 2
-    Grain = 3
-    Wool = 4
+    brick = 0
+    lumber = 1
+    ore = 2
+    grain = 3
+    wool = 4
+
+    def __str__(self):
+        return self.capitalize()
 
 @dataclass
 class DevelopmentCard:
@@ -89,11 +92,11 @@ class Resources:
 
     def data_rep(self) -> list[(ResourceKind, int)]:
         return [
-            (ResourceKind.Brick, self.brick),
-            (ResourceKind.Lumber, self.lumber),
-            (ResourceKind.Ore, self.ore),
-            (ResourceKind.Grain, self.grain),
-            (ResourceKind.Wool, self.wool),
+            (ResourceKind.brick, self.brick),
+            (ResourceKind.lumber, self.lumber),
+            (ResourceKind.ore, self.ore),
+            (ResourceKind.grain, self.grain),
+            (ResourceKind.wool, self.wool),
         ]
 
     def __str__(self):
