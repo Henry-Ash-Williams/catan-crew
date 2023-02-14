@@ -51,6 +51,16 @@
 - [x]   has_road_buiding_card()
 - [x]   has_year_of_plenty_card()
 - [x]   has_monopoly_card()
+- []    prompt_settlement_location()
+- []    prompt_road_locaiton()
+- []    prompt_trade_details()
+- []    prompt_settlement_for_upgrade()
+- []    prompt_knight()
+- []    prompt_road_building()
+- []    prompt_year_of_plenty()
+- []    prompt_monopoly()
+- []    buy_development_card()
+
 
 <a id="orgd15ef1d"></a>
 

@@ -252,13 +252,13 @@ class Player:
         
 class HumanPlayer(Player):
 
-    def prompt_settlement_location(player, for_free=False):
+    def prompt_settlement_location(player):
         choice = None
         while not (choice in player.game.board.available_intersection_locations):
             choice = int(player.get("Pick a location to place a settlement: "))
         return choice
 
-    def prompt_road_location(player, for_free=False):
+    def prompt_road_location(player):
         choice = None
         #FIXME: 
         while not (choice in player.game.board.paths_reachable_by(player)):
@@ -272,7 +272,7 @@ class HumanPlayer(Player):
         details = player.get('Enter trade details: ')
         
     def prompt_settlement_for_upgrade(player):
-        """Called when user plays Road Building card.
+        """Called when user want to upgrade a settlement.
         Prompts user for settlement they want to upgrade,
         then initiates upgrade"""
         choice = None
@@ -281,35 +281,61 @@ class HumanPlayer(Player):
         return choice
         
     def prompt_knight(player):
-        """Called when user plays Road Building card.
+        """Called when user plays knight card.
         Prompts user for tile they want to place the robber on,
         then initiates robbery."""
         choice = None
-        choice = player.get('Pick a tile to place the robber on: ')
-        
+        while not (choice in player.game.board.tile_locations):
+            choice = player.get('Pick a tile to place the robber on: ')
+        return choice
+
     def prompt_road_building(player):
         """Called when user plays Road Building card.
         Prompts user for the location of a path to build a road on,
         initiates the building of that road, then repeats this again for
         second road."""
-        choice = player.get('Pick a location to place a road: ')
+        # the reason why we don't return 2 chocie at the same time
+        # is because we can build 1 road and build the next road next to the first road
+        choice = None
+        while not (choice in player.game.board.paths_reachable_by(player)):
+            choice = int(player.get("Pick a location to place a road: "))
+        return choice
         
     def prompt_year_of_plenty(player):
         """Called when user plays Year of Plenty card.
         Prompts user for a resource type to get from bank,
         passes it to them, then repeats this again for second
         resource type."""
-        choice1 = player.get('Pick a resource type: ')
-        choice2 = player.get('Pick the second resource type: ')
+        # don't return 2 chocie at the same time
+        # the supply stack (bank) can ran out of resource
+        # after the player make the first choice
+        # FIXME: need to double check the logic
+        choice = player.get('Pick a resource type: ')
+        while not (player.game.bank.available_resources[choice]):
+            choice = player.get('Pick a resource type: ')
+        return choice
         
     def prompt_monopoly(player):
         """Called when user plays Monopoly card.
         Prompts user for a resource type to steal from all players,
-        then steals it for them."""
-        choice = player.get('Pick a resource type: ')
+        then steals it for them.
+        Return: ResourceKind
+        """
+        choice = None
+        print("""
+            Brick = 0
+            Lumber = 1
+            Ore = 2
+            Grain = 3
+            Wool = 4
+            """)
+        while not (choice in [0,1,2,3,4]): #working on this line
+            choice = int(player.get('Pick a resource type: '))
+        return ResourceKind[choice]
         
     def buy_development_card(player):
         """Called when user chooses to buy a development card.
         Passes development card to them and prints out which card
         they got."""
+        # TODO:
         print('Congratulations, you got XXXXXXX')
