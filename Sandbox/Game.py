@@ -1,6 +1,5 @@
 from Bank import Bank
-from Player import Player
-from Player import Player
+from Player import Player, HumanPlayer
 from Trade import Trade
 from Board import Intersection, Path, Tile, Settlement, City, Road, Board
 from Resources import Resources
@@ -33,7 +32,7 @@ class Input_getter:
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, getter):
     
         self.bank = Bank()
         self.board = Board()
@@ -44,7 +43,7 @@ class Game:
 
         for i in range(1, self.player_number + 1):
             color = get("Player #%i's color: " % i)
-            self.players.append(Player(color, self)) 
+            self.players.append(HumanPlayer(color, getter)) 
             # I pass game inside player # Ryu #so player know which game are they in?
 
         requested_colors = set(p.color for p in self.players)
@@ -104,62 +103,8 @@ class Game:
         self.current_player_number = player.number
         self.print_current_player()
 
-    def prompt_settlement_location(self, for_free=False):
-        choice = None
-        while not (choice in self.board.available_intersection_locations):
-            choice = int(get("Pick a location to place a settlement: "))
-        self.current_player.builds_settlement(choice, for_free)
-
-    def prompt_road_location(self, for_free=False):
-        choice = None
-        while not (choice in self.board.available_path_locations):
-            choice = int(get("Pick a location to place a road: "))
-        self.current_player.builds_road(choice, for_free)
         
-    def prompt_trade_details(self):
-        """Called when user chooses to propose a trade.
-        Prompts user for proposed trade details, verifies
-        the trade is valid, then initiates proposed trade."""
-        details = get('Enter trade details: ')
-        
-    def prompt_settlement(self):
-        """Called when user plays Road Building card.
-        Prompts user for settlement they want to upgrade,
-        then initiates upgrade"""
-        choice = get('Choose a settlement: ')
-        
-    def prompt_knight(self):
-        """Called when user plays Road Building card.
-        Prompts user for tile they want to place the robber on,
-        then initiates robbery."""
-        choice = get('Pick a tile to place the robber on: ')
-        
-    def prompt_road_building(self):
-        """Called when user plays Road Building card.
-        Prompts user for the location of a path to build a road on,
-        initiates the building of that road, then repeats this again for
-        second road."""
-        choice = get('Pick a location to place a road: ')
-        
-    def prompt_year_of_plenty(self):
-        """Called when user plays Year of Plenty card.
-        Prompts user for a resource type to get from bank,
-        passes it to them, then repeats this again for second
-        resource type."""
-        choice1 = get('Pick a resource type: ')
-        choice2 = get('Pick the second resource type: ')
-        
-    def prompt_monopoly(self):
-        """Called when user plays Monopoly card.
-        Prompts user for a resource type to steal from all players,
-        then steals it for them."""
-        choice = get('Pick a resource type: ')
-        
-    def sell_development_card(self):
-        """Called when user chooses to buy a development card.
-        Passes development card to them and prints out which card
-        they got."""
-        print('Congratulations, you got XXXXXXX')
+    
 
     def start(self):
         self.set_up_board()
@@ -168,15 +113,15 @@ class Game:
     def set_up_board(self):
         for player in self.players:
             self.set_turn(player)
-            self.prompt_settlement_location(for_free=True)
-            self.prompt_road_location(for_free=True)
+            self.build_settlement(for_free=True)
+            self.build_road(for_free=True)
 
-        self.prompt_settlement_location(for_free=True)
-        self.prompt_road_location(for_free=True)
+        self.build_settlement(for_free=True)
+        self.build_road(for_free=True)
         for player in self.players[-2::-1]:
             self.set_turn(player)
-            self.prompt_settlement_location(for_free=True)
-            self.prompt_road_location(for_free=True)
+            self.build_settlement(for_free=True)
+            self.build_road(for_free=True)
 
     def game_loop(self):
         while self.is_on:
@@ -186,9 +131,11 @@ class Game:
         self.print_current_player()
         self.dice_roll()
         
-        resources_before = self.current_player.resources
+        player = self.current_player
+        
+        resources_before = player.resources
         self.distribute_resources()
-        resources_after = self.current_player.resources
+        resources_after = player.resources
         resources_gained = resources_after - resources_before
         print('\nYou got:',resources_gained,'\n')
         
@@ -197,36 +144,36 @@ class Game:
         while self.turn_ongoing:
             print()
         
-            self.current_player.get_player_state()
+            player.get_player_state()
         
             available_actions = []
         
-            if self.current_player.has_resources():
-                available_actions.append(('Propose a trade', self.prompt_trade_details))
+            if player.has_resources():
+                available_actions.append(('Propose a trade', self.start_trade))
         
-            if self.current_player.can_build_road():
-                available_actions.append(('Build a road', self.prompt_road_location))
+            if player.can_build_road():
+                available_actions.append(('Build a road', self.build_road))
             
-            if self.current_player.can_build_settlement():
-                available_actions.append(('Build a settlement', self.prompt_settlement_location))
+            if player.can_build_settlement():
+                available_actions.append(('Build a settlement', self.build_settlement))
             
-            if self.current_player.can_upgrade_settlement():
-                available_actions.append(('Upgrade a settlement', self.prompt_settlement))
+            if player.can_upgrade_settlement():
+                available_actions.append(('Upgrade a settlement', self.upgrade_settlement))
             
-            if self.current_player.can_buy_dev_card():
+            if player.can_buy_dev_card():
                 available_actions.append(('Buy a development card', self.sell_development_card))
             
-            if self.current_player.has_knight_card():
-                available_actions.append(('Play Knight card', self.prompt_knight))
+            if player.has_knight_card():
+                available_actions.append(('Play Knight card', self.play_knight))
             
-            if self.current_player.has_road_building_card():
-                available_actions.append(('Play Road Building card', self.prompt_road_building))
+            if player.has_road_building_card():
+                available_actions.append(('Play Road Building card', self.play_road_building))
             
-            if self.current_player.has_year_of_plenty_card():
-                available_actions.append(('Play Year of Plenty card', self.prompt_year_of_plenty))
+            if player.has_year_of_plenty_card():
+                available_actions.append(('Play Year of Plenty card', self.play_year_of_plenty))
             
-            if self.current_player.has_monopoly_card():
-                available_actions.append(('Play Monopoly card', self.prompt_monopoly))
+            if player.has_monopoly_card():
+                available_actions.append(('Play Monopoly card', self.play_monopoly))
         
             available_actions.append(('End turn', self.end_turn))
         
@@ -237,14 +184,51 @@ class Game:
             choice = int(get('What would you like to do? ')) - 1
         
             available_actions[choice][1]()
+        
+    def start_trade(self):
+        trade = self.current_player.prompt_trade_details()
+        willing_traders = [trader for trader in trade.proposees+[self.bank] if trader.accepts_trade(trade)]
+        
+        if len(willing_traders)==0:
+            self.current_player.message('No trader accepted this trade.')
+            return
             
-        
-        #self.is_on = False
-        
-    # I guess it's redudiant @Ryu
-    # def can_build_road(self, player): return True
-    # def can_build_settlement(self, player): return True
-        
+        else:
+            trade.accepters = willing_traders
+            self.current_player.prompt_trade_partner(trade)
+            
+    def build_settlement(self, for_free = False):
+        choice = self.current_player.prompt_settlement_location()
+        self.current_player.builds_settlement(choice, for_free)
+    
+    def build_road(self, for_free = False):
+        choice = self.current_player.prompt_road_location()
+        self.current_player.builds_road(choice, for_free)
+    
+    def sell_development_card(self):
+        self.current_player.buy_development_card()
+    
+    def upgrade_settlement(self):
+        settlement = self.current_player.prompt_settlement_for_upgrade()
+        self.board.cells[settlement.location].settlement = None
+        self.board.cells[settlement.location].has_settlement = False
+        # TODO: finish this
+
+    def play_knight(self):
+        """ play knight by interacting board"""
+        pass
+
+    def play_monopoly(self):
+        """ play monopoly by interacting with other players"""
+        pass
+
+    def play_year_of_plenty(self):
+        """ play year of plenty by interacting with banks"""
+        pass
+
+    def play_road_building(self):
+        """ place two road on board"""
+        pass
         
 
     def verify_current_player_is(self, player):
@@ -277,30 +261,10 @@ class Game:
             location, settlement, allow_disconnected_settlement=self.is_just_starting
         )
 
-    def upgrade_settlement(self, location, city):
-        """ upgrade the settlement to city by interacting board"""
-        # TODO: 
-        self.verify_current_player_is(city.owner)
-        self.board.upgrade_settlement(
-            location, city, allow_disconnected_settlement=self.is_just_starting
-        )
-
-    def play_knight(self, location):
-        """ play knight by interacting board"""
-
-    def play_monopoly(self, resource1, resource2):
-        """ play monopoly by interacting with other players"""
-
-    def play_year_of_plenty():
-        """ play year of plenty by interacting with banks"""
-
-    def play_road_building(location1: int, location2: int):
-        """ place two road on board"""
-
 if __name__ == "__main__":
     get = Input_getter("settlers.in").get
     # get = input
-    game = Game()
+    game = Game(get)
 
 
 # iterate over players

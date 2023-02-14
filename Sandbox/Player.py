@@ -7,13 +7,12 @@ from rich.panel import Panel
 from copy import copy
 
 class Player:
-    def __init__(player, color, game):
+    def __init__(player, color, getter = None):
         player.color = color
-        player.game = game
+        player.get = input if getter==None else getter
 
         player.available_settlements = [Settlement(player) for i in range(5)]
         player.available_cities = [City(player) for i in range(4)]
-        # TODO: change this so the location of possible roads is accurate
         player.available_roads = [Road(0, player) for i in range(15)]
 
         player.built_settlements = []
@@ -23,12 +22,13 @@ class Player:
         # Victory point related
         player.road_length = 0
         player.knights_played = 0
-        player.victory_points = 0
+        player.visible_victory_points = 0
         player.hidden_victory_points = 0
 
         player.resources = Resources()
         player.development_cards = {
             "knight": 0,
+            "hidden victory point": 0,
             "road building": 0,
             "year of plenty": 0,
             "monopoly": 0,
@@ -114,29 +114,24 @@ class Player:
         player.resources -= RESOURCE_REQUIREMENTS["settlement"] if not for_free else Resources()
         settlement = player.available_settlements.pop()
         player.game.add_settlement(location, settlement)
-        player.built_settlements.append((settlement, location))
+        settlement.location = location
+        player.built_settlements.append(settlement)
+        # TODO: settlement.location seems exist, so we may get rid of the tuple
 
     def upgrade_settlement(player, location):
         player.resources -= RESOURCE_REQUIREMENTS["city"]
         city = player.available_cities.pop()
         player.game.upgrade_settlement(location, city)
-        player.built_cities.append((city, location))           
+        city.location = location
+        player.built_cities.append(city)   
+        player.available_settlements.append(Settlement(player))        
 
     def builds_road(player, location, for_free=False):
-        # TODO: make this method subtract from player's resources
-
-        # shall these handel by gamemaster to look over to it
-        # when gamemaster give options for player to choose
-        
         player.resources -= Resources() if for_free else RESOURCE_REQUIREMENTS["road"]
-
-        if player.available_roads:
-            road = player.available_roads.pop()
-        else:
-            raise Exception("Player has no available roads to build")
-            
+        road = player.available_roads.pop()            
         player.game.add_road(location, road)
-        player.built_roads.append((road, location))
+        road.location = location
+        player.built_roads.append(road)
 
     def play_knight(player, location):
         player.development_cards["knight"] -= 1
@@ -152,9 +147,9 @@ class Player:
             raise Exception("Player has no available year of plenty card to play")
         else:
             player.development_cards["year of plenty"] -= 1
-            player.GameMaster.play_monopoly(player, resource1, resource2)
+            player.game.play_monopoly(player, resource1, resource2)
 
-    def play_road_building(player):
+    def play_road_building(player, location1, location2):
         # can place 2 roads immediately
         player.development_cards["road building"] -= 1
         player.game.add_road(location1)
@@ -201,6 +196,8 @@ class Player:
                 keys = inner_dict.keys()
                 for key in keys:
                     inner_dict[key] = 3
+
+    ####### avavilable actions validation #######
     
     def can_build_road(player):
         """ Returns whether a player can build a road or not."""
@@ -222,7 +219,7 @@ class Player:
         enough resources to upgrade it."""
 
         # no sure if we upgrade a city, do we pop settlement out of built-settlement
-        return True if player.resources.can_build(RESOURCE_REQUIREMENTS["city"]) and player.available_cities > 0 and player.built_settlements > 0 else False
+        return True if player.resources.can_build(RESOURCE_REQUIREMENTS["city"]) and len(player.available_cities) > 0 and len(player.built_settlements) > 0 else False
     
     def can_buy_dev_card(player):
         """Returns True if player can afford a development card."""
@@ -243,3 +240,76 @@ class Player:
     def has_monopoly_card(player):
         """Returns True if player has a Monopoly card."""
         return True if player.development_cards["monopoly"] > 0 else False
+        
+    def calculate_visable_victory_point(player):
+        """ for each action, the game can update this, so that every players can view other players' VP in real time"""
+        player.visible_victory_points = len(player.built_cities) * 2 + len(player.built_settlements) + 2 if player.game.check_longest_road() is player else 0 + 2 if player.game.check_largest_army is player else 0
+        return player.visible_victory_points
+
+    def calculate_total_victory_point(player):
+        """ for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
+        return player.calculate_visable_victory_point + player.hidden_victory_points
+        
+class HumanPlayer(Player):
+
+    def prompt_settlement_location(player, for_free=False):
+        choice = None
+        while not (choice in player.game.board.available_intersection_locations):
+            choice = int(player.get("Pick a location to place a settlement: "))
+        return choice
+
+    def prompt_road_location(player, for_free=False):
+        choice = None
+        #FIXME: 
+        while not (choice in player.game.board.paths_reachable_by(player)):
+            choice = int(player.get("Pick a location to place a road: "))
+        return choice
+
+    def prompt_trade_details(player):
+        """Called when user chooses to propose a trade.
+        Prompts user for proposed trade details, verifies
+        the trade is valid, then returns trade object."""
+        details = player.get('Enter trade details: ')
+        
+    def prompt_settlement_for_upgrade(player):
+        """Called when user plays Road Building card.
+        Prompts user for settlement they want to upgrade,
+        then initiates upgrade"""
+        choice = None
+        while not (choice in [settlement.location for settlement in player.built_settlements]):
+            choice = int(player.get("Pick one of your settlement to upgrade: "))
+        return choice
+        
+    def prompt_knight(player):
+        """Called when user plays Road Building card.
+        Prompts user for tile they want to place the robber on,
+        then initiates robbery."""
+        choice = None
+        choice = player.get('Pick a tile to place the robber on: ')
+        
+    def prompt_road_building(player):
+        """Called when user plays Road Building card.
+        Prompts user for the location of a path to build a road on,
+        initiates the building of that road, then repeats this again for
+        second road."""
+        choice = player.get('Pick a location to place a road: ')
+        
+    def prompt_year_of_plenty(player):
+        """Called when user plays Year of Plenty card.
+        Prompts user for a resource type to get from bank,
+        passes it to them, then repeats this again for second
+        resource type."""
+        choice1 = player.get('Pick a resource type: ')
+        choice2 = player.get('Pick the second resource type: ')
+        
+    def prompt_monopoly(player):
+        """Called when user plays Monopoly card.
+        Prompts user for a resource type to steal from all players,
+        then steals it for them."""
+        choice = player.get('Pick a resource type: ')
+        
+    def buy_development_card(player):
+        """Called when user chooses to buy a development card.
+        Passes development card to them and prints out which card
+        they got."""
+        print('Congratulations, you got XXXXXXX')
