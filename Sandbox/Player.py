@@ -5,13 +5,13 @@ from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
 
-from Board import *
-from Resources import Resources, RESOURCE_REQUIREMENTS
+from Board import Settlement, City, Road
+from Resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind
 
 class Player:
     def __init__(player, color, getter = None):
         player.color = color
-        player.get = input if getter==None else getter
+        player.get = input if getter is None else getter
 
         player.available_settlements = [Settlement(player) for i in range(5)]
         player.available_cities = [City(player) for i in range(4)]
@@ -341,3 +341,6 @@ class HumanPlayer(Player):
         they got."""
         # TODO:
         print('Congratulations, you got XXXXXXX')
+
+    def message(self, msg: str):
+        print(msg)

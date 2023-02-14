@@ -8,8 +8,15 @@ class PlayerTester(unittest.TestCase):
         self.p = Player("blue")
 
     def test_constructor(self):
-        # TODO
-        pass
+        self.assertEqual(self.p.color, "blue")
+        self.assertEqual(len(self.p.available_settlements), 5)
+        self.assertEqual(len(self.p.available_cities), 4)
+        self.assertEqual(len(self.p.available_roads), 15)
+
+        self.assertEqual(self.p.built_settlements, [])
+        self.assertEqual(self.p.built_cities, [])
+        self.assertEqual(self.p.built_roads, [])
+        self.assertEqual(self.p.resources, Resources())
 
     def test_available_builds(self):
         self.p.resources = Resources(brick=1, lumber=1)

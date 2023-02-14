@@ -155,9 +155,8 @@ class Game:
             table = self.display_game_state()
             clear()
             c.print(table, justify="center")
-            input()
+            input("Press any key to continue")
             clear()
-
 
     def do_turn(self):
         self.print_current_player()

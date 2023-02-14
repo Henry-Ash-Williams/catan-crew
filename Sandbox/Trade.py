@@ -3,8 +3,6 @@
 from Player import Player
 from Resources import Resources
 from dataclasses import dataclass
-from typing import Union
-
 
 @dataclass
 class Trade:
