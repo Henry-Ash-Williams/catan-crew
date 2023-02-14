@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from Bank import Bank
 from Player import Player
 from Resources import Resources
 from dataclasses import dataclass
@@ -13,4 +12,4 @@ class Trade:
     proposeess: list[Player]
     resources_offered: Resources
     resources_requested: Resources
-    accepters: list[Player] = []
+    accepters: list[Player]
