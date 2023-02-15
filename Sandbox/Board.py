@@ -154,8 +154,8 @@ class Board:
                 intersection = board.cells[location_across]
                 intersection.has_harbor = True
                 intersection.harbors.append(harbor)
-                
-
+               
+                    
         board.desert_tiles = [0]
         board.robber_location = random.choice(board.desert_tiles)
         board.resource_number = len(board.tile_locations) - len(board.desert_tiles)

@@ -179,6 +179,17 @@ class BoardTester(unittest.TestCase):
             len(set(created_road_locations) & set(test.board.available_path_locations)),
             0,
         )
+        
+    def test_bridge_count(test):
+    
+        bridge_count = 0
+    
+        for intersection_location in test.board.intersection_locations:
+            intersection = test.board.cells[intersection_location]
+            if intersection.has_harbor:
+                bridge_count += len(intersection.harbors)
+        
+        test.assertEqual(bridge_count, 18)
 
     def tearDown(test):
         del test.board
