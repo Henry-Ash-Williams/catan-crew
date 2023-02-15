@@ -13,6 +13,9 @@ def join(l):
 class Intersection:
     def __init__(intersection):
         intersection.has_settlement = False
+        intersection.settlement = None
+        intersection.has_harbor = False
+        intersection.harbors = []
 
     def build_settlement(intersection, settlement):
         intersection.settlement = settlement
@@ -51,10 +54,26 @@ class Tile:
 
 
 class City(Settlement):
-    def __init__(self, owner):
-        self.distribution_rate = 2
+    def __init__(city, owner):
+        city.distribution_rate = 2
         super()
 
+class Sea:
+    def _init__(sea):
+        sea.has_harbor = False
+        sea.harbor = None
+
+class Coast:
+    def _init__(coast):
+        coast.has_bridge = False
+
+class Harbor:
+    def __init__(harbor, flavor, resource=None):
+        harbor.flavor = flavor
+        harbor.resource = resource
+        harbor.location = None
+
+class Bridge: pass
 
 class Board:
     # Spec says Board should be initializable with a game state
@@ -78,9 +97,9 @@ class Board:
         #  of the cell 2 steps away in the southwest direction from cell X
 
         board.cells = [None] * board.cell_count
-        board.harbor_locations = board.select(0, size, dir_pattern=(2, 2))
-        board.bridge_locations = join(
-            board.select(h, 1) for h in board.harbor_locations
+        board.sea_locations = board.select(0, size, dir_pattern=(2, 2))
+        board.coast_locations = join(
+            board.select(h, 1) for h in board.sea_locations
         )
         board.tile_locations = join(
             board.select(0, i, dir_pattern=(2, 2)) for i in range(n)
@@ -100,6 +119,42 @@ class Board:
 
         for location in board.path_locations:
             board.cells[location] = Path(location)
+
+        for location in board.sea_locations:
+            board.cells[location] = Sea()
+
+        for location in board.coast_locations:
+            board.cells[location] = Coast()
+            
+        board.harbors = [Harbor('generic') for i in range(4)]+[Harbor('special',ResourceKind(i)) for i in range(5)]
+        random.shuffle(board.harbors)
+        
+        board.harbor_locations = random.sample(board.sea_locations, 9)
+        board.bridge_locations = []
+        
+        for harbor,location in zip(board.harbors,board.harbor_locations):
+        
+            sea = board.cells[location]
+            sea.has_harbor = True
+            sea.harbor = harbor
+            harbor.location = location
+            
+            bridge_candidate_locations = []
+            for direction in board.cardinal_directions:
+                middle = (harbor.location + direction) % board.cell_count
+                location_across = (harbor.location + 2*direction) % board.cell_count
+                if board.has_intersection(location_across):
+                    bridge_candidate_locations.append((middle,location_across))
+                    
+            chosen_bridge_locations = random.sample(bridge_candidate_locations, 2)
+            
+            for middle,location_across in chosen_bridge_locations:
+                board.bridge_locations.append(middle)
+                board.cells[middle] = Bridge()
+                intersection = board.cells[location_across]
+                intersection.has_harbor = True
+                intersection.harbors.append(harbor)
+                
 
         board.desert_tiles = [0]
         board.robber_location = random.choice(board.desert_tiles)
