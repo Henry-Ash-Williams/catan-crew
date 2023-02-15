@@ -296,7 +296,8 @@ class Board:
                 "Settlement can't be built at this intersection because it's too close to another settlement."
             )
 
-        board.cells[location].build_settlement(settlement)
+        intersection = board.cells[location]
+        intersection.build_settlement(settlement)
 
         intersections_to_make_unavailable = set(
             [location]
@@ -304,6 +305,10 @@ class Board:
         )
 
         board.available_intersection_locations -= intersections_to_make_unavailable
+        
+        if intersection.has_harbor:
+            for harbor in intersection.harbors:
+                settlement.owner.update_exchange_rate(harbor.flavor=='special',harbor.resource)
 
     def upgrade_settlement(board, location):
         if not board.has_intersection(location):
