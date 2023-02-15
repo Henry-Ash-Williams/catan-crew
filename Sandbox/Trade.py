@@ -12,3 +12,7 @@ class Trade:
     resources_offered: Resources
     resources_requested: Resources
     accepters: list[Player]
+
+    def __init__(self):
+        self.proposees = []
+        super()
