@@ -4,7 +4,13 @@ from rich import print
 
 if __name__ == "__main__":
     get = Input_getter("settlers.test.in").get
+
     g = Game(getter=get, seed=420)
+    try:
+        g.start()
+    except KeyboardInterrupt:
+        g.save_state("game_state.pickle")
+
 
 # alice.roll_dice()
 # alice.get_resources(...)

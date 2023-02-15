@@ -4,6 +4,7 @@ from Trade import Trade
 from Board import Intersection, Path, Tile, Settlement, City, Road, Board
 from Resources import Resources
 from clear import clear
+from pickle import Pickler, Unpickler
 
 from typing import Union
 import random, sys
@@ -74,7 +75,7 @@ class Game:
 
         self.turn_count = 0
 
-        self.start()
+        # self.start()
 
     def check_longest_road(self) -> Player:
         player = max(self.players, key=lambda player: player.road_length)
@@ -357,10 +358,21 @@ class Game:
             self.current_player.message("You got a %s." % resource_to_steal)
 
 
+    def save_state(self, filename: str):
+        with open(filename, "wb") as file:
+            pickled = Pickler(file)
+            pickled.dump(self)
+
+    def load_state(filename: str):
+        with open(filename, "rb") as file:
+            pickle = Unpickler(file)
+            return pickle.load()
+
 if __name__ == "__main__":
     get = Input_getter("settlers.in").get
     # get = input
     game = Game(getter=get)
+    game.start()
 
 
 # iterate over players

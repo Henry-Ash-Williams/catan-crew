@@ -11,7 +11,7 @@ class ResourceKind(Enum):
     wool = 4
 
     def __str__(self):
-        return self.capitalize()
+        return self.name.capitalize()
 
 
 @dataclass
