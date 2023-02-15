@@ -8,7 +8,7 @@ from dataclasses import dataclass
 @dataclass
 class Trade:
     sender: Player
-    proposeess: list[Player]
+    proposees: list[Player]
     resources_offered: Resources
     resources_requested: Resources
     accepters: list[Player]
