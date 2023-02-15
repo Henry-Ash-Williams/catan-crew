@@ -279,7 +279,6 @@ class HumanPlayer(Player):
     def prompt_road_location(player):
         choice = None
         print(f"Valid road locations: {player.game.board.paths_reachable_by(player)}")
-        # FIXME:
         while not (choice in player.game.board.paths_reachable_by(player)):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
@@ -288,7 +287,26 @@ class HumanPlayer(Player):
         """Called when user chooses to propose a trade.
         Prompts user for proposed trade details, verifies
         the trade is valid, then returns trade object."""
-        details = player.get("Enter trade details: ")
+        # FIXME: check if logically right
+        has_enough_resource = None
+        resources_offered = None
+        while not (has_enough_resource):
+            has_enough_resource = True
+            num_brick = player.get("Enter number of brick you offer: ")
+            num_lumber = player.get("Enter number of lumber you offer: ")
+            num_ore = player.get("Enter number of ore you offer: ")
+            num_grain = player.get("Enter number of grain you offer: ")
+            num_wool = player.get("Enter number of wool you offer: ")
+            resources_offered = Resources(brick = num_brick, lumber=num_lumber, ore=num_ore, grain=num_grain, wool=num_wool)
+            for offering_resources, player_resources in zip(resources_offered, player.resources):
+                if offering_resources > player_resources:
+                    has_enough_resource = False
+                    print("player doesn't have enough resources to for this trade") 
+        
+        return resources_offered
+
+            
+
 
     def prompt_settlement_for_upgrade(player):
         """Called when user want to upgrade a settlement.
@@ -361,9 +379,8 @@ class HumanPlayer(Player):
         """Called when user chooses to buy a development card.
         Passes development card to them and prints out which card
         they got."""
-        # TODO:
-        self.game.bank.sell_development_card(self)
-        print("Congratulations, you got XXXXXXX")
+        name_of_dev_card = self.game.bank.sell_development_card(self)
+        print(f"Congratulations, you got {name_of_dev_card}")
 
     def message(self, msg: str):
         print(msg)
