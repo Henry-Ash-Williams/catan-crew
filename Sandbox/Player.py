@@ -8,8 +8,9 @@ from rich.panel import Panel
 from Board import Settlement, City, Road
 from Resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind
 
+
 class Player:
-    def __init__(player, color, getter = None):
+    def __init__(player, color, getter=None):
         player.color = color
         player.get = input if getter is None else getter
 
@@ -113,7 +114,9 @@ class Player:
         )
 
     def builds_settlement(player, location, for_free=False):
-        player.resources -= RESOURCE_REQUIREMENTS["settlement"] if not for_free else Resources()
+        player.resources -= (
+            RESOURCE_REQUIREMENTS["settlement"] if not for_free else Resources()
+        )
         settlement = player.available_settlements.pop()
         player.game.add_settlement(location, settlement)
         settlement.location = location
@@ -125,12 +128,12 @@ class Player:
         city = player.available_cities.pop()
         player.game.upgrade_settlement(location, city)
         city.location = location
-        player.built_cities.append(city)   
-        player.available_settlements.append(Settlement(player))        
+        player.built_cities.append(city)
+        player.available_settlements.append(Settlement(player))
 
     def builds_road(player, location, for_free=False):
         player.resources -= Resources() if for_free else RESOURCE_REQUIREMENTS["road"]
-        road = player.available_roads.pop()            
+        road = player.available_roads.pop()
         player.game.add_road(location, road)
         road.location = location
         player.built_roads.append(road)
@@ -200,60 +203,73 @@ class Player:
                     inner_dict[key] = 3
 
     ####### avavilable actions validation #######
-    
+
     def can_build_road(player):
-        """ Returns whether a player can build a road or not."""
-        return len(player.available_roads) > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["road"])
-    
+        """Returns whether a player can build a road or not."""
+        return len(player.available_roads) > 0 and player.resources.can_build(
+            RESOURCE_REQUIREMENTS["road"]
+        )
+
     def can_build_settlement(player):
         """Returns whether a player can build a settlement or not."""
-        return len(player.available_settlements) > 0 and player.resources.can_build(RESOURCE_REQUIREMENTS["settlement"])
-    
+        return len(player.available_settlements) > 0 and player.resources.can_build(
+            RESOURCE_REQUIREMENTS["settlement"]
+        )
+
     def has_resources(player):
         """Returns True if player has any resource to trade."""
         for amount in player.resources:
             if amount > 0:
                 return True
         return False
-    
+
     def can_upgrade_settlement(player):
         """Returns True if player has an un-upgraded settlement and
         enough resources to upgrade it."""
 
         # no sure if we upgrade a city, do we pop settlement out of built-settlement
-        return player.resources.can_build(RESOURCE_REQUIREMENTS["city"]) and len(player.available_cities) > 0 and len(player.built_settlements) > 0
-    
+        return (
+            player.resources.can_build(RESOURCE_REQUIREMENTS["city"])
+            and len(player.available_cities) > 0
+            and len(player.built_settlements) > 0
+        )
+
     def can_buy_dev_card(player):
         """Returns True if player can afford a development card."""
         return player.resources.can_build(RESOURCE_REQUIREMENTS["development_card"])
-    
+
     def has_knight_card(player):
         """Returns True if player has a Knight card."""
         return player.development_cards["knight"] > 0
-    
+
     def has_road_building_card(player):
         """Returns True if player has a Road Building card."""
         return player.development_cards["road building"] > 0
-    
+
     def has_year_of_plenty_card(player):
         """Returns True if player has a Year of Plenty card."""
         return player.development_cards["year of plenty"] > 0
-    
+
     def has_monopoly_card(player):
         """Returns True if player has a Monopoly card."""
         return player.development_cards["monopoly"] > 0
-        
+
     def calculate_visable_victory_point(player):
-        """ for each action, the game can update this, so that every players can view other players' VP in real time"""
-        player.visible_victory_points = len(player.built_cities) * 2 + len(player.built_settlements) + 2 if player.game.check_longest_road() is player else 0 + 2 if player.game.check_largest_army is player else 0
+        """for each action, the game can update this, so that every players can view other players' VP in real time"""
+        # please refactor this line
+        player.visible_victory_points = (
+            len(player.built_cities) * 2 + len(player.built_settlements) + 2
+            if player.game.check_longest_road() is player
+            else 0 + (2 if player.game.check_largest_army is player else 0)
+        )
         return player.visible_victory_points
 
     def calculate_total_victory_point(player):
-        """ for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
+        """for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
         return player.calculate_visable_victory_point + player.hidden_victory_points
-        
-class HumanPlayer(Player):
 
+
+class HumanPlayer(Player):
     def prompt_settlement_location(player):
         choice = None
         while not (choice in player.game.board.available_intersection_locations):
@@ -262,7 +278,8 @@ class HumanPlayer(Player):
 
     def prompt_road_location(player):
         choice = None
-        #FIXME: 
+        print(f"Valid road locations: {player.game.board.paths_reachable_by(player)}")
+        # FIXME:
         while not (choice in player.game.board.paths_reachable_by(player)):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
@@ -271,24 +288,27 @@ class HumanPlayer(Player):
         """Called when user chooses to propose a trade.
         Prompts user for proposed trade details, verifies
         the trade is valid, then returns trade object."""
-        details = player.get('Enter trade details: ')
-        
+        details = player.get("Enter trade details: ")
+
     def prompt_settlement_for_upgrade(player):
         """Called when user want to upgrade a settlement.
         Prompts user for settlement they want to upgrade,
         then initiates upgrade"""
         choice = None
-        while not (choice in [settlement.location for settlement in player.built_settlements]):
+        print(f"Your settlements: {[settlement.location for settlement in player.built_settlements]}")
+        while not (
+            choice in [settlement.location for settlement in player.built_settlements]
+        ):
             choice = int(player.get("Pick one of your settlement to upgrade: "))
         return choice
-        
+
     def prompt_knight(player):
         """Called when user plays knight card.
         Prompts user for tile they want to place the robber on,
         then initiates robbery."""
         choice = None
         while not (choice in player.game.board.tile_locations):
-            choice = player.get('Pick a tile to place the robber on: ')
+            choice = player.get("Pick a tile to place the robber on: ")
         return choice
 
     def prompt_road_building(player):
@@ -302,7 +322,7 @@ class HumanPlayer(Player):
         while not (choice in player.game.board.paths_reachable_by(player)):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
-        
+
     def prompt_year_of_plenty(player):
         """Called when user plays Year of Plenty card.
         Prompts user for a resource type to get from bank,
@@ -312,11 +332,11 @@ class HumanPlayer(Player):
         # the supply stack (bank) can ran out of resource
         # after the player make the first choice
         # FIXME: need to double check the logic
-        choice = player.get('Pick a resource type: ')
+        choice = player.get("Pick a resource type: ")
         while not (player.game.bank.available_resources[choice]):
-            choice = player.get('Pick a resource type: ')
+            choice = player.get("Pick a resource type: ")
         return choice
-        
+
     def prompt_monopoly(player):
         """Called when user plays Monopoly card.
         Prompts user for a resource type to steal from all players,
@@ -324,23 +344,26 @@ class HumanPlayer(Player):
         Return: ResourceKind
         """
         choice = None
-        print("""
+        print(
+            """
             Brick = 0
             Lumber = 1
             Ore = 2
             Grain = 3
             Wool = 4
-            """)
-        while not (choice in [0,1,2,3,4]): #working on this line
-            choice = int(player.get('Pick a resource type: '))
+            """
+        )
+        while not (choice in [0, 1, 2, 3, 4]):  # working on this line
+            choice = int(player.get("Pick a resource type: "))
         return ResourceKind[choice]
-        
-    def buy_development_card(player):
+
+    def buy_development_card(self):
         """Called when user chooses to buy a development card.
         Passes development card to them and prints out which card
         they got."""
         # TODO:
-        print('Congratulations, you got XXXXXXX')
+        self.game.bank.sell_development_card(self)
+        print("Congratulations, you got XXXXXXX")
 
     def message(self, msg: str):
         print(msg)

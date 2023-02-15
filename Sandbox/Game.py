@@ -33,32 +33,34 @@ class Input_getter:
             return input(s)
 
 
+
 class Game:
-    def __init__(self, getter, players=None):
+    def __init__(self, getter, players=None, seed=None):
         clear()
-    
+        self.getter = getter
         self.bank = Bank()
-        self.board = Board()
+        self.board = Board(seed=seed)
         self.board.game = self
-        
-        if players==None:
+
+        if players == None:
             self.players = []
 
-            self.player_number = int(get("How many players would like to play? "))
+            self.player_number = int(self.getter("How many players would like to play? "))
 
             for i in range(1, self.player_number + 1):
-                color = get("Player #%i's color: " % i)
-                self.players.append(HumanPlayer(color, getter)) 
+                color = self.getter("Player #%i's color: " % i)
+                self.players.append(HumanPlayer(color, getter))
                 # I pass game inside player # Ryu #so player know which game are they in?
 
             requested_colors = set(p.color for p in self.players)
             if len(requested_colors) != len(self.players):
                 raise Exception("More than one player have the same color")
 
-        else: self.players = players
+        else:
+            self.players = players
 
         i = 0
-        
+
         for player in self.players:
             player.game = self
             player.number = i
@@ -69,7 +71,7 @@ class Game:
 
         self.is_just_starting = True
         self.is_on = True
-        
+
         self.turn_count = 0
 
         self.start()
@@ -102,13 +104,20 @@ class Game:
     def print_current_player(self):
         player_color = self.current_player.color
         c = Console()
-        r = Rule(f"[b {player_color}]{player_color.capitalize()}'s[/b {player_color}] turn")
+        r = Rule(
+            f"[b {player_color}]{player_color.capitalize()}'s[/b {player_color}] turn"
+        )
         c.print(r)
 
     def display_game_state(self):
         clear()
         player_data = [
-            (player.color, player.visible_victory_points, player.road_length, player.knights_played)
+            (
+                player.color,
+                player.visible_victory_points,
+                player.road_length,
+                player.knights_played,
+            )
             for player in self.players
         ]
 
@@ -119,9 +128,14 @@ class Game:
         t.add_column("Army Size")
 
         for player in player_data:
-            t.add_row(player[0], str(player[1]), str(player[2]), str(player[3]), style=player[0])
+            t.add_row(
+                player[0],
+                str(player[1]),
+                str(player[2]),
+                str(player[3]),
+                style=player[0],
+            )
         return t
-
 
     def set_turn(self, player):
         self.current_player = player
@@ -145,7 +159,7 @@ class Game:
             self.build_settlement(for_free=True)
             self.build_road(for_free=True)
 
-        input("Press any key to continue")
+        self.getter("Press any key to continue")
         clear()
 
     def game_loop(self):
@@ -155,90 +169,102 @@ class Game:
             table = self.display_game_state()
             clear()
             c.print(table, justify="center")
-            input("Press any key to continue")
+            self.getter("Press any key to continue")
             clear()
 
     def do_turn(self):
         self.print_current_player()
         self.dice_roll()
-        
+
         player = self.current_player
-        
+
         resources_before = player.resources
         self.distribute_resources()
         resources_after = player.resources
         resources_gained = resources_after - resources_before
-        print('\nYou got:',str(resources_gained),'\n')
-        
+        print("\nYou got:", str(resources_gained), "\n")
+
         self.turn_ongoing = True
-        
+
         while self.turn_ongoing:
             print()
-        
+
             player.get_player_state()
-        
+
             available_actions = []
-        
+
             if player.has_resources():
-                available_actions.append(('Propose a trade', self.start_trade))
-        
+                available_actions.append(("Propose a trade", self.start_trade))
+
             if player.can_build_road():
-                available_actions.append(('Build a road', self.build_road))
-            
+                available_actions.append(("Build a road", self.build_road))
+
             if player.can_build_settlement():
-                available_actions.append(('Build a settlement', self.build_settlement))
-            
+                available_actions.append(("Build a settlement", self.build_settlement))
+
             if player.can_upgrade_settlement():
-                available_actions.append(('Upgrade a settlement', self.upgrade_settlement))
-            
+                available_actions.append(
+                    ("Upgrade a settlement", self.upgrade_settlement)
+                )
+
             if player.can_buy_dev_card():
-                available_actions.append(('Buy a development card', self.sell_development_card))
-            
+                available_actions.append(
+                    ("Buy a development card", self.sell_development_card)
+                )
+
             if player.has_knight_card():
-                available_actions.append(('Play Knight card', self.play_knight))
-            
+                available_actions.append(("Play Knight card", self.play_knight))
+
             if player.has_road_building_card():
-                available_actions.append(('Play Road Building card', self.play_road_building))
-            
+                available_actions.append(
+                    ("Play Road Building card", self.play_road_building)
+                )
+
             if player.has_year_of_plenty_card():
-                available_actions.append(('Play Year of Plenty card', self.play_year_of_plenty))
-            
+                available_actions.append(
+                    ("Play Year of Plenty card", self.play_year_of_plenty)
+                )
+
             if player.has_monopoly_card():
-                available_actions.append(('Play Monopoly card', self.play_monopoly))
-        
-            available_actions.append(('End turn', self.end_turn))
-        
-            print('\nYou can:')
-            for index,(action_name, action_method) in enumerate(available_actions,1):
-              print('%i. %s'%(index, action_name))
-        
-            choice = int(get('What would you like to do? ')) - 1
-        
+                available_actions.append(("Play Monopoly card", self.play_monopoly))
+
+            available_actions.append(("End turn", self.end_turn))
+
+            print("\nYou can:")
+            for index, (action_name, action_method) in enumerate(available_actions, 1):
+                print("%i. %s" % (index, action_name))
+
+            choice = int(self.getter("What would you like to do? ")) - 1
+
             available_actions[choice][1]()
-        
+
     def start_trade(self):
         trade = self.current_player.prompt_trade_details()
-        willing_traders = [trader for trader in trade.proposees+[self.bank] if trader.accepts_trade(trade)]
-        
-        if len(willing_traders)==0:
-            self.current_player.message('No trader accepted this trade.')
+        willing_traders = [
+            trader
+            for trader in trade.proposees + [self.bank]
+            if trader.accepts_trade(trade)
+        ]
+
+        if len(willing_traders) == 0:
+            self.current_player.message("No trader accepted this trade.")
             return
-            
+
         else:
             trade.accepters = willing_traders
             self.current_player.prompt_trade_partner(trade)
-            
-    def build_settlement(self, for_free = False):
+
+    def build_settlement(self, for_free=False):
         choice = self.current_player.prompt_settlement_location()
         self.current_player.builds_settlement(choice, for_free)
-    
-    def build_road(self, for_free = False):
+
+    def build_road(self, for_free=False):
         choice = self.current_player.prompt_road_location()
         self.current_player.builds_road(choice, for_free)
-    
+
     def sell_development_card(self):
         self.current_player.buy_development_card()
-    
+
     def upgrade_settlement(self):
         settlement = self.current_player.prompt_settlement_for_upgrade()
         self.board.cells[settlement.location].settlement = None
@@ -246,30 +272,36 @@ class Game:
         # TODO: finish this
 
     def play_knight(self):
-        """ play knight by interacting board"""
+        """play knight by interacting board"""
         pass
 
     def play_monopoly(self):
         resource_name = self.current_player.prompt_monopoly_resource().name
         total_gained = 0
         for player in self.players:
-            if player is self.current_player: continue
+            if player is self.current_player:
+                continue
             total_gained += player.resources[resource_name]
             player.resources[resource_name] = 0
         self.current_player.resources[resource_name] += total_gained
-        self.current_player.message('Congrats, you got %i %ss!'%(resource_name, total_gained))
+        self.current_player.message(
+            "Congrats, you got %i %ss!" % (resource_name, total_gained)
+        )
 
     def play_year_of_plenty(self):
         for _ in range(2):
             choice = self.current_player.prompt_YoP_resource()
             while not self.bank.available_resources[choice.name]:
-                self.current_player.message("Sorry, the bank doesn't have any %s."%choice.name)
+                self.current_player.message(
+                    "Sorry, the bank doesn't have any %s." % choice.name
+                )
                 choice = self.current_player.prompt_YoP_resource()
             self.current_player.resources += self.bank.distribute_resources(1, choice)
 
     def play_road_building(self):
-        for _ in range(2): self.build_road(for_free = True)
-            
+        for _ in range(2):
+            self.build_road(for_free=True)
+
     def verify_current_player_is(self, player):
         if player != self.current_player:
             raise Exception(
@@ -286,7 +318,9 @@ class Game:
 
     def end_turn(self):
         self.turn_ongoing = False
-        self.current_player_number = (self.current_player_number + 1) % self.player_number
+        self.current_player_number = (
+            self.current_player_number + 1
+        ) % self.player_number
         self.current_player = self.players[self.current_player_number]
         self.turn_count += 1
 
@@ -299,27 +333,34 @@ class Game:
         self.board.add_settlement(
             location, settlement, allow_disconnected_settlement=self.is_just_starting
         )
-    
+
     def move_robber(self):
         tile_choice = self.current_player.prompt_robber_location()
-        self.board.robber_location = choice
-        neighboring_settlements = self.board.settlements_neighboring(tile)
-        neighboring_players = set([settlement.owner for settlement in neighboring_settlements])
+        self.board.robber_location = tile_choice
+        neighboring_settlements = self.board.settlements_neighboring(tile_choice)
+        neighboring_players = set(
+            [settlement.owner for settlement in neighboring_settlements]
+        )
         robbee = self.current_player.prompt_robbing_victim(neighboring_players)
         if not robbee.has_resources:
-            self.current_player.message('%s has no resources to rob.'%robbee.color.capitalize())
+            self.current_player.message(
+                "%s has no resources to rob." % robbee.color.capitalize()
+            )
         else:
-            available_to_steal = filter(lambda r: robbee.resources[r]>0, ['brick','lumber','ore','grain','wool'])
+            available_to_steal = filter(
+                lambda r: robbee.resources[r] > 0,
+                ["brick", "lumber", "ore", "grain", "wool"],
+            )
             resource_to_steal = random.choice(available_to_steal)
             robbee.resources[resource_to_steal] -= 1
             self.current_player.resources[resource_to_steal] += 1
-            self.current_player.message('You got a %s.'%resource_to_steal)
-        
+            self.current_player.message("You got a %s." % resource_to_steal)
+
 
 if __name__ == "__main__":
     get = Input_getter("settlers.in").get
     # get = input
-    game = Game(get)
+    game = Game(getter=get)
 
 
 # iterate over players

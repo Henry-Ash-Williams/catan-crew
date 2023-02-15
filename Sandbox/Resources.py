@@ -13,6 +13,7 @@ class ResourceKind(Enum):
     def __str__(self):
         return self.capitalize()
 
+
 @dataclass
 class DevelopmentCard:
     knight: int = 0
@@ -110,10 +111,6 @@ class Resources:
             rep += f"{amount}x {kind.name}, "
 
         return rep
-
-
-
-
 
 
 RESOURCE_REQUIREMENTS = {

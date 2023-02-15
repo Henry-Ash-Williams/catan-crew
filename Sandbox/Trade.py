@@ -4,6 +4,7 @@ from Player import Player
 from Resources import Resources
 from dataclasses import dataclass
 
+
 @dataclass
 class Trade:
     sender: Player

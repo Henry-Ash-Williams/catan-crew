@@ -3,6 +3,7 @@
 import sys
 from os import system
 
+
 def clear():
     clear = "clear"
     if sys.platform.startswith("win32"):
