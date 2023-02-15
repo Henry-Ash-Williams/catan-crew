@@ -15,4 +15,4 @@ class Trade:
 
     def __init__(self):
         self.proposees = []
-        super()
+        super() #
