@@ -192,10 +192,10 @@ class Player:
             new_trade.recipient = player
             player.proposed_trades.append(new_trade)
 
-    def update_exchange_rate(player, special_harbour: bool, resource_type: str = None):
+    def update_exchange_rate(player, special_harbour: bool = False, resource_type: ResourceKind = None):
         if special_harbour:
             for inner_dict in player.exchange_rate.values():
-                inner_dict[resource_type] = 2
+                inner_dict[resource_type.name.lower()] = 2
         else:
             for inner_dict in player.exchange_rate.values():
                 keys = inner_dict.keys()
@@ -292,16 +292,19 @@ class HumanPlayer(Player):
         resources_offered = None
         while not (has_enough_resource):
             has_enough_resource = True
-            num_brick = player.get("Enter number of brick you offer: ")
-            num_lumber = player.get("Enter number of lumber you offer: ")
-            num_ore = player.get("Enter number of ore you offer: ")
-            num_grain = player.get("Enter number of grain you offer: ")
-            num_wool = player.get("Enter number of wool you offer: ")
+            num_brick = int(player.get("Enter number of brick you offer: "))
+            num_lumber = int(player.get("Enter number of lumber you offer: "))
+            num_ore = int(player.get("Enter number of ore you offer: "))
+            num_grain = int(player.get("Enter number of grain you offer: "))
+            num_wool = int(player.get("Enter number of wool you offer: "))
             resources_offered = Resources(brick = num_brick, lumber=num_lumber, ore=num_ore, grain=num_grain, wool=num_wool)
             for offering_resources, player_resources in zip(resources_offered, player.resources):
+                # why offering_resources is string>
                 if offering_resources > player_resources:
                     has_enough_resource = False
-                    print("player doesn't have enough resources to for this trade") 
+            
+            if not (has_enough_resource):
+                print("player doesn't have enough resources to for this trade") 
         
         return resources_offered
 
@@ -349,7 +352,7 @@ class HumanPlayer(Player):
         # don't return 2 chocie at the same time
         # the supply stack (bank) can ran out of resource
         # after the player make the first choice
-        # FIXME: need to double check the logic
+        # FIXME: need to double check the logic, also promot options to players
         choice = player.get("Pick a resource type: ")
         while not (player.game.bank.available_resources[choice]):
             choice = player.get("Pick a resource type: ")
