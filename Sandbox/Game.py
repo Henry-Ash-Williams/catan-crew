@@ -7,7 +7,7 @@ from clear import clear
 from pickle import Pickler, Unpickler
 
 from typing import Union
-import random, sys
+import random, sys, fileinput
 from rich.console import Console
 from rich.rule import Rule
 from rich.table import Table
@@ -18,55 +18,30 @@ ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 
 
-class Input_getter:
-    def __init__(self, filename):
-        self.index = 0
-        self.inputs = open(filename, "r+").readlines()
-
-    def get(self, s):
-        if self.index < len(self.inputs):
-            inp = self.inputs[self.index].rstrip("\r\n")
-            sys.stdout.write(s)
-            print(inp)
-            self.index += 1
-            return inp
-        else:
-            return input(s)
-
+class GameException(Exception):
+    pass
 
 
 class Game:
-    def __init__(self, getter, players=None, seed=None):
+    def __init__(self, getter, players=[], has_human_players=False, seed=None):
+    
         clear()
         self.getter = getter
         self.bank = Bank()
         self.board = Board(seed=seed)
         self.board.game = self
+        
+        self.players = players
+        self.player_colors = [player.color for player in players]
 
-        if players == None:
-            self.players = []
+        if has_human_players:
+            player_number = self.prompt_player_number()
+            for number in range(player_number):
+                self.prompt_human_player()
 
-            self.player_number = int(self.getter("How many players would like to play? "))
-
-            for i in range(1, self.player_number + 1):
-                color = self.getter("Player #%i's color: " % i)
-                self.players.append(HumanPlayer(color, getter))
-                # I pass game inside player # Ryu #so player know which game are they in?
-
-            requested_colors = set(p.color for p in self.players)
-            if len(requested_colors) != len(self.players):
-                raise Exception("More than one player have the same color")
-
-        else:
-            self.players = players
-
-        i = 0
-
-        for player in self.players:
-            player.game = self
-            player.number = i
-            i += 1
-
+        if len(self.players)<1:
+            raise GameException("You can't have a game with no players")
+        
         self.current_player_number = 0
         self.current_player = self.players[self.current_player_number]
 
@@ -76,6 +51,19 @@ class Game:
         self.turn_count = 0
 
         # self.start()
+    
+    def prompt_player_number(self):
+        return int(self.getter("How many players would like to play? "))
+    
+    def prompt_human_player(self):
+        player_number = len(self.players) + 1
+        color = self.getter("Player #%i's color: " % player_number)
+        while color in self.player_colors:
+            color = self.getter('Sorry, that color is already taken. Please choose a different color: ')
+        new_player = HumanPlayer(color, self.getter)
+        new_player.number = player_number
+        new_player.game = self
+        self.players.append(new_player)
 
     def check_longest_road(self) -> Player:
         player = max(self.players, key=lambda player: player.road_length)
@@ -325,9 +313,7 @@ class Game:
 
     def end_turn(self):
         self.turn_ongoing = False
-        self.current_player_number = (
-            self.current_player_number + 1
-        ) % self.player_number
+        self.current_player_number = (self.current_player_number + 1) % len(self.players)
         self.current_player = self.players[self.current_player_number]
         self.turn_count += 1
 
@@ -375,11 +361,16 @@ class Game:
             return pickle.load()
 
 if __name__ == "__main__":
-    get = Input_getter("settlers.in").get
-    # get = input
-    game = Game(getter=get)
+    inp = fileinput.input()
+    def get(s):
+        sys.stdout.write(s)
+        sys.stdout.flush()
+        k=inp.__next__().strip()
+        if inp.fileno()>0: print(k)
+        return k
+    #get = input
+    game = Game(getter=get, has_human_players=True)
     game.start()
-
 
 # iterate over players
 #  - roll dice
