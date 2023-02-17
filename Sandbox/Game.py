@@ -2,7 +2,7 @@ from Bank import Bank
 from Player import Player, HumanPlayer
 from Trade import Trade
 from Board import Intersection, Path, Tile, Settlement, City, Road, Board
-from Resources import Resources, ResourceKind, RESOURCE_NAMES
+from Resources import Resources, ResourceKind, RESOURCE_NAMES, RESOURCE_REQUIREMENTS
 from clear import clear
 from pickle import Pickler, Unpickler
 
@@ -268,6 +268,7 @@ class Game:
 
     def sell_development_card(self):
         dev_card = self.bank.distribute_dev_card()
+        self.current_player.resources -= RESOURCE_REQUIREMENTS["development_card"]
         self.current_player.gets_resource_card(dev_card)
         self.current_player.message(f"Congratulations, you got [b]{dev_card.name}[/b]")
 

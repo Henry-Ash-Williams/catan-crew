@@ -396,5 +396,4 @@ class HumanPlayer(Player):
     
     def gets_resource_card(self, dev_card: DevelopmentCardKind):
         """ takes a development card parameter, adds it to this player's development cards."""
-        # TODO: this method
-        pass
+        self.development_cards[dev_card.name] += 1

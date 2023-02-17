@@ -6,6 +6,7 @@ from Resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, Developmen
 from Player import Player
 
 
+class BankException(Exception): pass
 
 
 class Bank:
@@ -23,6 +24,7 @@ class Bank:
             + [DevelopmentCardKind.year_of_plenty for i in range(2)]
             + [DevelopmentCardKind.monopoly for i in range(2)]
         )
+        self.development_card_deck = []
         random.shuffle(self.development_card_deck)
         self.color = "Bank"
 
@@ -47,4 +49,6 @@ class Bank:
 
     def distribute_dev_card(self):
         """ pops a development card from the development card stack and returns it"""
-        # TODO: this method
+        if not self.development_card_deck:
+            raise BankException('Bank is out of development cards')
+        return self.development_card_deck.pop()
