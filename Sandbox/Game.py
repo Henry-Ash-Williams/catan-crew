@@ -2,7 +2,7 @@ from Bank import Bank
 from Player import Player, HumanPlayer
 from Trade import Trade
 from Board import Intersection, Path, Tile, Settlement, City, Road, Board
-from Resources import Resources
+from Resources import Resources, ResourceKind, RESOURCE_NAMES
 from clear import clear
 from pickle import Pickler, Unpickler
 
@@ -258,17 +258,15 @@ class Game:
         self.current_player.builds_road(choice, for_free)
 
     def sell_development_card(self):
-        self.current_player.buy_development_card()
+        dev_card = self.bank.distribute_dev_card()
+        self.current_player.gets_resource_card(dev_card)
+        self.current_player.message(f"Congratulations, you got [b]{dev_card.name}[/b]")
 
     def upgrade_settlement(self):
         settlement = self.current_player.prompt_settlement_for_upgrade()
         self.board.cells[settlement.location].settlement = None
         self.board.cells[settlement.location].has_settlement = False
         # TODO: finish this
-
-    def play_knight(self):
-        """play knight by interacting board"""
-        pass
 
     def play_monopoly(self):
         resource_name = self.current_player.prompt_monopoly_resource().name
@@ -296,6 +294,31 @@ class Game:
     def play_road_building(self):
         for _ in range(2):
             self.build_road(for_free=True)
+
+    def play_knight(self):
+        tile_choice = self.current_player.prompt_robber_location()
+        self.board.robber_location = tile_choice
+        self.current_player.knights_played += 1
+        neighboring_settlements = self.board.settlements_neighboring(tile_choice)
+        if not neighboring_settlements:
+            self.current_player.message('The tile where the robber has been placed has no neighboring settlements')
+            return
+        neighboring_players = list(set(
+            [settlement.owner for settlement in neighboring_settlements]
+        ))
+        potential_robbees = filter(lambda p: p.has_resources(), neighboring_players)
+        if not potential_robbees:
+            self.current_player.message('None of the neighboring players have resource cards.')
+            return
+        robbee = self.current_player.prompt_robbing_victim(potential_robbees)
+        available_to_steal = filter(
+            lambda r: robbee.resources[r] > 0,
+            RESOURCE_NAMES,
+        )
+        resource_to_steal = random.choice(available_to_steal)
+        robbee.resources[resource_to_steal] -= 1
+        self.current_player.resources[resource_to_steal] += 1
+        self.current_player.message("You got a %s." % resource_to_steal)
 
     def verify_current_player_is(self, player):
         if player != self.current_player:
@@ -326,28 +349,6 @@ class Game:
         self.board.add_settlement(
             location, settlement, allow_disconnected_settlement=self.is_just_starting
         )
-
-    def move_robber(self):
-        tile_choice = self.current_player.prompt_robber_location()
-        self.board.robber_location = tile_choice
-        neighboring_settlements = self.board.settlements_neighboring(tile_choice)
-        neighboring_players = set(
-            [settlement.owner for settlement in neighboring_settlements]
-        )
-        robbee = self.current_player.prompt_robbing_victim(neighboring_players)
-        if not robbee.has_resources:
-            self.current_player.message(
-                "%s has no resources to rob." % robbee.color.capitalize()
-            )
-        else:
-            available_to_steal = filter(
-                lambda r: robbee.resources[r] > 0,
-                ["brick", "lumber", "ore", "grain", "wool"],
-            )
-            resource_to_steal = random.choice(available_to_steal)
-            robbee.resources[resource_to_steal] -= 1
-            self.current_player.resources[resource_to_steal] += 1
-            self.current_player.message("You got a %s." % resource_to_steal)
 
 
     def save_state(self, filename: str):

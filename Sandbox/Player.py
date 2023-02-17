@@ -6,7 +6,7 @@ from rich.columns import Columns
 from rich.panel import Panel
 
 from Board import Settlement, City, Road
-from Resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind
+from Resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind, DevelopmentCardKind
 
 
 class Player:
@@ -251,19 +251,24 @@ class Player:
         """Returns True if player has a Monopoly card."""
         return player.development_cards["monopoly"] > 0
 
-    def calculate_visable_victory_point(player):
+    def calculate_visible_victory_point(player):
         """for each action, the game can update this, so that every players can view other players' VP in real time"""
         # please refactor this line
-        player.visible_victory_points = (
-            len(player.built_cities) * 2 + len(player.built_settlements) + 2
-            if player.game.check_longest_road() is player
-            else 0 + (2 if player.game.check_largest_army is player else 0)
-        )
+        player.visible_victory_points = \
+            1 * len(player.built_settlements) + \
+            2 * len(player.built_cities) + \
+            2 * (player.game.check_longest_road() is player) + \
+            2 * (player.game.check_largest_army is player)
+        
         return player.visible_victory_points
+
+    def calculate_hidden_victory_points(player):
+        player.hidden_victory_points = player.development_cards["hidden_victory_point"]
+        return player.hidden_victory_points
 
     def calculate_total_victory_point(player):
         """for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
-        return player.calculate_visable_victory_point + player.hidden_victory_points
+        return player.calculate_visable_victory_point() + player.calculate_hidden_victory_points()
 
 
 class HumanPlayer(Player):
@@ -384,3 +389,12 @@ class HumanPlayer(Player):
 
     def message(self, msg: str):
         print(msg)
+
+    def prompt_robbing_victim(self): pass  # TODO: this method
+    
+    def prompt_robber_location(self): pass # TODO: this method
+    
+    def gets_resource_card(self, dev_card: DevelopmentCardKind):
+        """ takes a development card parameter, adds it to this player's development cards."""
+        # TODO: this method
+        pass

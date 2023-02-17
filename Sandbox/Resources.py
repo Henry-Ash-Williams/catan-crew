@@ -2,17 +2,15 @@
 from dataclasses import dataclass
 from enum import Enum
 
+RESOURCE_NAMES = ["brick", "lumber", "ore", "grain", "wool"]
 
-class ResourceKind(Enum):
-    brick = 0
-    lumber = 1
-    ore = 2
-    grain = 3
-    wool = 4
 
-    def __str__(self):
-        return self.name.capitalize()
-
+class DevelopmentCardKind(Enum):
+    knight = 0
+    hidden_victory_point = 1
+    road_building = 2
+    year_of_plenty = 3
+    monopoly = 4
 
 @dataclass
 class DevelopmentCard:
@@ -28,6 +26,16 @@ class DevelopmentCard:
     def card_count(self) -> int:
         return sum(self)
 
+
+class ResourceKind(Enum):
+    brick = 0
+    lumber = 1
+    ore = 2
+    grain = 3
+    wool = 4
+
+    def __str__(self):
+        return self.name.capitalize()
 
 @dataclass(order=True)
 class Resources:

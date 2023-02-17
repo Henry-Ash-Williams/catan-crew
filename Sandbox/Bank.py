@@ -2,16 +2,10 @@
 import random
 from Trade import Trade
 from enum import Enum
-from Resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS
+from Resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind
 from Player import Player
 
 
-class DevelopmentCardKind(Enum):
-    knight = 0
-    hidden_victory_point = 1
-    road_building = 2
-    year_of_plenty = 3
-    monopoly = 4
 
 
 class Bank:
@@ -42,7 +36,7 @@ class Bank:
         self.available_resources += returned_resources
 
     def sell_development_card(self, player: Player) -> str:
-        if player.can_buy_dev_card() != True:
+        if not player.can_buy_dev_card():
             raise Exception("Player does not have resources to purchase dev card")
         elif len(self.development_card_deck) <= 0:
             raise Exception("Bank is out of development cards")
@@ -50,3 +44,7 @@ class Bank:
             player.resources -= RESOURCE_REQUIREMENTS["development_card"]
             dev_card = self.development_card_deck.pop().name.replace("_", " ")
             player.development_cards[dev_card] += 1
+
+    def distribute_dev_card(self):
+        """ pops a development card from the development card stack and returns it"""
+        # TODO: this method
