@@ -41,7 +41,7 @@ class Bank:
     def return_to_bank(self, returned_resources: Resources):
         self.available_resources += returned_resources
 
-    def sell_development_card(self, player: Player):
+    def sell_development_card(self, player: Player) -> str:
         if player.can_buy_dev_card() != True:
             raise Exception("Player does not have resources to purchase dev card")
         elif len(self.development_card_deck) <= 0:

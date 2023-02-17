@@ -1,14 +1,15 @@
-from Game import Game, Input_getter
-from rich import print
+from Game import Game
 
 
 if __name__ == "__main__":
-    get = Input_getter("settlers.test.in").get
-
-    g = Game(getter=get, seed=420)
+    # get = Input_getter("settlers.test.in").get
+    # get = input
+    # g = Game(get, seed=420)
+    g = Game.load_state("game_state.pickle")
+    g.getter = input
     try:
-        g.start()
-    except KeyboardInterrupt:
+        g.game_loop()
+    except Exception:
         g.save_state("game_state.pickle")
 
 

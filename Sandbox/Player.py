@@ -31,9 +31,9 @@ class Player:
         player.resources = Resources()
         player.development_cards = {
             "knight": 0,
-            "hidden victory point": 0,
-            "road building": 0,
-            "year of plenty": 0,
+            "hidden_victory_point": 0,
+            "road_building": 0,
+            "year_of_plenty": 0,
             "monopoly": 0,
         }  # TODO: either dict or dataclass
 
@@ -66,13 +66,13 @@ class Player:
         t.add_column("Count")
         t.add_row("Knight", str(self.development_cards["knight"]), style="blue_violet")
         t.add_row(
-            "Road Building",
-            str(self.development_cards["road building"]),
+            "Road_Building",
+            str(self.development_cards["road_building"]),
             style="chartreuse4",
         )
         t.add_row(
-            "Year of Plenty",
-            str(self.development_cards["year of plenty"]),
+            "year_of_plenty",
+            str(self.development_cards["year_of_plenty"]),
             style="red3",
         )
         t.add_row("Monopoly", str(self.development_cards["monopoly"]), style="gold1")
@@ -132,7 +132,7 @@ class Player:
         player.available_settlements.append(Settlement(player))
 
     def builds_road(player, location, for_free=False):
-        player.resources -= Resources() if for_free else RESOURCE_REQUIREMENTS["road"]
+        player.resources -= RESOURCE_REQUIREMENTS["road"] if not for_free else Resources()
         road = player.available_roads.pop()
         player.game.add_road(location, road)
         road.location = location
@@ -148,15 +148,15 @@ class Player:
 
     def play_year_of_plenty(player, resource1: str, resource2: str):
         # check dev card
-        if player.development_cards["year of plenty"] <= 0:
-            raise Exception("Player has no available year of plenty card to play")
+        if player.development_cards["year_of_plenty"] <= 0:
+            raise Exception("Player has no available year_of_plenty card to play")
         else:
-            player.development_cards["year of plenty"] -= 1
+            player.development_cards["year_of_plenty"] -= 1
             player.game.play_monopoly(player, resource1, resource2)
 
     def play_road_building(player, location1, location2):
         # can place 2 roads immediately
-        player.development_cards["road building"] -= 1
+        player.development_cards["road_building"] -= 1
         player.game.add_road(location1)
         player.game.add_road(location2)
 
@@ -218,10 +218,7 @@ class Player:
 
     def has_resources(player):
         """Returns True if player has any resource to trade."""
-        for amount in player.resources:
-            if amount > 0:
-                return True
-        return False
+        return any(map(lambda resource: resource > 0, player.resources))
 
     def can_upgrade_settlement(player):
         """Returns True if player has an un-upgraded settlement and
@@ -243,12 +240,12 @@ class Player:
         return player.development_cards["knight"] > 0
 
     def has_road_building_card(player):
-        """Returns True if player has a Road Building card."""
-        return player.development_cards["road building"] > 0
+        """Returns True if player has a Road_Building card."""
+        return player.development_cards["road_building"] > 0
 
     def has_year_of_plenty_card(player):
-        """Returns True if player has a Year of Plenty card."""
-        return player.development_cards["year of plenty"] > 0
+        """Returns True if player has a year_of_plenty card."""
+        return player.development_cards["year_of_plenty"] > 0
 
     def has_monopoly_card(player):
         """Returns True if player has a Monopoly card."""
@@ -333,7 +330,7 @@ class HumanPlayer(Player):
         return choice
 
     def prompt_road_building(player):
-        """Called when user plays Road Building card.
+        """Called when user plays Road_Building card.
         Prompts user for the location of a path to build a road on,
         initiates the building of that road, then repeats this again for
         second road."""
@@ -345,7 +342,7 @@ class HumanPlayer(Player):
         return choice
 
     def prompt_year_of_plenty(player):
-        """Called when user plays Year of Plenty card.
+        """Called when user plays year_of_plenty card.
         Prompts user for a resource type to get from bank,
         passes it to them, then repeats this again for second
         resource type."""
@@ -383,7 +380,7 @@ class HumanPlayer(Player):
         Passes development card to them and prints out which card
         they got."""
         name_of_dev_card = self.game.bank.sell_development_card(self)
-        print(f"Congratulations, you got {name_of_dev_card}")
+        print(f"Congratulations, you got [b]{name_of_dev_card}[/b]")
 
     def message(self, msg: str):
         print(msg)

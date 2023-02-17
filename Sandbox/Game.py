@@ -118,6 +118,8 @@ class Game:
                 player.visible_victory_points,
                 player.road_length,
                 player.knights_played,
+                player.resources.card_count()[0],
+                player.resources.card_count()[1],
             )
             for player in self.players
         ]
@@ -127,6 +129,8 @@ class Game:
         t.add_column("Victory Points")
         t.add_column("Road Length")
         t.add_column("Army Size")
+        t.add_column("Resource Cards")
+        t.add_column("Development Cards")
 
         for player in player_data:
             t.add_row(
@@ -134,6 +138,8 @@ class Game:
                 str(player[1]),
                 str(player[2]),
                 str(player[3]),
+                str(player[4]),
+                str(player[5]),
                 style=player[0],
             )
         return t

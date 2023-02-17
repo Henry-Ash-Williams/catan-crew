@@ -3,8 +3,6 @@ from functools import reduce
 from Resources import ResourceKind
 from pickle import Pickler, Unpickler
 
-from Resources import *
-
 
 def join(l):
     return list(set(reduce(lambda x, y: x + y, l, [])))

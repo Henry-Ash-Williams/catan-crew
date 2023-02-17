@@ -22,6 +22,12 @@ class DevelopmentCard:
     year_of_plenty: int = 0
     monopoly: int = 0
 
+    def __iter__(self):
+        return iter([self.knight, self.hidden_victory_point, self.road_building, self.year_of_plenty, self.monopoly])
+
+    def card_count(self) -> int:
+        return sum(self)
+
 
 @dataclass(order=True)
 class Resources:
@@ -99,6 +105,9 @@ class Resources:
             (ResourceKind.grain, self.grain),
             (ResourceKind.wool, self.wool),
         ]
+
+    def card_count(self) -> (int, int):
+        return (sum(self), self.development_cards.card_count())
 
     def __str__(self):
         rep = ""
