@@ -227,6 +227,9 @@ class Board:
 
     def has_intersection(board, location):
         return type(board.cells[location]) is Intersection
+    
+    def has_tile(board, location):
+        return type(board.cells[location]) is Tile
 
     def add_road(board, location, road):
         if not board.has_path(location):
@@ -342,6 +345,16 @@ class Board:
             if intersection.has_settlement
         ]
         return settlements
+
+    def tiles_neighboring(board, settlement):
+        tiles = board.select(
+            around=settlement.location,
+            distance=1,
+            dir_pattern=(2,),
+            matching=board.has_tile,
+            return_cells=True,
+        )
+        return tiles
 
     # This should return the board state in some format which the board can be initialized from
     def save_state(self, filename: str):

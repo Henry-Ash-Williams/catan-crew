@@ -122,10 +122,15 @@ class Resources:
         if all(map(lambda r: r == 0, self)):
             return "Nothing!"
 
-        for kind, amount in self.data_rep():
-            if amount == 0:
-                continue
-            rep += f"{amount}x {kind.name}, "
+        #for kind, amount in self.data_rep():
+        #    if amount == 0:
+        #        continue
+        #    rep += f"{amount}x {kind.name}, "
+        
+        rep = ", ".join(f"{amount}x {kind.name}" 
+                        for kind, amount
+                        in self.data_rep()
+                        if amount>0)
 
         return rep
 

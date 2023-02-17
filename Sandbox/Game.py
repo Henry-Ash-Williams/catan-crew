@@ -147,15 +147,24 @@ class Game:
             self.build_settlement(for_free=True)
             self.build_road(for_free=True)
 
-        self.build_settlement(for_free=True)
+        new_settlement = self.build_settlement(for_free=True)
+        self.distribute_bonus(new_settlement)
         self.build_road(for_free=True)
         for player in self.players[-2::-1]:
             self.set_turn(player)
-            self.build_settlement(for_free=True)
+            new_settlement = self.build_settlement(for_free=True)
+            self.distribute_bonus(new_settlement)
             self.build_road(for_free=True)
 
         self.getter("Press any key to continue")
         clear()
+
+    def distribute_bonus(self, settlement):
+        bonus_resources = Resources()
+        for tile in self.board.tiles_neighboring(settlement):
+            bonus_resources += self.bank.distribute(settlement.distribution_rate, tile.resource)
+        settlement.owner.resources += bonus_resources
+        settlement.owner.message(f'You got {bonus_resources}')
 
     def game_loop(self):
         c = Console()
@@ -251,7 +260,7 @@ class Game:
 
     def build_settlement(self, for_free=False):
         choice = self.current_player.prompt_settlement_location()
-        self.current_player.builds_settlement(choice, for_free)
+        return self.current_player.builds_settlement(choice, for_free)
 
     def build_road(self, for_free=False):
         choice = self.current_player.prompt_road_location()

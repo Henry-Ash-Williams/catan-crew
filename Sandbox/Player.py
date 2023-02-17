@@ -121,7 +121,7 @@ class Player:
         player.game.add_settlement(location, settlement)
         settlement.location = location
         player.built_settlements.append(settlement)
-        # TODO: settlement.location seems exist, so we may get rid of the tuple
+        return settlement
 
     def upgrade_settlement(player, location):
         player.resources -= RESOURCE_REQUIREMENTS["city"]
