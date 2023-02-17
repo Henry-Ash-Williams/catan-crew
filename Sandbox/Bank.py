@@ -24,7 +24,6 @@ class Bank:
             + [DevelopmentCardKind.year_of_plenty for i in range(2)]
             + [DevelopmentCardKind.monopoly for i in range(2)]
         )
-        self.development_card_deck = []
         random.shuffle(self.development_card_deck)
         self.color = "Bank"
 

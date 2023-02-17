@@ -66,16 +66,17 @@ class Player:
         t.add_column("Count")
         t.add_row("Knight", str(self.development_cards["knight"]), style="blue_violet")
         t.add_row(
-            "Road_Building",
+            "Road Building",
             str(self.development_cards["road_building"]),
             style="chartreuse4",
         )
         t.add_row(
-            "year_of_plenty",
+            "Year of Plenty",
             str(self.development_cards["year_of_plenty"]),
             style="red3",
         )
         t.add_row("Monopoly", str(self.development_cards["monopoly"]), style="gold1")
+        t.add_row("Hidden Victory Point", str(self.development_cards["hidden_victory_point"]), style="grey70")
         return t
 
     def view_available_resources(self) -> Table:
