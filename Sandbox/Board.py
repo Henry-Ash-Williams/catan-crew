@@ -54,7 +54,7 @@ class Tile:
 class City(Settlement):
     def __init__(city, owner):
         city.distribution_rate = 2
-        super()
+        super().__init__(owner)
 
 class Sea:
     def _init__(sea):

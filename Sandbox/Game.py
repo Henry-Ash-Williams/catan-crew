@@ -16,6 +16,7 @@ from dataclasses import dataclass
 
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
+ROBBING_THRESHOLD = 7
 
 
 class GameException(Exception):
@@ -63,7 +64,7 @@ class Game:
         new_player = HumanPlayer(color, self.getter)
         new_player.number = player_number
         new_player.game = self
-        #new_player.resources = Resources(5,5,5,5,5) # Uncomment for testing
+        #new_player.resources = Resources(5,5,5,5,5) # This line is for testing
         self.players.append(new_player)
 
     def check_longest_road(self) -> Player:
@@ -104,7 +105,7 @@ class Game:
         player_data = [
             (
                 player.color,
-                player.visible_victory_points,
+                player.calculate_visible_victory_points(),
                 player.road_length,
                 player.knights_played,
                 player.resources.card_count()[0],
@@ -183,11 +184,20 @@ class Game:
 
         player = self.current_player
 
-        resources_before = player.resources
-        self.distribute_resources()
-        resources_after = player.resources
-        resources_gained = resources_after - resources_before
-        print("\nYou got:", str(resources_gained), "\n")
+        if self.dice == 7:
+            self.current_player.message(f"You rolled a 7. Any player with more than {ROBBING_THRESHOLD} resource cards now has to give up half of them!")
+            for player in self.players:
+                player_wealth = sum(player.resources)
+                if player_wealth > ROBBING_THRESHOLD:
+                    amount_robbed = player_wealth // 2
+                    player.message(f"A 7 has been rolled. You have {player_wealth} resource cards. You have to give up {amount_robbed} of them.")
+                    player.message(f"Select {amount_robbed} cards out of the following to give up: {player.resources}")
+        else:
+            resources_before = player.resources
+            self.distribute_resources()
+            resources_after = player.resources
+            resources_gained = resources_after - resources_before
+            print("\nYou got:", str(resources_gained), "\n")
 
         self.turn_ongoing = True
 
@@ -275,9 +285,7 @@ class Game:
 
     def upgrade_settlement(self):
         settlement = self.current_player.prompt_settlement_for_upgrade()
-        self.board.cells[settlement.location].settlement = None
-        self.board.cells[settlement.location].has_settlement = False
-        # TODO: finish this
+        self.current_player.upgrade_settlement(settlement)
 
     def play_monopoly(self):
         self.current_player.development_cards["monopoly"] -= 1

@@ -124,13 +124,18 @@ class Player:
         player.built_settlements.append(settlement)
         return settlement
 
-    def upgrade_settlement(player, location):
+    def upgrade_settlement(player, settlement: Settlement):
         player.resources -= RESOURCE_REQUIREMENTS["city"]
+        
         city = player.available_cities.pop()
-        player.game.upgrade_settlement(location, city)
-        city.location = location
+        city.location = settlement.location
         player.built_cities.append(city)
-        player.available_settlements.append(Settlement(player))
+        
+        player.built_settlements.remove(settlement)
+        settlement.location = None
+        player.available_settlements.append(settlement)
+        
+        player.game.board.cells[city.location].settlement = city
 
     def builds_road(player, location, for_free=False):
         player.resources -= RESOURCE_REQUIREMENTS["road"] if not for_free else Resources()
@@ -252,7 +257,7 @@ class Player:
         """Returns True if player has a Monopoly card."""
         return player.development_cards["monopoly"] > 0
 
-    def calculate_visible_victory_point(player):
+    def calculate_visible_victory_points(player):
         """for each action, the game can update this, so that every players can view other players' VP in real time"""
         # please refactor this line
         player.visible_victory_points = \
@@ -267,7 +272,7 @@ class Player:
         player.hidden_victory_points = player.development_cards["hidden_victory_point"]
         return player.hidden_victory_points
 
-    def calculate_total_victory_point(player):
+    def calculate_total_victory_points(player):
         """for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
         return player.calculate_visable_victory_point() + player.calculate_hidden_victory_points()
 
@@ -314,17 +319,16 @@ class HumanPlayer(Player):
             
 
 
-    def prompt_settlement_for_upgrade(player):
-        """Called when user want to upgrade a settlement.
-        Prompts user for settlement they want to upgrade,
-        then initiates upgrade"""
+    def prompt_settlement_for_upgrade(player) -> Settlement:
+        """Called when the user chooses to upgrade a settlement.
+        Prompts user for settlement they want to upgrade."""
         choice = None
         print(f"Your settlements: {[settlement.location for settlement in player.built_settlements]}")
         while not (
             choice in [settlement.location for settlement in player.built_settlements]
         ):
             choice = int(player.get("Pick one of your settlement to upgrade: "))
-        return choice
+        return player.game.board.cells[choice].settlement
 
     def prompt_knight(player):
         """Called when user plays knight card.
