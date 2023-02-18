@@ -63,6 +63,7 @@ class Game:
         new_player = HumanPlayer(color, self.getter)
         new_player.number = player_number
         new_player.game = self
+        #new_player.resources = Resources(5,5,5,5,5) # Uncomment for testing
         self.players.append(new_player)
 
     def check_longest_road(self) -> Player:
@@ -279,6 +280,7 @@ class Game:
         # TODO: finish this
 
     def play_monopoly(self):
+        self.current_player.development_cards["monopoly"] -= 1
         resource_name = self.current_player.prompt_monopoly_resource().name
         total_gained = 0
         for player in self.players:
@@ -292,6 +294,7 @@ class Game:
         )
 
     def play_year_of_plenty(self):
+        self.current_player.development_cards["year_of_plenty"] -= 1
         for _ in range(2):
             choice = self.current_player.prompt_YoP_resource()
             while not self.bank.available_resources[choice.name]:
@@ -302,6 +305,7 @@ class Game:
             self.current_player.resources += self.bank.distribute_resources(1, choice)
 
     def play_road_building(self):
+        self.current_player.development_cards["road_building"] -= 1
         for _ in range(2):
             self.build_road(for_free=True)
 
@@ -309,6 +313,7 @@ class Game:
         tile_choice = self.current_player.prompt_robber_location()
         self.board.robber_location = tile_choice
         self.current_player.knights_played += 1
+        self.current_player.development_cards["knight"] -= 1
         neighboring_settlements = self.board.settlements_neighboring(tile_choice)
         if not neighboring_settlements:
             self.current_player.message('The tile where the robber has been placed has no neighboring settlements')
@@ -316,15 +321,16 @@ class Game:
         neighboring_players = list(set(
             [settlement.owner for settlement in neighboring_settlements]
         ))
-        potential_robbees = filter(lambda p: p.has_resources(), neighboring_players)
+        neighboring_players = [player for player in neighboring_players if not (player is self.current_player)]
+        if not neighboring_players:
+            self.current_player.message('You are the only player adjacent to the chosen tile.')
+            return
+        potential_robbees = [player for player in neighboring_players if player.has_resources()]
         if not potential_robbees:
-            self.current_player.message('None of the neighboring players have resource cards.')
+            self.current_player.message('None of the players adjacent to this tile have any resource cards.')
             return
         robbee = self.current_player.prompt_robbing_victim(potential_robbees)
-        available_to_steal = filter(
-            lambda r: robbee.resources[r] > 0,
-            RESOURCE_NAMES,
-        )
+        available_to_steal = [resource_name for resource_name in RESOURCE_NAMES if robbee.resources[resource_name]>0]
         resource_to_steal = random.choice(available_to_steal)
         robbee.resources[resource_to_steal] -= 1
         self.current_player.resources[resource_to_steal] += 1

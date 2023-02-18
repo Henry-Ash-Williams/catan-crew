@@ -5,7 +5,7 @@ from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
 
-from Board import Settlement, City, Road
+from Board import Settlement, City, Road, Tile
 from Resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind, DevelopmentCardKind
 
 
@@ -139,9 +139,9 @@ class Player:
         road.location = location
         player.built_roads.append(road)
 
-    def play_knight(player, location):
-        player.development_cards["knight"] -= 1
-        player.game.play_knight(location)
+    #def play_knight(player, location):
+    #    player.development_cards["knight"] -= 1
+    #    player.game.play_knight(location)
 
     def play_monopoly(player, resource_type: ResourceKind):
         player.development_cards["monopoly"] -= 1
@@ -381,20 +381,43 @@ class HumanPlayer(Player):
             choice = int(player.get("Pick a resource type: "))
         return ResourceKind[choice]
 
-    def buy_development_card(self):
+    def buy_development_card(player):
         """Called when user chooses to buy a development card.
         Passes development card to them and prints out which card
         they got."""
-        name_of_dev_card = self.game.bank.sell_development_card(self)
+        name_of_dev_card = player.game.bank.sell_development_card(player)
         print(f"Congratulations, you got [b]{name_of_dev_card}[/b]")
 
-    def message(self, msg: str):
+    def message(player, msg: str):
         print(msg)
 
-    def prompt_robbing_victim(self): pass  # TODO: this method
+    def prompt_robbing_victim(player, robbee_options: list[Player]) -> Player:
+        """Prompts the player for a choice of other player to rob."""
+        available_robbees = [(potential_robbee.color,potential_robbee) for potential_robbee in robbee_options]
+        
+        print("\nYou can rob:")
+        for index, (color, robbee) in enumerate(available_robbees, 1):
+            print("%i. %s" % (index, color))
+
+        choice = int(player.get("Who would you like to rob? ")) - 1
+        
+        return robbee_options[choice]
     
-    def prompt_robber_location(self): pass # TODO: this method
+    def prompt_robber_location(player) -> Tile:
+        """Prompts player for a location at which to place the robber."""
+        chosen_tile_location = int(player.get('Pick a location at which to place the robber: '))
+        valid_tile = player.game.board.has_tile(chosen_tile_location)
+        robber_moved = (chosen_tile_location != player.game.board.robber_location)
+        while not (valid_tile and robber_moved):
+            if not robber_moved:
+                chosen_tile_location = int(player.get("The robber is already on that tile. Pick another: "))
+            elif not valid_tile:
+                chosen_tile_location = int(player.get("Sorry, that's not a valid tile location. Pick another: "))
+            valid_tile = player.game.board.has_tile(chosen_tile_location)
+            robber_moved = (chosen_tile_location != player.game.board.robber_location)
+        chosen_tile = player.game.board.cells[chosen_tile_location]
+        return chosen_tile
     
-    def gets_resource_card(self, dev_card: DevelopmentCardKind):
-        """ takes a development card parameter, adds it to this player's development cards."""
-        self.development_cards[dev_card.name] += 1
+    def gets_resource_card(player, dev_card: DevelopmentCardKind):
+        """ Takes a development card parameter, adds it to this player's development cards."""
+        player.development_cards[dev_card.name] += 1
