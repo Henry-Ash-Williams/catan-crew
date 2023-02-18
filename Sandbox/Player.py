@@ -6,7 +6,7 @@ from rich.columns import Columns
 from rich.panel import Panel
 
 from Board import Settlement, City, Road, Tile
-from Resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind, DevelopmentCardKind
+from Resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind, DevelopmentCardKind, RESOURCE_NAMES
 
 
 class Player:
@@ -275,11 +275,19 @@ class Player:
     def calculate_total_victory_points(player):
         """for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
         return player.calculate_visable_victory_point() + player.calculate_hidden_victory_points()
+    
+    def gets_resource_card(player, dev_card: DevelopmentCardKind):
+        """ Takes a development card parameter, adds it to this player's development cards."""
+        player.development_cards[dev_card.name] += 1
+
+    def message(player, msg: str):
+        print(msg)
 
 
 class HumanPlayer(Player):
     def prompt_settlement_location(player):
         choice = None
+        print(f"Valid settlement locations: ???")  # TODO
         while not (choice in player.game.board.available_intersection_locations):
             choice = int(player.get("Pick a location to place a settlement: "))
         return choice
@@ -315,9 +323,6 @@ class HumanPlayer(Player):
                 print("player doesn't have enough resources to for this trade") 
         
         return resources_offered
-
-            
-
 
     def prompt_settlement_for_upgrade(player) -> Settlement:
         """Called when the user chooses to upgrade a settlement.
@@ -385,15 +390,15 @@ class HumanPlayer(Player):
             choice = int(player.get("Pick a resource type: "))
         return ResourceKind[choice]
 
-    def buy_development_card(player):
-        """Called when user chooses to buy a development card.
-        Passes development card to them and prints out which card
-        they got."""
-        name_of_dev_card = player.game.bank.sell_development_card(player)
-        print(f"Congratulations, you got [b]{name_of_dev_card}[/b]")
-
-    def message(player, msg: str):
-        print(msg)
+    # Deprecated method
+    # TODO: delete once sure it's not going to be used
+    
+    #def buy_development_card(player):
+    #    """Called when user chooses to buy a development card.
+    #    Passes development card to them and prints out which card
+    #    they got."""
+    #    name_of_dev_card = player.game.bank.sell_development_card(player)
+    #    print(f"Congratulations, you got [b]{name_of_dev_card}[/b]")
 
     def prompt_robbing_victim(player, robbee_options: list[Player]) -> Player:
         """Prompts the player for a choice of other player to rob."""
@@ -421,7 +426,17 @@ class HumanPlayer(Player):
             robber_moved = (chosen_tile_location != player.game.board.robber_location)
         chosen_tile = player.game.board.cells[chosen_tile_location]
         return chosen_tile
+        
+    def prompt_resource(player, prompt) -> ResourceKind:
+        choice = player.get(prompt).lower()
+        while not choice in RESOURCE_NAMES:
+            choice = player.get("That is not a valid resource name. Try again: ").lower()
+        resource = ResourceKind(RESOURCE_NAMES.index(choice))
+        assert resource.name == choice
+        return resource
     
-    def gets_resource_card(player, dev_card: DevelopmentCardKind):
-        """ Takes a development card parameter, adds it to this player's development cards."""
-        player.development_cards[dev_card.name] += 1
+    def prompt_monopoly_resource(player) -> ResourceKind:
+        return player.prompt_resource("Select a resource to monopolize: ")
+
+    def prompt_YoP_resource(player) -> ResourceKind:
+        return player.prompt_resource("Select a resource to get from bank: ")

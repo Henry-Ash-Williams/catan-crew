@@ -186,12 +186,12 @@ class Game:
 
         if self.dice == 7:
             self.current_player.message(f"You rolled a 7. Any player with more than {ROBBING_THRESHOLD} resource cards now has to give up half of them!")
-            for player in self.players:
-                player_wealth = sum(player.resources)
+            for other_player in self.players:
+                player_wealth = sum(other_player.resources)
                 if player_wealth > ROBBING_THRESHOLD:
                     amount_robbed = player_wealth // 2
-                    player.message(f"A 7 has been rolled. You have {player_wealth} resource cards. You have to give up {amount_robbed} of them.")
-                    player.message(f"Select {amount_robbed} cards out of the following to give up: {player.resources}")
+                    other_player.message(f"A 7 has been rolled. You have {player_wealth} resource cards. You have to give up {amount_robbed} of them.")
+                    other_player.message(f"Select {amount_robbed} cards out of the following to give up: {player.resources}")
         else:
             resources_before = player.resources
             self.distribute_resources()
@@ -298,7 +298,7 @@ class Game:
             player.resources[resource_name] = 0
         self.current_player.resources[resource_name] += total_gained
         self.current_player.message(
-            "Congrats, you got %i %ss!" % (resource_name, total_gained)
+            "Congrats, you got %i %ss!" % (total_gained, resource_name)
         )
 
     def play_year_of_plenty(self):
@@ -310,7 +310,7 @@ class Game:
                     "Sorry, the bank doesn't have any %s." % choice.name
                 )
                 choice = self.current_player.prompt_YoP_resource()
-            self.current_player.resources += self.bank.distribute_resources(1, choice)
+            self.current_player.resources += self.bank.distribute(1, choice)
 
     def play_road_building(self):
         self.current_player.development_cards["road_building"] -= 1
