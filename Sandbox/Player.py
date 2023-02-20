@@ -7,7 +7,10 @@ from rich.panel import Panel
 
 from Board import Settlement, City, Road, Tile
 from Resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind, DevelopmentCardKind, RESOURCE_NAMES
+from Trade import Trade
+import random
 
+class PlayerException(Exception): pass
 
 class Player:
     def __init__(player, color, getter=None):
@@ -56,6 +59,8 @@ class Player:
 
     # def builds_road(player, location):
     #  player.game.board.add_road(location, player)
+
+    def __str__(player): return player.color.capitalize()
 
     def roll_dice(player):
         player.game.dice_roll()
@@ -283,6 +288,13 @@ class Player:
     def message(player, msg: str):
         print(msg)
 
+    def distribute_resources(player, resources: Resources) -> Resources:
+        if player.resources < resources:
+            raise PlayerException('Not enough resources to give away')
+        else:
+            player.resources -= resources
+            return resources
+
 
 class HumanPlayer(Player):
     def prompt_settlement_location(player):
@@ -320,10 +332,52 @@ class HumanPlayer(Player):
                     has_enough_resource = False
             
             if not (has_enough_resource):
-                print("player doesn't have enough resources to for this trade") 
+                print("player doesn't have enough resources to for this trade")
+                
+        resources_requested_input = player.get('Enter resources you want to get in format (%s): '%', '.join(RESOURCE_NAMES))
+        while True:
+            try: resources_requested = Resources(*eval(resources_requested_input)); break
+            except:
+                resources_requested_input = player.get("That doesn't look right. Try again: ")
         
-        return resources_offered
+        print("\nYou can trade with:")
+        for index, proposee in enumerate(player.game.players, 1):
+            print("%i. %s" % (index, proposee))
+        
+        prompt1 = 'Who would you like to propose this trade to? '
+        choices = [p.strip() for p in player.get(prompt1).split(',')]
+        choices_are_numbers = all(p.isnumeric() for p in choices)
+        if choices_are_numbers:
+            numeric_choices = [int(choice) for choice in choices]
+            choices_in_range = min(numeric_choices)>0 and max(numeric_choices)<=len(player.game.players)
+        
+        while not (choices_are_numbers and choices_in_range):
+            prompt2 = "That is not a valid selection of players. Try again: "
+            choices = [p.strip() for p in player.get(prompt2).split(',')]
+            choices_are_numbers = all([p.isnumeric() for p in choices])
+            if choices_are_numbers:
+                numeric_choices = [int(choice) for choice in choices]
+                choices_in_range = min(numeric_choices)>0 and max(numeric_choices)<=len(player.game.players)
+        
+        proposees = [player.game.players[choice-1] for choice in numeric_choices]
+        
+        return Trade(sender=player,resources_offered=resources_offered,resources_requested=resources_requested,proposees=proposees)
 
+    def accepts_trade(player, trade):
+        # TODO
+        # This is just some filler code that makes the player always
+        # accept the trade if they have the resources for it
+        return player.resources >= trade.resources_requested
+    
+    def prompt_trade_partner(player, trade):
+        print("\nYou can trade with:")
+        for index, accepter in enumerate(trade.accepters, 1):
+            print("%i. %s" % (index, accepter))
+            
+        choice = int(player.get('Pick a trade partner: '))
+        
+        return trade.accepters[choice-1]
+    
     def prompt_settlement_for_upgrade(player) -> Settlement:
         """Called when the user chooses to upgrade a settlement.
         Prompts user for settlement they want to upgrade."""
@@ -366,7 +420,7 @@ class HumanPlayer(Player):
         # after the player make the first choice
         # FIXME: need to double check the logic, also promot options to players
         choice = player.get("Pick a resource type: ")
-        while not (player.game.bank.available_resources[choice]):
+        while not (player.game.bank.resources[choice]):
             choice = player.get("Pick a resource type: ")
         return choice
 

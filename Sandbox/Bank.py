@@ -4,6 +4,7 @@ from Trade import Trade
 from enum import Enum
 from Resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind
 from Player import Player
+import random
 
 
 class BankException(Exception): pass
@@ -14,7 +15,7 @@ class Bank:
 
     # In the standard board game, there are 19 of each resource card.
     def __init__(self, available: int = 19):
-        self.available_resources = Resources(
+        self.resources = Resources(
             available, available, available, available, available
         )
         self.development_card_deck = (
@@ -26,15 +27,23 @@ class Bank:
         )
         random.shuffle(self.development_card_deck)
         self.color = "Bank"
+        
+    def __str__(self): return 'Bank'
 
     def distribute(self, amount: int, resource_kind: ResourceKind) -> Resources:
-        self.available_resources[resource_kind.name] -= amount
+        self.resources[resource_kind.name] -= amount
+        r = Resources()
+        r[resource_kind.name] = amount
+        return r
+
+    def distribute_resources(self, amount: int, resource_kind: ResourceKind) -> Resources:
+        self.resources[resource_kind.name] -= amount
         r = Resources()
         r[resource_kind.name] = amount
         return r
 
     def return_to_bank(self, returned_resources: Resources):
-        self.available_resources += returned_resources
+        self.resources += returned_resources
 
     def sell_development_card(self, player: Player) -> str:
         if not player.can_buy_dev_card():
@@ -51,3 +60,16 @@ class Bank:
         if not self.development_card_deck:
             raise BankException('Bank is out of development cards')
         return self.development_card_deck.pop()
+
+    def distribute_resources(self, resources: Resources) -> Resources:
+        if self.resources < resources:
+            raise BankException('Not enough resources to give away')
+        else:
+            self.resources -= resources
+            return resources
+        
+    def accepts_trade(self, trade):
+        # TODO
+        # This is just some filler code that makes the bank always
+        # accept the trade if they have the resources for it
+        return self.resources >= trade.resources_requested

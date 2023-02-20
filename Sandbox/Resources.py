@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from dataclasses import dataclass
 from enum import Enum
+from collections import Counter
 
 RESOURCE_NAMES = ["brick", "lumber", "ore", "grain", "wool"]
 
@@ -37,7 +38,8 @@ class ResourceKind(Enum):
     def __str__(self):
         return self.name.capitalize()
 
-@dataclass(order=True)
+@dataclass     #(order=True)  This yields wrong results, replaced with
+               # comparison methods
 class Resources:
     brick: int = 0
     lumber: int = 0
@@ -133,7 +135,14 @@ class Resources:
                         if amount>0)
 
         return rep
-
+    
+    def counter(self): return Counter({r:self[r] for r in RESOURCE_NAMES})
+    
+    def __eq__(self, other): return self.counter() == other.counter()
+    def __lt__(self, other): return self.counter() < other.counter()  
+    def __le__(self, other): return self.counter() <= other.counter()
+    def __gt__(self, other): return other < self   
+    def __ge__(self, other): return other <= self        
 
 RESOURCE_REQUIREMENTS = {
     "road": Resources(brick=1, lumber=1),

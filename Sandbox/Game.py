@@ -267,7 +267,13 @@ class Game:
 
         else:
             trade.accepters = willing_traders
-            self.current_player.prompt_trade_partner(trade)
+            trade_partner = self.current_player.prompt_trade_partner(trade)
+            
+            outgoing = self.current_player.distribute_resources(trade.resources_offered)
+            trade_partner.resources += outgoing
+            
+            incoming = trade_partner.distribute_resources(trade.resources_requested)
+            self.current_player.resources += incoming
 
     def build_settlement(self, for_free=False):
         choice = self.current_player.prompt_settlement_location()
@@ -305,7 +311,7 @@ class Game:
         self.current_player.development_cards["year_of_plenty"] -= 1
         for _ in range(2):
             choice = self.current_player.prompt_YoP_resource()
-            while not self.bank.available_resources[choice.name]:
+            while not self.bank.resources[choice.name]:
                 self.current_player.message(
                     "Sorry, the bank doesn't have any %s." % choice.name
                 )
