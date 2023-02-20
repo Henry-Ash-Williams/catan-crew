@@ -3,6 +3,8 @@ from functools import reduce
 from Resources import ResourceKind
 from pickle import Pickler, Unpickler
 
+from typing import Union
+
 
 def join(l):
     return list(set(reduce(lambda x, y: x + y, l, [])))
@@ -77,6 +79,8 @@ class Board:
     # Spec says Board should be initializable with a game state
     def __init__(board, size=3, initial_data=None, seed=None):
         random.seed(seed)
+        
+        board.game = None
 
         # Size of the board is the number of tiles at each edge
         board.size = n = size
@@ -94,7 +98,8 @@ class Board:
         #  (X + cardinal_directions[3]*2)%board.cell_count would be the index
         #  of the cell 2 steps away in the southwest direction from cell X
 
-        board.cells = [None] * board.cell_count
+        board.cells : list(Union[None, Intersection, Path, Tile, Coast, Sea]) \
+            = [None] * board.cell_count
         board.sea_locations = board.select(0, size, dir_pattern=(2, 2))
         board.coast_locations = join(
             board.select(h, 1) for h in board.sea_locations
@@ -381,6 +386,31 @@ class Board:
             (set(adjacent_to_settlement) | set(adjacent_to_road))
             & set(board.available_path_locations)
         )
+        
+    def valid_settlement_locations(board, player):
+    
+        player_road_locations = [road.location for road in player.built_roads]
+        
+        reachable_intersection_locations \
+            = join(board.select(around = road_location,
+                                distance = 1,
+                                matching = board.has_intersection)
+                   for road_location in player_road_locations)
+                   
+        occupied_intersection_locations \
+            = [location for location in board.intersection_locations \
+               if board.cells[location].has_settlement]
+               
+        blocked_intersection_locations \
+            = join(board.select(around = location,
+                                distance = 1,
+                                dir_pattern = (2,),
+                                matching = board.has_intersection)
+                   for location in occupied_intersection_locations)
+                   
+        return list(set(reachable_intersection_locations) \
+                    - (set(occupied_intersection_locations) \
+                      |set(blocked_intersection_locations)))
 
 
 class RoadBuildingException(Exception):

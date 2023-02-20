@@ -14,6 +14,7 @@ class PlayerException(Exception): pass
 
 class Player:
     def __init__(player, color, getter=None):
+        player.game = None
         player.color = color
         player.get = input if getter is None else getter
 
@@ -177,31 +178,31 @@ class Player:
     def handle_trade(self, trade):
         pass
 
-    def propose_trade(
-        self,
-        offered_to,
-        resources_offered: Resources,
-        resources_requested: Resources,
-    ):
-        # check resource
-        for offering_resources, player_resources in zip(
-            resources_offered, self.resources
-        ):
-            if offering_resources > player_resources:
-                raise Exception(
-                    "player doesn't have enough resources to for this trade"
-                )
-
-        t = Trade(
-            sender=self,
-            resources_offered=resources_offered,
-            resources_requested=resources_requested,
-        )
-
-        for player in offered_to + [self.game.bank]:
-            new_trade = copy(t)
-            new_trade.recipient = player
-            player.proposed_trades.append(new_trade)
+    #def propose_trade(
+    #    self,
+    #    offered_to,
+    #    resources_offered: Resources,
+    #    resources_requested: Resources,
+    #):
+    #    # check resource
+    #    for offering_resources, player_resources in zip(
+    #        resources_offered, self.resources
+    #    ):
+    #        if offering_resources > player_resources:
+    #            raise Exception(
+    #                "player doesn't have enough resources to for this trade"
+    #            )
+    #
+    #    t = Trade(
+    #        sender=self,
+    #        resources_offered=resources_offered,
+    #        resources_requested=resources_requested,
+    #    )
+    #
+    #    for player in offered_to + [self.game.bank]:
+    #        new_trade = copy(t)
+    #        new_trade.recipient = player
+    #        player.proposed_trades.append(new_trade)
 
     def update_exchange_rate(player, special_harbour: bool = False, resource_type: ResourceKind = None):
         if special_harbour:
@@ -223,9 +224,11 @@ class Player:
 
     def can_build_settlement(player):
         """Returns whether a player can build a settlement or not."""
-        return len(player.available_settlements) > 0 and player.resources.can_build(
-            RESOURCE_REQUIREMENTS["settlement"]
-        )
+        if len(player.available_settlements) == 0: return False
+        if not player.resources.can_build(RESOURCE_REQUIREMENTS["settlement"]): return False
+        if not player.game.board.valid_settlement_locations(player): return False
+        
+        return True
 
     def has_resources(player):
         """Returns True if player has any resource to trade."""
@@ -286,7 +289,8 @@ class Player:
         player.development_cards[dev_card.name] += 1
 
     def message(player, msg: str):
-        print(msg)
+        c = Console()
+        c.print(msg)
 
     def distribute_resources(player, resources: Resources) -> Resources:
         if player.resources < resources:
@@ -299,7 +303,7 @@ class Player:
 class HumanPlayer(Player):
     def prompt_settlement_location(player):
         choice = None
-        print(f"Valid settlement locations: ???")  # TODO
+        print(f"Valid settlement locations: {player.game.board.valid_settlement_locations(player)}")  # TODO
         while not (choice in player.game.board.available_intersection_locations):
             choice = int(player.get("Pick a location to place a settlement: "))
         return choice
@@ -340,7 +344,7 @@ class HumanPlayer(Player):
             except:
                 resources_requested_input = player.get("That doesn't look right. Try again: ")
         
-        print("\nYou can trade with:")
+        print("\nYou can propose this trade to:")
         for index, proposee in enumerate(player.game.players, 1):
             print("%i. %s" % (index, proposee))
         
