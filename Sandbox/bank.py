@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 import random
-from Trade import Trade
-from enum import Enum
-from Resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind
-from Player import Player
-import random
+from resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind
+from player import Player
 
 
 class BankException(Exception): pass

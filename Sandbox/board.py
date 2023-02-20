@@ -1,6 +1,6 @@
 import random
 from functools import reduce
-from Resources import ResourceKind
+from resources import ResourceKind
 from pickle import Pickler, Unpickler
 
 from typing import Union

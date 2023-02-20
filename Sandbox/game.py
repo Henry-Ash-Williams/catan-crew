@@ -1,12 +1,11 @@
-from Bank import Bank
-from Player import Player, HumanPlayer
-from Trade import Trade
-from Board import Board
-from Resources import Resources, RESOURCE_NAMES, RESOURCE_REQUIREMENTS
+from bank import Bank
+from player import Player, HumanPlayer
+from trade import Trade
+from board import Board
+from resources import Resources, RESOURCE_NAMES, RESOURCE_REQUIREMENTS
 from clear import clear
 from pickle import Pickler, Unpickler
 
-from typing import Union
 import random, sys, fileinput
 from rich.console import Console
 from rich.rule import Rule
@@ -17,6 +16,13 @@ ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
 
+inp = fileinput.input()
+def get(s, inp):
+    sys.stdout.write(s)
+    sys.stdout.flush()
+    k=inp.__next__().strip()
+    if inp.fileno()>0: print(k)
+    return k
 
 class GameException(Exception):
     pass
@@ -391,15 +397,8 @@ class Game:
             return pickle.load()
 
 if __name__ == "__main__":
-    inp = fileinput.input()
-    def get(s):
-        sys.stdout.write(s)
-        sys.stdout.flush()
-        k=inp.__next__().strip()
-        if inp.fileno()>0: print(k)
-        return k
     #get = input
-    game = Game(getter=get, has_human_players=True)
+    game = Game(getter=lambda prompt: get(prompt, inp), has_human_players=True)
     game.start()
 
 # iterate over players

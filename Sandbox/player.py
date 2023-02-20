@@ -1,14 +1,11 @@
-from copy import copy
-
 from rich.console import Console
 from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
 
-from Board import Settlement, City, Road, Tile
-from Resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind, DevelopmentCardKind, RESOURCE_NAMES
-from Trade import Trade
-import random
+from board import Settlement, City, Road, Tile
+from resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind, DevelopmentCardKind, RESOURCE_NAMES
+from trade import Trade
 
 class PlayerException(Exception): pass
 
