@@ -519,7 +519,9 @@ class AutonomousPlayer(Player):
         proposees = random.sample(player.game.players, random.randint(1,len(player.game.players)))
         return Trade(player, resources_offered, resources_requested, proposees)
     def accepts_trade(player, trade):
-        return random.choice([True,False])
+        if player.resources >= trade.resources_requested:
+            return random.choice([True,False])
+        else: return False
     def prompt_trade_partner(player, trade):
         return random.choice(trade.accepters)
     def prompt_settlement_for_upgrade(player) -> Settlement:

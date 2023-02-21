@@ -139,10 +139,10 @@ class Resources:
     def counter(self): return Counter({r:self[r] for r in RESOURCE_NAMES})
     
     def __eq__(self, other): return self.counter() == other.counter()
-    def __lt__(self, other): return self.counter() < other.counter()  
+    def __lt__(self, other): return self.counter() <  other.counter()  
     def __le__(self, other): return self.counter() <= other.counter()
-    def __gt__(self, other): return other < self   
-    def __ge__(self, other): return other <= self        
+    def __gt__(self, other): return self.counter() >  other.counter()
+    def __ge__(self, other): return self.counter() >= other.counter()
 
 RESOURCE_REQUIREMENTS = {
     "road": Resources(brick=1, lumber=1),

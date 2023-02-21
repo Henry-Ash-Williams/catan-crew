@@ -15,7 +15,7 @@ from rich.table import Table
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
-STARTING_RESOURCES = Resources(5,5,5,5,5)
+STARTING_RESOURCES = Resources(0,0,0,0,0) #Resources(5,5,5,5,5)
 
 inp = fileinput.input()
 def get(s, inp):
@@ -284,9 +284,9 @@ class Game:
             trade_partner = self.current_player.prompt_trade_partner(trade)
             
             outgoing = self.current_player.distribute_resources(trade.resources_offered)
-            trade_partner.resources += outgoing
-            
             incoming = trade_partner.distribute_resources(trade.resources_requested)
+            
+            trade_partner.resources += outgoing
             self.current_player.resources += incoming
 
     def build_settlement(self, for_free=False):
@@ -411,8 +411,8 @@ class Game:
 if __name__ == "__main__":
     #get = input
     getter = lambda prompt: get(prompt, inp)
-    game = Game(getter=getter, players = [], has_human_players=True)
-    #game = Game(getter=getter, players = [AutonomousPlayer(color) for color in ['red','green','blue','purple']], has_human_players=False)
+    #game = Game(getter=getter, players = [], has_human_players=True)
+    game = Game(getter=getter, players = [AutonomousPlayer(color) for color in ['red','green','blue','purple']], has_human_players=False)
     game.start()
 
 
