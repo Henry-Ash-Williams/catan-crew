@@ -1,7 +1,7 @@
 import random
 from functools import reduce
 from resources import ResourceKind
-from pickle import Pickler, Unpickler
+from dill import Pickler, Unpickler
 
 from typing import Union
 

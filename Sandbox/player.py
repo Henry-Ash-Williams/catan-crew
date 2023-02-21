@@ -274,7 +274,7 @@ class Player:
             1 * len(player.built_settlements) + \
             2 * len(player.built_cities) + \
             2 * (player.game.check_longest_road() is player) + \
-            2 * (player.game.check_largest_army is player)
+            2 * (player.game.check_largest_army() is player)
         
         return player.visible_victory_points
 

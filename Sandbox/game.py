@@ -4,12 +4,13 @@ from trade import Trade
 from board import Board
 from resources import Resources, RESOURCE_NAMES, RESOURCE_REQUIREMENTS
 from clear import clear
-from pickle import Pickler, Unpickler
+from dill import Pickler, Unpickler
 
 import random, sys, fileinput
 from rich.console import Console
 from rich.rule import Rule
 from rich.table import Table
+from rich.panel import Panel
 
 
 ROAD_LENGTH_THRESHOLD = 5
@@ -187,6 +188,12 @@ class Game:
             table = self.display_game_state()
             #clear()
             c.print(table, justify="center")
+            longest_road_player = max(self.players, key=lambda player: player.road_length)
+            largest_army_player = max(self.players, key=lambda player: player.knights_played)
+            p1 = Panel(f"Longest Road:\n{longest_road_player.color}")
+            p2 = Panel(f"Largest Army:\n{largest_army_player.color}")
+            c.print(p1, justify="center")
+            c.print(p2, justify="center")
             #self.getter("Press any key to continue")
             #clear()
         
