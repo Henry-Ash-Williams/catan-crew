@@ -7,6 +7,8 @@ from board import Settlement, City, Road, Tile
 from resources import Resources, RESOURCE_REQUIREMENTS, ResourceKind, DevelopmentCardKind, RESOURCE_NAMES
 from trade import Trade
 
+import random
+
 class PlayerException(Exception): pass
 
 class Player:
@@ -298,17 +300,17 @@ class Player:
 
 
 class HumanPlayer(Player):
-    def prompt_settlement_location(player):
+    def prompt_settlement_location(player, valid_settlement_locations):
         choice = None
-        print(f"Valid settlement locations: {player.game.board.valid_settlement_locations(player)}")  # TODO
-        while not (choice in player.game.board.available_intersection_locations):
+        print(f"Valid settlement locations: {valid_settlement_locations}")  # TODO
+        while not (choice in valid_settlement_locations):
             choice = int(player.get("Pick a location to place a settlement: "))
         return choice
 
-    def prompt_road_location(player):
+    def prompt_road_location(player, valid_road_locations):
         choice = None
-        print(f"Valid road locations: {player.game.board.paths_reachable_by(player)}")
-        while not (choice in player.game.board.paths_reachable_by(player)):
+        print(f"Valid road locations: {valid_road_locations}")
+        while not (choice in valid_road_locations):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
 
@@ -411,39 +413,41 @@ class HumanPlayer(Player):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
 
-    def prompt_year_of_plenty(player):
-        """Called when user plays year_of_plenty card.
-        Prompts user for a resource type to get from bank,
-        passes it to them, then repeats this again for second
-        resource type."""
-        # don't return 2 chocie at the same time
-        # the supply stack (bank) can ran out of resource
-        # after the player make the first choice
-        # FIXME: need to double check the logic, also promot options to players
-        choice = player.get("Pick a resource type: ")
-        while not (player.game.bank.resources[choice]):
-            choice = player.get("Pick a resource type: ")
-        return choice
+    # Possibly not needed
 
-    def prompt_monopoly(player):
-        """Called when user plays Monopoly card.
-        Prompts user for a resource type to steal from all players,
-        then steals it for them.
-        Return: ResourceKind
-        """
-        choice = None
-        print(
-            """
-            Brick = 0
-            Lumber = 1
-            Ore = 2
-            Grain = 3
-            Wool = 4
-            """
-        )
-        while not (choice in [0, 1, 2, 3, 4]):  # working on this line
-            choice = int(player.get("Pick a resource type: "))
-        return ResourceKind[choice]
+    #def prompt_year_of_plenty(player):
+    #    """Called when user plays year_of_plenty card.
+    #    Prompts user for a resource type to get from bank,
+    #    passes it to them, then repeats this again for second
+    #    resource type."""
+    #    # don't return 2 chocie at the same time
+    #    # the supply stack (bank) can ran out of resource
+    #    # after the player make the first choice
+    #    # FIXME: need to double check the logic, also promot options to players
+    #    choice = player.get("Pick a resource type: ")
+    #    while not (player.game.bank.resources[choice]):
+    #        choice = player.get("Pick a resource type: ")
+    #    return choice
+
+    #def prompt_monopoly(player):
+    #    """Called when user plays Monopoly card.
+    #    Prompts user for a resource type to steal from all players,
+    #    then steals it for them.
+    #    Return: ResourceKind
+    #    """
+    #    choice = None
+    #    print(
+    #        """
+    #        Brick = 0
+    #        Lumber = 1
+    #        Ore = 2
+    #        Grain = 3
+    #        Wool = 4
+    #        """
+    #    )
+    #    while not (choice in [0, 1, 2, 3, 4]):  # working on this line
+    #        choice = int(player.get("Pick a resource type: "))
+    #    return ResourceKind[choice]
 
     # Deprecated method
     # TODO: delete once sure it's not going to be used
@@ -495,3 +499,47 @@ class HumanPlayer(Player):
 
     def prompt_YoP_resource(player) -> ResourceKind:
         return player.prompt_resource("Select a resource to get from bank: ")
+        
+    def prompt_action(player, action_labels):
+        print("\nYou can:")
+        for index, action_label in enumerate(action_labels, 1):
+            print("%i. %s" % (index, action_label))
+        return int(player.get("What would you like to do? ")) - 1
+
+
+class AutonomousPlayer(Player):
+    def prompt_settlement_location(player,valid_settlement_locations):
+        return random.choice(valid_settlement_locations)
+    def prompt_road_location(player, valid_road_locations):
+        return random.choice(valid_road_locations)
+    def prompt_trade_details(player):
+        individual_resources = [Resources(*((0,)*i+(1,)+(0,)*(4-i))) for i in range(5)]
+        resources_offered = random.choice([res for res in individual_resources if res<=player.resources])
+        resources_requested = random.choice(individual_resources)
+        proposees = random.sample(player.game.players, random.randint(1,len(player.game.players)))
+        return Trade(player, resources_offered, resources_requested, proposees)
+    def accepts_trade(player, trade):
+        return random.choice([True,False])
+    def prompt_trade_partner(player, trade):
+        return random.choice(trade.accepters)
+    def prompt_settlement_for_upgrade(player) -> Settlement:
+        return random.choice(player.built_settlements)
+    def prompt_knight(player):
+        options = player.game.board.tile_locations[:]
+        options.remove(player.game.board.robber_location)
+        return random.choice(options)
+    def prompt_road_building(player):
+        return random.choice(player.game.board.valid_road_locations(player))
+    def prompt_robbing_victim(player, robbee_options: list[Player]) -> Player:
+        return random.choice(robbee_options)
+    def prompt_robber_location(player) -> Tile:
+        options = player.game.board.tile_locations[:]
+        options.remove(player.game.board.robber_location)
+        tile_location = random.choice(options)
+        return player.game.board.cells[tile_location]
+    def prompt_monopoly_resource(player) -> ResourceKind:
+        return ResourceKind(random.randint(0,4))
+    def prompt_YoP_resource(player) -> ResourceKind:
+        return ResourceKind(random.randint(0,4))
+    def prompt_action(player, action_labels):
+        return random.randint(0,len(action_labels)-1)

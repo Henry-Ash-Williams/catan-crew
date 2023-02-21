@@ -387,15 +387,7 @@ class Board:
             & set(board.available_path_locations)
         )
         
-    def valid_settlement_locations(board, player):
-    
-        player_road_locations = [road.location for road in player.built_roads]
-        
-        reachable_intersection_locations \
-            = join(board.select(around = road_location,
-                                distance = 1,
-                                matching = board.has_intersection)
-                   for road_location in player_road_locations)
+    def valid_settlement_locations(board, player, needs_to_be_reachable=True):
                    
         occupied_intersection_locations \
             = [location for location in board.intersection_locations \
@@ -407,6 +399,19 @@ class Board:
                                 dir_pattern = (2,),
                                 matching = board.has_intersection)
                    for location in occupied_intersection_locations)
+        
+        if not needs_to_be_reachable:
+            return list(set(board.intersection_locations) \
+                    - (set(occupied_intersection_locations) \
+                      |set(blocked_intersection_locations)))
+        
+        player_road_locations = [road.location for road in player.built_roads]
+        
+        reachable_intersection_locations \
+            = join(board.select(around = road_location,
+                                distance = 1,
+                                matching = board.has_intersection)
+                   for road_location in player_road_locations)
                    
         return list(set(reachable_intersection_locations) \
                     - (set(occupied_intersection_locations) \

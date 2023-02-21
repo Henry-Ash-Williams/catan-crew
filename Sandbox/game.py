@@ -1,5 +1,5 @@
 from bank import Bank
-from player import Player, HumanPlayer
+from player import Player, HumanPlayer, AutonomousPlayer
 from trade import Trade
 from board import Board
 from resources import Resources, RESOURCE_NAMES, RESOURCE_REQUIREMENTS
@@ -15,6 +15,7 @@ from rich.table import Table
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
+STARTING_RESOURCES = Resources(5,5,5,5,5)
 
 inp = fileinput.input()
 def get(s, inp):
@@ -37,6 +38,10 @@ class Game:
         self.board = Board(seed=seed)
         self.board.game = self
         
+        for i in range(len(players)):
+            players[i].number = i + 1
+            players[i].game = self
+            players[i].resources = STARTING_RESOURCES
         self.players = players
         self.player_colors = [player.color for player in players]
 
@@ -69,7 +74,7 @@ class Game:
         new_player = HumanPlayer(color, self.getter)
         new_player.number = player_number
         new_player.game = self
-        #new_player.resources = Resources(5,5,5,5,5) # This line is for testing
+        new_player.resources = STARTING_RESOURCES
         self.players.append(new_player)
 
     def check_longest_road(self) -> Player:
@@ -250,11 +255,15 @@ class Game:
 
             available_actions.append(("End turn", self.end_turn))
 
-            print("\nYou can:")
-            for index, (action_name, action_method) in enumerate(available_actions, 1):
-                print("%i. %s" % (index, action_name))
+            #print("\nYou can:")
+            #for index, (action_name, action_method) in enumerate(available_actions, 1):
+            #    print("%i. %s" % (index, action_name))
 
-            choice = int(self.getter("What would you like to do? ")) - 1
+            #choice = int(self.getter("What would you like to do? ")) - 1
+            
+            action_labels = [label for label,method in available_actions]
+            
+            choice = self.current_player.prompt_action(action_labels)
 
             available_actions[choice][1]()
 
@@ -281,11 +290,14 @@ class Game:
             self.current_player.resources += incoming
 
     def build_settlement(self, for_free=False):
-        choice = self.current_player.prompt_settlement_location()
+        valid_settlement_locations = self.board.valid_settlement_locations(self.current_player,
+                                     needs_to_be_reachable = False if for_free else True)
+        choice = self.current_player.prompt_settlement_location(valid_settlement_locations)
         return self.current_player.builds_settlement(choice, for_free)
 
     def build_road(self, for_free=False):
-        choice = self.current_player.prompt_road_location()
+        valid_road_locations = self.board.paths_reachable_by(self.current_player)
+        choice = self.current_player.prompt_road_location(valid_road_locations)
         self.current_player.builds_road(choice, for_free)
 
     def sell_development_card(self):
@@ -398,8 +410,12 @@ class Game:
 
 if __name__ == "__main__":
     #get = input
-    game = Game(getter=lambda prompt: get(prompt, inp), has_human_players=True)
+    getter = lambda prompt: get(prompt, inp)
+    game = Game(getter=getter, players = [], has_human_players=True)
+    #game = Game(getter=getter, players = [AutonomousPlayer(color) for color in ['red','green','blue','purple']], has_human_players=False)
     game.start()
+
+
 
 # iterate over players
 #  - roll dice
