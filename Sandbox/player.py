@@ -29,7 +29,7 @@ class Player:
         player.road_length = 0
         player.knights_played = 0
         player.visible_victory_points = 0
-        player.hidden_victory_points = 0
+        #player.hidden_victory_points = 0
 
         player.resources = Resources()
         player.development_cards = {
@@ -278,13 +278,9 @@ class Player:
         
         return player.visible_victory_points
 
-    def calculate_hidden_victory_points(player):
-        player.hidden_victory_points = player.development_cards["hidden_victory_point"]
-        return player.hidden_victory_points
-
     def calculate_total_victory_points(player):
         """for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
-        return player.calculate_visible_victory_points() + player.calculate_hidden_victory_points()
+        return player.calculate_visible_victory_points() + player.development_cards["hidden_victory_point"]
     
     def gets_resource_card(player, dev_card: DevelopmentCardKind):
         """ Takes a development card parameter, adds it to this player's development cards."""

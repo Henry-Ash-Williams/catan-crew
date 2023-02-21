@@ -117,7 +117,7 @@ class Game:
         player_data = [
             (
                 player.color,
-                player.calculate_visible_victory_points(),
+                str(player.calculate_visible_victory_points())+','+str(player.calculate_total_victory_points()),
                 player.road_length,
                 player.knights_played,
                 player.resources.card_count()[0],
@@ -277,9 +277,6 @@ class Game:
             choice = self.current_player.prompt_action(action_labels)
 
             available_actions[choice][1]()
-            
-        if self.current_player.calculate_total_victory_points() >= VP_TO_WIN:
-            self.is_won = True
 
     def start_trade(self):
         trade = self.current_player.prompt_trade_details()
@@ -403,9 +400,14 @@ class Game:
 
     def end_turn(self):
         self.turn_ongoing = False
-        self.current_player_number = (self.current_player_number + 1) % len(self.players)
-        self.current_player = self.players[self.current_player_number]
-        self.turn_count += 1
+
+        #print('VP:',self.current_player.calculate_total_victory_points())
+        if self.current_player.calculate_total_victory_points() >= VP_TO_WIN:
+            self.is_won = True
+        else:
+            self.current_player_number = (self.current_player_number + 1) % len(self.players)
+            self.current_player = self.players[self.current_player_number]
+            self.turn_count += 1
 
     def add_road(self, location, road):
         self.verify_current_player_is(road.owner)
