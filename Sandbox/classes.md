@@ -51,6 +51,10 @@
 - [x]   has_road_buiding_card()
 - [x]   has_year_of_plenty_card()
 - [x]   has_monopoly_card()
+
+# HumanPlayer (Player)
+
+## Methods
 - []    prompt_settlement_location()
 - []    prompt_road_locaiton()
 - []    prompt_trade_details()
