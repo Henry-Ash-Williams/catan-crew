@@ -16,6 +16,7 @@ ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
 STARTING_RESOURCES = Resources(0,0,0,0,0) #Resources(5,5,5,5,5)
+VP_TO_WIN = 10
 
 inp = fileinput.input()
 def get(s, inp):
@@ -32,7 +33,7 @@ class GameException(Exception):
 class Game:
     def __init__(self, getter, players=[], has_human_players=False, seed=None):
     
-        clear()
+        #clear()
         self.getter = getter
         self.bank = Bank()
         self.board = Board(seed=seed)
@@ -57,7 +58,7 @@ class Game:
         self.current_player = self.players[self.current_player_number]
 
         self.is_just_starting = True
-        self.is_on = True
+        self.is_won = False
 
         self.turn_count = 0
 
@@ -106,12 +107,12 @@ class Game:
         player_color = self.current_player.color
         c = Console()
         r = Rule(
-            f"[b {player_color}]{player_color.capitalize()}'s[/b {player_color}] turn"
+            f"[b {player_color}]{player_color.capitalize()}'s[/b {player_color}] turn ({self.turn_count})"
         )
         c.print(r)
 
     def display_game_state(self):
-        clear()
+        #clear()
         player_data = [
             (
                 player.color,
@@ -168,8 +169,8 @@ class Game:
             self.distribute_bonus(new_settlement)
             self.build_road(for_free=True)
 
-        self.getter("Press any key to continue")
-        clear()
+        #self.getter("Press any key to continue")
+        #clear()
 
     def distribute_bonus(self, settlement):
         bonus_resources = Resources()
@@ -179,14 +180,17 @@ class Game:
         settlement.owner.message(f'You got {bonus_resources}')
 
     def game_loop(self):
+        self.turn_count = 1
         c = Console()
-        while self.is_on:
+        while not self.is_won:
             self.do_turn()
             table = self.display_game_state()
-            clear()
+            #clear()
             c.print(table, justify="center")
-            self.getter("Press any key to continue")
-            clear()
+            #self.getter("Press any key to continue")
+            #clear()
+        
+        print(f"\n\n{str(self.current_player).upper()} WINS!!")
 
     def do_turn(self):
         self.print_current_player()
@@ -240,7 +244,7 @@ class Game:
             if player.has_knight_card():
                 available_actions.append(("Play Knight card", self.play_knight))
 
-            if player.has_road_building_card():
+            if player.can_play_road_building():
                 available_actions.append(
                     ("Play Road Building card", self.play_road_building)
                 )
@@ -266,9 +270,17 @@ class Game:
             choice = self.current_player.prompt_action(action_labels)
 
             available_actions[choice][1]()
+            
+        if self.current_player.calculate_total_victory_points() >= VP_TO_WIN:
+            self.is_won = True
 
     def start_trade(self):
         trade = self.current_player.prompt_trade_details()
+        
+        while self.current_player in trade.proposees:
+            self.current_player.message("You can't propose a trade to yourself")
+            trade = self.current_player.prompt_trade_details()
+        
         willing_traders = [
             trader
             for trader in trade.proposees + [self.bank]
@@ -338,11 +350,12 @@ class Game:
     def play_road_building(self):
         self.current_player.development_cards["road_building"] -= 1
         for _ in range(2):
-            self.build_road(for_free=True)
+            if self.current_player.can_build_road():
+                self.build_road(for_free=True)
 
     def play_knight(self):
         tile_choice = self.current_player.prompt_robber_location()
-        self.board.robber_location = tile_choice
+        self.board.robber_location = tile_choice.location
         self.current_player.knights_played += 1
         self.current_player.development_cards["knight"] -= 1
         neighboring_settlements = self.board.settlements_neighboring(tile_choice)

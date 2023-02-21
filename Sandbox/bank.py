@@ -28,6 +28,7 @@ class Bank:
     def __str__(self): return 'Bank'
 
     def distribute(self, amount: int, resource_kind: ResourceKind) -> Resources:
+        if resource_kind == None: return Resources()
         self.resources[resource_kind.name] -= amount
         r = Resources()
         r[resource_kind.name] = amount

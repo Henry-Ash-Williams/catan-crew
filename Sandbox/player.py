@@ -61,6 +61,7 @@ class Player:
     #  player.game.board.add_road(location, player)
 
     def __str__(player): return player.color.capitalize()
+    def __repr__(player): return player.color.capitalize()
 
     def roll_dice(player):
         player.game.dice_roll()
@@ -217,6 +218,7 @@ class Player:
 
     def can_build_road(player):
         """Returns whether a player can build a road or not."""
+        if len(player.game.board.paths_reachable_by(player))<1: return False
         return len(player.available_roads) > 0 and player.resources.can_build(
             RESOURCE_REQUIREMENTS["road"]
         )
@@ -246,15 +248,16 @@ class Player:
 
     def can_buy_dev_card(player):
         """Returns True if player can afford a development card."""
+        if not player.game.bank.development_card_deck: return False
         return player.resources.can_build(RESOURCE_REQUIREMENTS["development_card"])
 
     def has_knight_card(player):
         """Returns True if player has a Knight card."""
         return player.development_cards["knight"] > 0
 
-    def has_road_building_card(player):
+    def can_play_road_building(player):
         """Returns True if player has a Road_Building card."""
-        return player.development_cards["road_building"] > 0
+        return player.can_build_road() and player.development_cards["road_building"] > 0
 
     def has_year_of_plenty_card(player):
         """Returns True if player has a year_of_plenty card."""
@@ -281,7 +284,7 @@ class Player:
 
     def calculate_total_victory_points(player):
         """for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
-        return player.calculate_visable_victory_point() + player.calculate_hidden_victory_points()
+        return player.calculate_visible_victory_points() + player.calculate_hidden_victory_points()
     
     def gets_resource_card(player, dev_card: DevelopmentCardKind):
         """ Takes a development card parameter, adds it to this player's development cards."""
@@ -508,40 +511,79 @@ class HumanPlayer(Player):
 
 
 class AutonomousPlayer(Player):
+
     def prompt_settlement_location(player,valid_settlement_locations):
-        return random.choice(valid_settlement_locations)
+        location = random.choice(valid_settlement_locations)
+        print(f"{player} builds a settlement at location {location}")
+        return location
+        
     def prompt_road_location(player, valid_road_locations):
-        return random.choice(valid_road_locations)
+        location = random.choice(valid_road_locations)
+        print(f"{player} builds a road at location {location}")
+        return location
+        
     def prompt_trade_details(player):
         individual_resources = [Resources(*((0,)*i+(1,)+(0,)*(4-i))) for i in range(5)]
         resources_offered = random.choice([res for res in individual_resources if res<=player.resources])
         resources_requested = random.choice(individual_resources)
         proposees = random.sample(player.game.players, random.randint(1,len(player.game.players)))
+        print(f"{player} proposes a trade of {resources_offered} for {resources_requested} to {proposees}")
         return Trade(player, resources_offered, resources_requested, proposees)
+        
     def accepts_trade(player, trade):
         if player.resources >= trade.resources_requested:
-            return random.choice([True,False])
-        else: return False
+            decision = random.choice([True,False])
+        else: decision = False
+        print(f"{player} {['rejects','accepts'][decision]} trade proposed by {trade.sender}")
+        return decision
+        
     def prompt_trade_partner(player, trade):
-        return random.choice(trade.accepters)
+        chosen_trade_partner = random.choice(trade.accepters)
+        print(f"{player} chooses to trade with {chosen_trade_partner}")
+        return chosen_trade_partner
+        
     def prompt_settlement_for_upgrade(player) -> Settlement:
-        return random.choice(player.built_settlements)
+        settlement = random.choice(player.built_settlements)
+        print(f"{player} upgrades settlement at location {settlement.location}")
+        return settlement
+        
     def prompt_knight(player):
         options = player.game.board.tile_locations[:]
         options.remove(player.game.board.robber_location)
-        return random.choice(options)
+        chosen_location = random.choice(options)
+        print(f"{player} places Knight at location {chosen_location}")
+        return chosen_location
+        
     def prompt_road_building(player):
-        return random.choice(player.game.board.valid_road_locations(player))
+        location = random.choice(player.game.board.valid_road_locations(player))
+        print(f"{player} builds a road at location {location}")
+        return location
+        
     def prompt_robbing_victim(player, robbee_options: list[Player]) -> Player:
-        return random.choice(robbee_options)
+        robbing_victim = random.choice(robbee_options)
+        print(f"{player} robs {robbing_victim}")
+        return robbing_victim
+        
     def prompt_robber_location(player) -> Tile:
         options = player.game.board.tile_locations[:]
+        print('Options:',options)
+        print('Current robber location:',player.game.board.robber_location)
         options.remove(player.game.board.robber_location)
         tile_location = random.choice(options)
+        print(f"{player} moves robber to location {tile_location}")
         return player.game.board.cells[tile_location]
+        
     def prompt_monopoly_resource(player) -> ResourceKind:
-        return ResourceKind(random.randint(0,4))
+        choice = ResourceKind(random.randint(0,4))
+        print(f"{player} monopolizes {choice}")
+        return choice
+        
     def prompt_YoP_resource(player) -> ResourceKind:
-        return ResourceKind(random.randint(0,4))
+        choice = ResourceKind(random.randint(0,4))
+        print(f"{player} uses Year of Plenty to get {choice} from the bank")
+        return choice
+        
     def prompt_action(player, action_labels):
-        return random.randint(0,len(action_labels)-1)
+        action_index = random.randint(0,len(action_labels)-1)
+        print(f"{player} chooses to ({action_labels[action_index]})")
+        return action_index
