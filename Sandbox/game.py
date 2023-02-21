@@ -2,7 +2,7 @@ from bank import Bank
 from player import Player, HumanPlayer, AutonomousPlayer
 from trade import Trade
 from board import Board
-from resources import Resources, RESOURCE_NAMES, RESOURCE_REQUIREMENTS
+from resources import Resources, RESOURCE_NAMES, RESOURCE_REQUIREMENTS, DevelopmentCardKind
 from clear import clear
 from dill import Pickler, Unpickler
 
@@ -328,6 +328,7 @@ class Game:
 
     def play_monopoly(self):
         self.current_player.development_cards["monopoly"] -= 1
+        self.bank.development_card_deck.append(DevelopmentCardKind.monopoly)
         resource_name = self.current_player.prompt_monopoly_resource().name
         total_gained = 0
         for player in self.players:
@@ -342,6 +343,7 @@ class Game:
 
     def play_year_of_plenty(self):
         self.current_player.development_cards["year_of_plenty"] -= 1
+        self.bank.development_card_deck.append(DevelopmentCardKind.year_of_plenty)
         for _ in range(2):
             choice = self.current_player.prompt_YoP_resource()
             while not self.bank.resources[choice.name]:
@@ -353,15 +355,17 @@ class Game:
 
     def play_road_building(self):
         self.current_player.development_cards["road_building"] -= 1
+        self.bank.development_card_deck.append(DevelopmentCardKind.road_building)
         for _ in range(2):
             if self.current_player.can_build_road():
                 self.build_road(for_free=True)
 
     def play_knight(self):
+        self.current_player.development_cards["knight"] -= 1
+        self.bank.development_card_deck.append(DevelopmentCardKind.knight)
         tile_choice = self.current_player.prompt_robber_location()
         self.board.robber_location = tile_choice.location
         self.current_player.knights_played += 1
-        self.current_player.development_cards["knight"] -= 1
         neighboring_settlements = self.board.settlements_neighboring(tile_choice)
         if not neighboring_settlements:
             self.current_player.message('The tile where the robber has been placed has no neighboring settlements')

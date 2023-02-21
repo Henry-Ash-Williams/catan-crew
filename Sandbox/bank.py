@@ -34,11 +34,11 @@ class Bank:
         r[resource_kind.name] = amount
         return r
 
-    def distribute_resources(self, amount: int, resource_kind: ResourceKind) -> Resources:
-        self.resources[resource_kind.name] -= amount
-        r = Resources()
-        r[resource_kind.name] = amount
-        return r
+    #def distribute_resources(self, amount: int, resource_kind: ResourceKind) -> Resources:
+    #    self.resources[resource_kind.name] -= amount
+    #    r = Resources()
+    #    r[resource_kind.name] = amount
+    #    return r
 
     def return_to_bank(self, returned_resources: Resources):
         self.resources += returned_resources
