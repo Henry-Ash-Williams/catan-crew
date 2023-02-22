@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import random
-from resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind
+from resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind, InsufficientResources
 from player import Player
 
 
@@ -29,10 +29,22 @@ class Bank:
 
     def distribute(self, amount: int, resource_kind: ResourceKind) -> Resources:
         if resource_kind == None: return Resources()
-        self.resources[resource_kind.name] -= amount
         r = Resources()
         r[resource_kind.name] = amount
-        return r
+        try:
+            self.resources -= r
+            return r
+        except InsufficientResources:
+            r[resource_kind.name] = self.resources[resource_kind.name]
+            self.resources -= r
+            return r
+
+    def distribute_resources(self, resources: Resources) -> Resources:
+        if self.resources >= resources:
+            self.resources -= resources
+            return resources
+        else:
+            raise BankException('Not enough resources to give away')
 
     #def distribute_resources(self, amount: int, resource_kind: ResourceKind) -> Resources:
     #    self.resources[resource_kind.name] -= amount
@@ -40,7 +52,7 @@ class Bank:
     #    r[resource_kind.name] = amount
     #    return r
 
-    def return_to_bank(self, returned_resources: Resources):
+    def return_resources(self, returned_resources: Resources):
         self.resources += returned_resources
 
     def sell_development_card(self, player: Player) -> str:
@@ -58,13 +70,6 @@ class Bank:
         if not self.development_card_deck:
             raise BankException('Bank is out of development cards')
         return self.development_card_deck.pop()
-
-    def distribute_resources(self, resources: Resources) -> Resources:
-        if self.resources < resources:
-            raise BankException('Not enough resources to give away')
-        else:
-            self.resources -= resources
-            return resources
         
     def accepts_trade(self, trade):
         # TODO

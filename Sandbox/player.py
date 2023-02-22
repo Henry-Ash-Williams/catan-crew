@@ -121,9 +121,9 @@ class Player:
         )
 
     def builds_settlement(player, location, for_free=False):
-        player.resources -= (
-            RESOURCE_REQUIREMENTS["settlement"] if not for_free else Resources()
-        )
+        cost = (player.distribute_resources(RESOURCE_REQUIREMENTS["settlement"])
+                if not for_free else Resources())
+        player.game.bank.return_resources(cost)
         settlement = player.available_settlements.pop()
         player.game.add_settlement(location, settlement)
         settlement.location = location
@@ -131,7 +131,8 @@ class Player:
         return settlement
 
     def upgrade_settlement(player, settlement: Settlement):
-        player.resources -= RESOURCE_REQUIREMENTS["city"]
+        cost = player.distribute_resources(RESOURCE_REQUIREMENTS["city"])
+        player.game.bank.return_resources(cost)
         
         city = player.available_cities.pop()
         city.location = settlement.location
@@ -144,7 +145,9 @@ class Player:
         player.game.board.cells[city.location].settlement = city
 
     def builds_road(player, location, for_free=False):
-        player.resources -= RESOURCE_REQUIREMENTS["road"] if not for_free else Resources()
+        cost = (player.distribute_resources(RESOURCE_REQUIREMENTS["road"])
+                if not for_free else Resources())
+        player.game.bank.return_resources(cost)
         road = player.available_roads.pop()
         player.game.add_road(location, road)
         road.location = location
@@ -282,7 +285,7 @@ class Player:
         """for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
         return player.calculate_visible_victory_points() + player.development_cards["hidden_victory_point"]
     
-    def gets_resource_card(player, dev_card: DevelopmentCardKind):
+    def gets_development_card(player, dev_card: DevelopmentCardKind):
         """ Takes a development card parameter, adds it to this player's development cards."""
         player.development_cards[dev_card.name] += 1
 
@@ -291,11 +294,8 @@ class Player:
         c.print(msg)
 
     def distribute_resources(player, resources: Resources) -> Resources:
-        if player.resources < resources:
-            raise PlayerException('Not enough resources to give away')
-        else:
-            player.resources -= resources
-            return resources
+        player.resources -= resources
+        return resources
 
 
 class HumanPlayer(Player):

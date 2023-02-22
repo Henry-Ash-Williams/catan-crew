@@ -117,7 +117,7 @@ class Game:
         player_data = [
             (
                 player.color,
-                str(player.calculate_visible_victory_points())+','+str(player.calculate_total_victory_points()),
+                str(player.calculate_visible_victory_points()), #+','+str(player.calculate_total_victory_points()),
                 player.road_length,
                 player.knights_played,
                 player.resources.card_count()[0],
@@ -317,9 +317,10 @@ class Game:
         self.current_player.builds_road(choice, for_free)
 
     def sell_development_card(self):
+        cost = self.current_player.distribute_resources(RESOURCE_REQUIREMENTS["development_card"])
+        self.bank.return_resources(cost)
         dev_card = self.bank.distribute_dev_card()
-        self.current_player.resources -= RESOURCE_REQUIREMENTS["development_card"]
-        self.current_player.gets_resource_card(dev_card)
+        self.current_player.gets_development_card(dev_card)
         self.current_player.message(f"Congrats, you got [b]{dev_card.name.capitalize()}[/b]")
 
     def upgrade_settlement(self):
@@ -346,11 +347,13 @@ class Game:
         self.bank.development_card_deck.append(DevelopmentCardKind.year_of_plenty)
         for _ in range(2):
             choice = self.current_player.prompt_YoP_resource()
-            while not self.bank.resources[choice.name]:
+            remaining_tries = 4
+            while (not self.bank.resources[choice.name]) and remaining_tries>0:
                 self.current_player.message(
-                    "Sorry, the bank doesn't have any %s." % choice.name
+                    f"Sorry, the bank doesn't have any {choice.name}. You have {remaining_tries} tries left."
                 )
                 choice = self.current_player.prompt_YoP_resource()
+                remaining_tries -= 1
             self.current_player.resources += self.bank.distribute(1, choice)
 
     def play_road_building(self):

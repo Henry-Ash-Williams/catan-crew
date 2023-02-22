@@ -37,6 +37,10 @@ class ResourceKind(Enum):
 
     def __str__(self):
         return self.name.capitalize()
+        
+
+class InsufficientResources(Exception): pass
+
 
 @dataclass     #(order=True)  This yields wrong results, replaced with
                # comparison methods
@@ -66,7 +70,7 @@ class Resources:
             self.wool - other.wool,
         )
         if any(map(lambda r: r < 0, new_resources)):
-            raise Exception("Player cannot have negative resources")
+            raise InsufficientResources("Insufficient resources")
 
         return new_resources
 
