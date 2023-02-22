@@ -583,3 +583,27 @@ class AutonomousPlayer(Player):
         action_index = random.randint(0,len(action_labels)-1)
         print(f"{player} chooses to ({action_labels[action_index]})")
         return action_index
+
+
+class TesterPlayer(AutonomousPlayer):
+        
+    def upgrade_settlement(player, settlement: Settlement):
+    
+        settlement_location = settlement.location
+        settlement_intersection = player.game.board.cells[settlement.location]
+        
+        assert settlement in player.built_settlements
+        assert not(settlement in player.available_settlements)
+        
+        super().upgrade_settlement(settlement)
+        
+        assert not(settlement in player.built_settlements)
+        assert settlement in player.available_settlements
+        
+        assert settlement_intersection.has_settlement
+        assert type(settlement_intersection.settlement) is City
+        
+        new_city = settlement_intersection.settlement
+        assert new_city.location == settlement_location
+        assert new_city in player.built_cities
+        assert not(new_city in player.available_cities)

@@ -1,5 +1,5 @@
 from bank import Bank
-from player import Player, HumanPlayer, AutonomousPlayer
+from player import Player, HumanPlayer, AutonomousPlayer, TesterPlayer
 from trade import Trade
 from board import Board
 from resources import Resources, RESOURCE_NAMES, RESOURCE_REQUIREMENTS, DevelopmentCardKind
@@ -441,7 +441,7 @@ if __name__ == "__main__":
     #get = input
     getter = lambda prompt: get(prompt, inp)
     #game = Game(getter=getter, players = [], has_human_players=True)
-    game = Game(getter=getter, players = [AutonomousPlayer(color) for color in ['red','green','blue','purple']], has_human_players=False)
+    game = Game(getter = getter, players = [TesterPlayer(color) for color in ['red','green','blue','purple']], has_human_players=False)
     game.start()
 
 
