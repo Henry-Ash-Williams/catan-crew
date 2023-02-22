@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
 import sys
-from os import system, environ
+from sys import argv
+from os import system
+
+DEBUG = any(map(lambda arg: arg == "-d", argv))
+
 
 def clear():
-    if environ["USE_CLEAR"] == "false":
+    if DEBUG:
         return
 
     clear = "clear"

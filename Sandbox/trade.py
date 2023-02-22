@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 
-#from Player import Player
-#from Resources import Resources
+# from Player import Player
+# from Resources import Resources
+from dataclasses import dataclass
 
+
+# @dataj
+# class Trade:
+#    sender: Player
+#    resources_offered: Resources
+#    resources_requested: Resources
+#    proposees: list[Player]
+#    accepters: list[Player]
 
 
 class Trade:

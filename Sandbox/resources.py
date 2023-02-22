@@ -2,9 +2,11 @@
 from dataclasses import dataclass
 from enum import Enum
 from collections import Counter
+from random import randint
 from typing import Union
 
 RESOURCE_NAMES = ["brick", "lumber", "ore", "grain", "wool"]
+
 
 class DevelopmentCardKind(Enum):
     knight = 0
@@ -12,6 +14,16 @@ class DevelopmentCardKind(Enum):
     road_building = 2
     year_of_plenty = 3
     monopoly = 4
+
+
+DEVELOPMENT_CARD_COUNTS = {
+    DevelopmentCardKind.knight: 14,
+    DevelopmentCardKind.hidden_victory_point: 5,
+    DevelopmentCardKind.road_building: 2,
+    DevelopmentCardKind.year_of_plenty: 2,
+    DevelopmentCardKind.monopoly: 2,
+}
+
 
 @dataclass
 class DevelopmentCard:
@@ -22,10 +34,40 @@ class DevelopmentCard:
     monopoly: int = 0
 
     def __iter__(self):
-        return iter([self.knight, self.hidden_victory_point, self.road_building, self.year_of_plenty, self.monopoly])
+        return iter(
+            [
+                self.knight,
+                self.hidden_victory_point,
+                self.road_building,
+                self.year_of_plenty,
+                self.monopoly,
+            ]
+        )
+
+    def __add__(self, other):
+        pass
+
+    def __sub__(self, other):
+        pass
 
     def card_count(self) -> int:
         return sum(self)
+
+    def get_random_dev_card(self):
+        no_of_cards = self.card_count()
+        idx = randint(0, no_of_cards - 1)
+
+        for i, dc in enumerate(self):
+            if idx<dc: break
+            else: idx-=dc
+
+        q = DevelopmentCardKind(i)
+
+
+
+
+
+
 
 
 class ResourceKind(Enum):
@@ -37,14 +79,17 @@ class ResourceKind(Enum):
 
     def __str__(self):
         return self.name.capitalize()
-        
 
-class InsufficientResources(Exception): pass
+
+class InsufficientResources(Exception):
+    pass
+
 
 # ResourceTuple: TypeAlias = (int, int, int, int, int)
 
-@dataclass     #(order=True)  This yields wrong results, replaced with
-               # comparison methods
+
+@dataclass  # (order=True)  This yields wrong results, replaced with
+# comparison methods
 class Resources:
     brick: int = 0
     lumber: int = 0
@@ -54,10 +99,10 @@ class Resources:
     development_cards: DevelopmentCard = DevelopmentCard()
 
     # def __init__(self, resources: Union[ResourceKind, ()]):
-        # if type( resources ) is ResourceKind:
-            # pass
-        # else:
-            # super.__init__(resources)
+    # if type( resources ) is ResourceKind:
+    # pass
+    # else:
+    # super.__init__(resources)
 
     def __add__(self, other):
         return Resources(
@@ -151,20 +196,30 @@ class Resources:
         if all(map(lambda r: r == 0, self)):
             return "Nothing!"
 
-        rep = ", ".join(f"{amount}x {kind.name}"
-                        for kind, amount
-                        in self.data_rep()
-                        if amount>0)
+        rep = ", ".join(
+            f"{amount}x {kind.name}" for kind, amount in self.data_rep() if amount > 0
+        )
 
         return rep
-    
-    def counter(self): return Counter({r:self[r] for r in RESOURCE_NAMES})
-    
-    def __eq__(self, other): return self.counter() == other.counter()
-    def __lt__(self, other): return self.counter() <  other.counter()  
-    def __le__(self, other): return self.counter() <= other.counter()
-    def __gt__(self, other): return self.counter() >  other.counter()
-    def __ge__(self, other): return self.counter() >= other.counter()
+
+    def counter(self):
+        return Counter({r: self[r] for r in RESOURCE_NAMES})
+
+    def __eq__(self, other):
+        return self.counter() == other.counter()
+
+    def __lt__(self, other):
+        return self.counter() < other.counter()
+
+    def __le__(self, other):
+        return self.counter() <= other.counter()
+
+    def __gt__(self, other):
+        return self.counter() > other.counter()
+
+    def __ge__(self, other):
+        return self.counter() >= other.counter()
+
 
 RESOURCE_REQUIREMENTS = {
     "road": Resources(brick=1, lumber=1),

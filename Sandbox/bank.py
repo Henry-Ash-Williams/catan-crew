@@ -15,6 +15,9 @@ class Bank:
         self.resources = Resources(
             available, available, available, available, available
         )
+        """self.development_card_deck = DevelopmentCard(
+            tuple(DEVELOPMENT_CARD_COUNTS.values())
+        )"""
         self.development_card_deck = (
             [DevelopmentCardKind.knight for i in range(14)]
             + [DevelopmentCardKind.hidden_victory_point for i in range(5)]
@@ -46,11 +49,6 @@ class Bank:
         else:
             raise BankException('Not enough resources to give away')
 
-    #def distribute_resources(self, amount: int, resource_kind: ResourceKind) -> Resources:
-    #    self.resources[resource_kind.name] -= amount
-    #    r = Resources()
-    #    r[resource_kind.name] = amount
-    #    return r
 
     def return_resources(self, returned_resources: Resources):
         self.resources += returned_resources
