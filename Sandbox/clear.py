@@ -3,7 +3,6 @@
 import sys
 from os import system, environ
 
-
 def clear():
     if environ["USE_CLEAR"] == "false":
         return

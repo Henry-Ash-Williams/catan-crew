@@ -34,7 +34,7 @@ class GameException(Exception):
 class Game:
     def __init__(self, getter, players=[], has_human_players=False, seed=None):
     
-        #clear()
+        clear()
         self.getter = getter
         self.bank = Bank()
         self.board = Board(seed=seed)
@@ -113,7 +113,7 @@ class Game:
         c.print(r)
 
     def display_game_state(self):
-        #clear()
+        clear()
         player_data = [
             (
                 player.color,
@@ -171,7 +171,7 @@ class Game:
             self.build_road(for_free=True)
 
         #self.getter("Press any key to continue")
-        #clear()
+        clear()
 
     def distribute_bonus(self, settlement):
         bonus_resources = Resources()
@@ -186,7 +186,7 @@ class Game:
         while not self.is_won:
             self.do_turn()
             table = self.display_game_state()
-            #clear()
+            clear()
             c.print(table, justify="center")
             longest_road_player = max(self.players, key=lambda player: player.road_length)
             largest_army_player = max(self.players, key=lambda player: player.knights_played)
@@ -195,7 +195,7 @@ class Game:
             c.print(p1, justify="center")
             c.print(p2, justify="center")
             #self.getter("Press any key to continue")
-            #clear()
+            clear()
         
         print(f"\n\n{str(self.current_player).upper()} WINS!!")
 

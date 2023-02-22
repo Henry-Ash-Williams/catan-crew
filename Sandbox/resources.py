@@ -2,9 +2,9 @@
 from dataclasses import dataclass
 from enum import Enum
 from collections import Counter
+from typing import Union
 
 RESOURCE_NAMES = ["brick", "lumber", "ore", "grain", "wool"]
-
 
 class DevelopmentCardKind(Enum):
     knight = 0
@@ -41,6 +41,7 @@ class ResourceKind(Enum):
 
 class InsufficientResources(Exception): pass
 
+# ResourceTuple: TypeAlias = (int, int, int, int, int)
 
 @dataclass     #(order=True)  This yields wrong results, replaced with
                # comparison methods
@@ -52,6 +53,12 @@ class Resources:
     wool: int = 0
     development_cards: DevelopmentCard = DevelopmentCard()
 
+    # def __init__(self, resources: Union[ResourceKind, ()]):
+        # if type( resources ) is ResourceKind:
+            # pass
+        # else:
+            # super.__init__(resources)
+
     def __add__(self, other):
         return Resources(
             self.brick + other.brick,
@@ -59,6 +66,17 @@ class Resources:
             self.ore + other.ore,
             self.grain + other.grain,
             self.wool + other.wool,
+            self.development_cards,
+        )
+
+    def __mul__(self, scalar: float):
+        return Resources(
+            self.brick * scalar,
+            self.lumber * scalar,
+            self.ore * scalar,
+            self.grain * scalar,
+            self.wool * scalar,
+            self.development_cards,
         )
 
     def __sub__(self, other):
@@ -68,6 +86,7 @@ class Resources:
             self.ore - other.ore,
             self.grain - other.grain,
             self.wool - other.wool,
+            self.development_cards,
         )
         if any(map(lambda r: r < 0, new_resources)):
             raise InsufficientResources("Insufficient resources")
@@ -81,7 +100,10 @@ class Resources:
     def can_build(self, building):
         return all(pr >= br for pr, br in zip(self, building))
 
-    def __getitem__(self, key: str) -> int:
+    def __getitem__(self, key: Union[str, ResourceKind]) -> int:
+        if isinstance(key, ResourceKind):
+            return self[key.name]
+
         key = key.lower()
         if key == "brick":
             return self.brick
@@ -93,10 +115,11 @@ class Resources:
             return self.grain
         elif key == "wool":
             return self.wool
-        else:
-            raise Exception("Unrecognised resource")
 
-    def __setitem__(self, key: str, new_value: int):
+    def __setitem__(self, key: Union[str, ResourceKind], new_value: int):
+        if isinstance(key, ResourceKind):
+            self[key.name] = new_value
+
         key = key.lower()
         if key == "brick":
             self.brick = new_value
@@ -128,12 +151,7 @@ class Resources:
         if all(map(lambda r: r == 0, self)):
             return "Nothing!"
 
-        #for kind, amount in self.data_rep():
-        #    if amount == 0:
-        #        continue
-        #    rep += f"{amount}x {kind.name}, "
-        
-        rep = ", ".join(f"{amount}x {kind.name}" 
+        rep = ", ".join(f"{amount}x {kind.name}"
                         for kind, amount
                         in self.data_rep()
                         if amount>0)

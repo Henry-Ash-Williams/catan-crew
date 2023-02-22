@@ -2,16 +2,8 @@
 
 #from Player import Player
 #from Resources import Resources
-from dataclasses import dataclass
 
 
-#@dataclass
-#class Trade:
-#    sender: Player
-#    resources_offered: Resources
-#    resources_requested: Resources
-#    proposees: list[Player]
-#    accepters: list[Player]
 
 class Trade:
     def __init__(self, sender, resources_offered, resources_requested, proposees):

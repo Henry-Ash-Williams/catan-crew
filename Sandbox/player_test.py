@@ -1,8 +1,9 @@
-from Player import Player
-from Resources import Resources
+from player import Player
+from resources import Resources
 
 import unittest
 
+# TODO: Update the player tester class to reflect current interface design
 
 class PlayerTester(unittest.TestCase):
     def setUp(self):
