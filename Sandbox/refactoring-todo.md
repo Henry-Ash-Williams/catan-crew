@@ -3,13 +3,18 @@
 
 ## Guy's Tasks 
 
+#### Resources stuff
+
+- `Resources` and `DevelopmentCard` should be refactored to use `Counter`
+- `Resources.can_build` should be renamed to `Resources.can_afford` 
+- `Resources.__sub__` should use `InsufficientResources` 
+
+#### Other
+
 - add `Game.play_robber` 
 - `bank.development_card_deck` should be `DevelopmentCard` object
 - refactor `board.py`
-- `Resources` and `DevelopmentCard` should be refactored to use `Counter`
 - `Player.exchange_rates` should use `ResourceKind` as keys, not a priority 
-- `Resources.can_build` should be renamed to `Resources.can_afford` 
-- `Resources.__sub__` should use `InsufficientResources` 
 - `Game.prompt_trade_details` should be cleaned up 
 - finish `Player.accepts_trade` 
 - `Player.get_location` function to handle getting and validating locations from the user

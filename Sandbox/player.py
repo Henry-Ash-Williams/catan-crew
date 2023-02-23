@@ -9,7 +9,8 @@ from resources import (
     RESOURCE_REQUIREMENTS,
     ResourceKind,
     DevelopmentCardKind,
-    RESOURCE_NAMES,
+    NO_RESOURCES,
+    brick, lumber, ore, grain, wool,
 )
 from trade import Trade
 
@@ -102,18 +103,18 @@ class Player:
         )
         t.add_column("Resource")
         t.add_column("Count")
-        t.add_row("Brick", str(self.resources.brick), style="#cb4154")
-        t.add_row("Lumber", str(self.resources.lumber), style="green4")
-        t.add_row("Ore", str(self.resources.ore), style="grey30")
-        t.add_row("Grain", str(self.resources.grain), style="gold1")
-        t.add_row("Wool", str(self.resources.wool), style="grey70")
+        t.add_row("Brick", str(self.resources[brick]), style="#cb4154")
+        t.add_row("Lumber", str(self.resources[lumber]), style="green4")
+        t.add_row("Ore", str(self.resources[ore]), style="grey30")
+        t.add_row("Grain", str(self.resources[grain]), style="gold1")
+        t.add_row("Wool", str(self.resources[wool]), style="grey70")
         return t
 
     def view_available_builds(self) -> list[str]:
         return [
             building
             for building, cost in RESOURCE_REQUIREMENTS.items()
-            if self.resources.can_build(cost)
+            if self.resources >= cost
         ]
 
     def get_player_state(self):
@@ -241,15 +242,14 @@ class Player:
         """Returns whether a player can build a road or not."""
         if len(player.game.board.paths_reachable_by(player)) < 1:
             return False
-        return len(player.available_roads) > 0 and player.resources.can_build(
-            RESOURCE_REQUIREMENTS["road"]
-        )
+        return len(player.available_roads) > 0 and player.resources >= RESOURCE_REQUIREMENTS["road"]
+        
 
     def can_build_settlement(player):
         """Returns whether a player can build a settlement or not."""
         if len(player.available_settlements) == 0:
             return False
-        if not player.resources.can_build(RESOURCE_REQUIREMENTS["settlement"]):
+        if not player.resources >= RESOURCE_REQUIREMENTS["settlement"]:
             return False
         if not player.game.board.valid_settlement_locations(player):
             return False
@@ -258,7 +258,7 @@ class Player:
 
     def has_resources(player):
         """Returns True if player has any resource to trade."""
-        return any(map(lambda resource: resource > 0, player.resources))
+        return player.resources > NO_RESOURCES
 
     def can_upgrade_settlement(player):
         """Returns True if player has an un-upgraded settlement and
@@ -266,7 +266,7 @@ class Player:
 
         # no sure if we upgrade a city, do we pop settlement out of built-settlement
         return (
-            player.resources.can_build(RESOURCE_REQUIREMENTS["city"])
+            player.resources >= RESOURCE_REQUIREMENTS["city"]
             and len(player.available_cities) > 0
             and len(player.built_settlements) > 0
         )
@@ -275,7 +275,7 @@ class Player:
         """Returns True if player can afford a development card."""
         if not player.game.bank.development_card_deck:
             return False
-        return player.resources.can_build(RESOURCE_REQUIREMENTS["development_card"])
+        return player.resources >= RESOURCE_REQUIREMENTS["development_card"]
 
     def has_knight_card(player):
         """Returns True if player has a Knight card."""
@@ -354,27 +354,19 @@ class HumanPlayer(Player):
             num_ore = int(player.get("Enter number of ore you offer: "))
             num_grain = int(player.get("Enter number of grain you offer: "))
             num_wool = int(player.get("Enter number of wool you offer: "))
-            resources_offered = Resources(
-                brick=num_brick,
-                lumber=num_lumber,
-                ore=num_ore,
-                grain=num_grain,
-                wool=num_wool,
+            resources_offered = Resources({brick:num_brick, lumber:num_lumber, ore:num_ore, grain:num_grain, wool:num_wool}
             )
-            for offering_resources, player_resources in zip(
-                resources_offered, player.resources
-            ):
-                # why offering_resources is string>
-                if offering_resources > player_resources:
-                    has_enough_resource = False
+
+            has_enough_resource = player.resources >= resources_offered
 
             if not (has_enough_resource):
-                print("player doesn't have enough resources to for this trade")
+                print("Player doesn't have enough resources to for this trade")
 
         resources_requested_input = player.get(
             "Enter resources you want to get in format (%s): "
-            % ", ".join(RESOURCE_NAMES)
+            % ", ".join(ResourceKind.__members__)
         )
+        
         while True:
             try:
                 resources_requested = Resources(*eval(resources_requested_input))
@@ -385,7 +377,8 @@ class HumanPlayer(Player):
                 )
 
         print("\nYou can propose this trade to:")
-        for index, proposee in enumerate(player.game.players, 1):
+        other_players = [p for p in player.game.players if not(p is player)]
+        for index, proposee in enumerate(other_players, 1):
             print("%i. %s" % (index, proposee))
 
         prompt1 = "Who would you like to propose this trade to? "
@@ -394,7 +387,7 @@ class HumanPlayer(Player):
         if choices_are_numbers:
             numeric_choices = [int(choice) for choice in choices]
             choices_in_range = min(numeric_choices) > 0 and max(numeric_choices) <= len(
-                player.game.players
+                other_players
             )
 
         while not (choices_are_numbers and choices_in_range):
@@ -405,9 +398,9 @@ class HumanPlayer(Player):
                 numeric_choices = [int(choice) for choice in choices]
                 choices_in_range = min(numeric_choices) > 0 and max(
                     numeric_choices
-                ) <= len(player.game.players)
+                ) <= len(other_players)
 
-        proposees = [player.game.players[choice - 1] for choice in numeric_choices]
+        proposees = [other_players[choice - 1] for choice in numeric_choices]
 
         return Trade(
             sender=player,
@@ -551,11 +544,11 @@ class HumanPlayer(Player):
 
     def prompt_resource(player, prompt) -> ResourceKind:
         choice = player.get(prompt).lower()
-        while not choice in RESOURCE_NAMES:
+        while not choice in ResourceKind.__members__:
             choice = player.get(
                 "That is not a valid resource name. Try again: "
             ).lower()
-        resource = ResourceKind(RESOURCE_NAMES.index(choice))
+        resource = ResourceKind(ResourceKind[choice])
         return resource
 
     def prompt_monopoly_resource(player) -> ResourceKind:
@@ -583,12 +576,8 @@ class AutonomousPlayer(Player):
         return location
 
     def prompt_trade_details(player):
-        individual_resources = [
-            Resources(*((0,) * i + (1,) + (0,) * (4 - i))) for i in range(5)
-        ]
-        resources_offered = random.choice(
-            [res for res in individual_resources if res <= player.resources]
-        )
+        individual_resources = [Resources(kind) for kind in ResourceKind]
+        resources_offered = random.choice(individual_resources)
         resources_requested = random.choice(individual_resources)
         proposees = random.sample(
             player.game.players, random.randint(1, len(player.game.players))

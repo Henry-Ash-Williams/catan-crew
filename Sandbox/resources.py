@@ -3,10 +3,17 @@ from dataclasses import dataclass
 from enum import Enum
 from collections import Counter
 from random import randint
-from typing import Union
 
-RESOURCE_NAMES = ["brick", "lumber", "ore", "grain", "wool"]
+class ResourceKind(Enum):
+    brick = 0
+    lumber = 1
+    ore = 2
+    grain = 3
+    wool = 4
 
+    def __str__(self): return self.name.capitalize()
+
+globals().update(ResourceKind.__members__)
 
 class DevelopmentCardKind(Enum):
     knight = 0
@@ -44,14 +51,11 @@ class DevelopmentCard:
             ]
         )
 
-    def __add__(self, other):
-        pass
+    def __add__(self, other):  pass
 
-    def __sub__(self, other):
-        pass
+    def __sub__(self, other):  pass
 
-    def card_count(self) -> int:
-        return sum(self)
+    def card_count(self) -> int:  return sum(self)
 
     def get_random_dev_card(self):
         no_of_cards = self.card_count()
@@ -64,166 +68,48 @@ class DevelopmentCard:
         q = DevelopmentCardKind(i)
 
 
-
-
-
-
-
-
-class ResourceKind(Enum):
-    brick = 0
-    lumber = 1
-    ore = 2
-    grain = 3
-    wool = 4
-
-    def __str__(self):
-        return self.name.capitalize()
-
-
 class InsufficientResources(Exception):
     pass
 
 
-# ResourceTuple: TypeAlias = (int, int, int, int, int)
-
-
-@dataclass  # (order=True)  This yields wrong results, replaced with
-# comparison methods
-class Resources:
-    brick: int = 0
-    lumber: int = 0
-    ore: int = 0
-    grain: int = 0
-    wool: int = 0
-    development_cards: DevelopmentCard = DevelopmentCard()
-
-    # def __init__(self, resources: Union[ResourceKind, ()]):
-    # if type( resources ) is ResourceKind:
-    # pass
-    # else:
-    # super.__init__(resources)
-
-    def __add__(self, other):
-        return Resources(
-            self.brick + other.brick,
-            self.lumber + other.lumber,
-            self.ore + other.ore,
-            self.grain + other.grain,
-            self.wool + other.wool,
-            self.development_cards,
-        )
-
-    def __mul__(self, scalar: float):
-        return Resources(
-            self.brick * scalar,
-            self.lumber * scalar,
-            self.ore * scalar,
-            self.grain * scalar,
-            self.wool * scalar,
-            self.development_cards,
-        )
-
-    def __sub__(self, other):
-        new_resources = Resources(
-            self.brick - other.brick,
-            self.lumber - other.lumber,
-            self.ore - other.ore,
-            self.grain - other.grain,
-            self.wool - other.wool,
-            self.development_cards,
-        )
-        if any(map(lambda r: r < 0, new_resources)):
-            raise InsufficientResources("Insufficient resources")
-
-        return new_resources
-
-    def __iter__(self):
-        # enables iteration over each resource in the class
-        return iter([self.brick, self.lumber, self.ore, self.grain, self.wool])
-
-    def can_build(self, building):
-        return all(pr >= br for pr, br in zip(self, building))
-
-    def __getitem__(self, key: Union[str, ResourceKind]) -> int:
-        if isinstance(key, ResourceKind):
-            return self[key.name]
-
-        key = key.lower()
-        if key == "brick":
-            return self.brick
-        elif key == "lumber":
-            return self.lumber
-        elif key == "ore":
-            return self.ore
-        elif key == "grain":
-            return self.grain
-        elif key == "wool":
-            return self.wool
-
-    def __setitem__(self, key: Union[str, ResourceKind], new_value: int):
-        if isinstance(key, ResourceKind):
-            self[key.name] = new_value
-
-        key = key.lower()
-        if key == "brick":
-            self.brick = new_value
-        elif key == "lumber":
-            self.lumber = new_value
-        elif key == "ore":
-            self.ore = new_value
-        elif key == "grain":
-            self.grain = new_value
-        elif key == "wool":
-            self.wool = new_value
+class Resources(Counter):
+    
+    def __init__(self, *resources_spec):
+    
+        if len(resources_spec) == 0:
+            super().__init__()
+            
+        elif len(resources_spec) == 1:
+            if isinstance(resources_spec[0], ResourceKind):
+                super().__init__(resources_spec)
+            elif isinstance(resources_spec[0], dict):
+                super().__init__(resources_spec[0])
+            else: raise TypeError(f"Resources object can't be initialized with parameters {resources_spec}")
+            
+        elif len(resources_spec) == len(ResourceKind):
+            super().__init__(dict(zip(ResourceKind,resources_spec)))
+            
         else:
-            raise Exception("Unrecognised resource")
-
-    def data_rep(self) -> list[(ResourceKind, int)]:
-        return [
-            (ResourceKind.brick, self.brick),
-            (ResourceKind.lumber, self.lumber),
-            (ResourceKind.ore, self.ore),
-            (ResourceKind.grain, self.grain),
-            (ResourceKind.wool, self.wool),
-        ]
-
-    def card_count(self) -> (int, int):
-        return (sum(self), self.development_cards.card_count())
+            raise TypeError(f"Resources object can't be initialized with parameters {resources_spec}")
+        
+    def __add__(self, other): return Resources(super().__add__(other))
+    
+    def __sub__(self, other):
+        if not(self >= other): raise InsufficientResources()
+        return Resources(super().__sub__(other))
+    
+    def __isub__(self, other): return self - other
 
     def __str__(self):
-        rep = ""
-        if all(map(lambda r: r == 0, self)):
-            return "Nothing!"
-
-        rep = ", ".join(
-            f"{amount}x {kind.name}" for kind, amount in self.data_rep() if amount > 0
-        )
-
-        return rep
-
-    def counter(self):
-        return Counter({r: self[r] for r in RESOURCE_NAMES})
-
-    def __eq__(self, other):
-        return self.counter() == other.counter()
-
-    def __lt__(self, other):
-        return self.counter() < other.counter()
-
-    def __le__(self, other):
-        return self.counter() <= other.counter()
-
-    def __gt__(self, other):
-        return self.counter() > other.counter()
-
-    def __ge__(self, other):
-        return self.counter() >= other.counter()
+        if self == NO_RESOURCES: return "Nothing!"
+        else: return ", ".join(f"{amount}x {kind}" for kind, amount in self.items() if amount > 0)
 
 
 RESOURCE_REQUIREMENTS = {
-    "road": Resources(brick=1, lumber=1),
-    "settlement": Resources(brick=1, lumber=1, wool=1, grain=1),
-    "city": Resources(ore=3, grain=2),
-    "development_card": Resources(ore=1, wool=1, grain=1),
+    "road": Resources({brick:1, lumber:1}),
+    "settlement": Resources({brick:1, lumber:1, wool:1, grain:1}),
+    "city": Resources({ore:3, grain:2}),
+    "development_card": Resources({ore:1, wool:1, grain:1}),
 }
+
+NO_RESOURCES = Resources()

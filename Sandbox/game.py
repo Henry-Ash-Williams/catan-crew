@@ -4,9 +4,9 @@ from trade import Trade
 from board import Board
 from resources import (
     Resources,
-    RESOURCE_NAMES,
     RESOURCE_REQUIREMENTS,
     DevelopmentCardKind,
+    ResourceKind,
 )
 from clear import clear
 from dill import Pickler, Unpickler
@@ -51,7 +51,7 @@ class Game:
         for i in range(len(players)):
             players[i].number = i + 1
             players[i].game = self
-            players[i].resources = STARTING_RESOURCES
+            players[i].resources = STARTING_RESOURCES.copy()
         self.players = players
         self.player_colors = [player.color for player in players]
 
@@ -70,7 +70,6 @@ class Game:
         self.is_won = False
 
         self.turn_count = 0
-
         # self.start()
 
     def prompt_player_number(self):
@@ -86,7 +85,7 @@ class Game:
         new_player = HumanPlayer(color, self.getter)
         new_player.number = player_number
         new_player.game = self
-        new_player.resources = STARTING_RESOURCES
+        new_player.resources = STARTING_RESOURCES.copy()
         self.players.append(new_player)
 
     def check_longest_road(self) -> Player:
@@ -132,8 +131,9 @@ class Game:
                 ),  # +','+str(player.calculate_total_victory_points()),
                 player.road_length,
                 player.knights_played,
-                player.resources.card_count()[0],
-                player.resources.card_count()[1],
+                player.resources.total(),
+                
+                sum(player.development_cards.values()),
             )
             for player in self.players
         ]
@@ -205,7 +205,7 @@ class Game:
             c.print(Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center")
             c.print(Panel(f"Largest Army:\n{self.check_largest_army()}") , justify="center") # self.getter("Press any key to continue")
             clear()
-
+            
         print(f"\n\n{str(self.current_player).upper()} WINS!!")
 
     def do_turn(self):
@@ -219,7 +219,7 @@ class Game:
                 f"You rolled a 7. Any player with more than {ROBBING_THRESHOLD} resource cards now has to give up half of them!"
             )
             for other_player in self.players:
-                player_wealth = sum(other_player.resources)
+                player_wealth = other_player.resources.total()
                 if player_wealth > ROBBING_THRESHOLD:
                     amount_robbed = player_wealth // 2
                     other_player.message(
@@ -229,9 +229,9 @@ class Game:
                         f"Select {amount_robbed} cards out of the following to give up: {player.resources}"
                     )
         else:
-            resources_before = player.resources
+            resources_before = player.resources.copy()
             self.distribute_resources()
-            resources_after = player.resources
+            resources_after = player.resources.copy()
             resources_gained = resources_after - resources_before
             print("\nYou got:", str(resources_gained), "\n")
 
@@ -290,9 +290,15 @@ class Game:
     def start_trade(self):
         trade = self.current_player.prompt_trade_details()
 
-        while self.current_player in trade.proposees:
-            self.current_player.message("You can't propose a trade to yourself")
-            trade = self.current_player.prompt_trade_details()
+        while True:
+            if   self.current_player in trade.proposees:
+                self.current_player.message("You can't propose a trade to yourself")
+                trade = self.current_player.prompt_trade_details()
+            elif not(self.current_player.resources >= trade.resources_offered):
+                self.current_player.message("You don't have enough resources for this trade")
+                trade = self.current_player.prompt_trade_details()
+            else:
+                break
 
         willing_traders = [
             trader
@@ -346,16 +352,16 @@ class Game:
     def play_monopoly(self):
         self.current_player.development_cards["monopoly"] -= 1
         self.bank.development_card_deck.append(DevelopmentCardKind.monopoly)
-        resource_name = self.current_player.prompt_monopoly_resource().name
+        resource = self.current_player.prompt_monopoly_resource()
         total_gained = 0
         for player in self.players:
             if player is self.current_player:
                 continue
-            total_gained += player.resources[resource_name]
-            player.resources[resource_name] = 0
-        self.current_player.resources[resource_name] += total_gained
+            total_gained += player.resources[resource]
+            player.resources[resource] = 0
+        self.current_player.resources[resource] += total_gained
         self.current_player.message(
-            f"Congrats, you got {total_gained} {resource_name}s!"
+            f"Congrats, you got {total_gained} {resource}s!"
         )
 
     def play_year_of_plenty(self):
@@ -364,9 +370,9 @@ class Game:
         for _ in range(2):
             choice = self.current_player.prompt_YoP_resource()
             remaining_tries = 4
-            while (not self.bank.resources[choice.name]) and remaining_tries > 0:
+            while (not self.bank.resources[choice]) and remaining_tries > 0:
                 self.current_player.message(
-                    f"Sorry, the bank doesn't have any {choice.name}. You have {remaining_tries} tries left."
+                    f"Sorry, the bank doesn't have any {choice}. You have {remaining_tries} tries left."
                 )
                 choice = self.current_player.prompt_YoP_resource()
                 remaining_tries -= 1
@@ -414,9 +420,9 @@ class Game:
             return
         robbee = self.current_player.prompt_robbing_victim(potential_robbees)
         available_to_steal = [
-            resource_name
-            for resource_name in RESOURCE_NAMES
-            if robbee.resources[resource_name] > 0
+            resource
+            for resource in ResourceKind
+            if robbee.resources[resource] > 0
         ]
         resource_to_steal = random.choice(available_to_steal)
         robbee.resources[resource_to_steal] -= 1
@@ -474,7 +480,7 @@ class Game:
 if __name__ == "__main__":
     # get = input
     getter = lambda prompt: get(prompt, inp)
-    # game = Game(getter=getter, players = [], has_human_players=True)
+    #game = Game(getter=getter, players = [], has_human_players=True)
     game = Game(
         getter=getter,
         players=[TesterPlayer(color) for color in ["red", "green", "blue", "purple"]],

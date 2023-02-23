@@ -31,29 +31,24 @@ class Bank:
     def __str__(self): return 'Bank'
 
     def distribute(self, amount: int, resource_kind: ResourceKind) -> Resources:
-        if resource_kind == None: return Resources()
-        r = Resources()
-        r[resource_kind.name] = amount
+        r = Resources() if resource_kind == None else Resources(resource_kind)
         try:
             self.resources -= r
             return r
         except InsufficientResources:
-            r[resource_kind.name] = self.resources[resource_kind.name]
+            r[resource_kind] = self.resources[resource_kind]
             self.resources -= r
             return r
 
     def distribute_resources(self, resources: Resources) -> Resources:
-        if self.resources >= resources:
-            self.resources -= resources
-            return resources
-        else:
-            raise BankException('Not enough resources to give away')
+        self.resources -= resources
+        return resources
 
 
     def return_resources(self, returned_resources: Resources):
         self.resources += returned_resources
 
-    def sell_development_card(self, player: Player) -> str:
+    def sell_development_card(self, player: Player):
         if not player.can_buy_dev_card():
             raise Exception("Player does not have resources to purchase dev card")
         elif len(self.development_card_deck) <= 0:
