@@ -22,6 +22,10 @@ class DevelopmentCardKind(Enum):
     year_of_plenty = 3
     monopoly = 4
 
+globals().update(DevelopmentCardKind.__members__)
+
+class DevelopmentCards(Counter): pass
+
 
 DEVELOPMENT_CARD_COUNTS = {
     DevelopmentCardKind.knight: 14,
@@ -30,43 +34,6 @@ DEVELOPMENT_CARD_COUNTS = {
     DevelopmentCardKind.year_of_plenty: 2,
     DevelopmentCardKind.monopoly: 2,
 }
-
-
-@dataclass
-class DevelopmentCard:
-    knight: int = 0
-    hidden_victory_point: int = 0
-    road_building: int = 0
-    year_of_plenty: int = 0
-    monopoly: int = 0
-
-    def __iter__(self):
-        return iter(
-            [
-                self.knight,
-                self.hidden_victory_point,
-                self.road_building,
-                self.year_of_plenty,
-                self.monopoly,
-            ]
-        )
-
-    def __add__(self, other):  pass
-
-    def __sub__(self, other):  pass
-
-    def card_count(self) -> int:  return sum(self)
-
-    def get_random_dev_card(self):
-        no_of_cards = self.card_count()
-        idx = randint(0, no_of_cards - 1)
-
-        for i, dc in enumerate(self):
-            if idx<dc: break
-            else: idx-=dc
-
-        q = DevelopmentCardKind(i)
-
 
 class InsufficientResources(Exception):
     pass

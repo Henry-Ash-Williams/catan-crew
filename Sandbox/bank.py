@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import random
-from resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind, InsufficientResources
+from resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind, InsufficientResources, DEVELOPMENT_CARD_COUNTS
 from player import Player
 
 

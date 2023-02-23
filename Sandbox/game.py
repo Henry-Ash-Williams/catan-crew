@@ -7,6 +7,7 @@ from resources import (
     RESOURCE_REQUIREMENTS,
     DevelopmentCardKind,
     ResourceKind,
+    knight, hidden_victory_point, road_building, year_of_plenty, monopoly
 )
 from clear import clear
 from dill import Pickler, Unpickler
@@ -21,7 +22,7 @@ from rich.panel import Panel
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
-STARTING_RESOURCES = Resources(0, 0, 0, 0, 0)  # Resources(5,5,5,5,5)
+STARTING_RESOURCES = Resources()  # Resources(5,5,5,5,5)
 VP_TO_WIN = 10
 
 inp = fileinput.input()
@@ -350,7 +351,7 @@ class Game:
         self.current_player.upgrade_settlement(settlement)
 
     def play_monopoly(self):
-        self.current_player.development_cards["monopoly"] -= 1
+        self.current_player.development_cards[monopoly] -= 1
         self.bank.development_card_deck.append(DevelopmentCardKind.monopoly)
         resource = self.current_player.prompt_monopoly_resource()
         total_gained = 0
@@ -365,7 +366,7 @@ class Game:
         )
 
     def play_year_of_plenty(self):
-        self.current_player.development_cards["year_of_plenty"] -= 1
+        self.current_player.development_cards[year_of_plenty] -= 1
         self.bank.development_card_deck.append(DevelopmentCardKind.year_of_plenty)
         for _ in range(2):
             choice = self.current_player.prompt_YoP_resource()
@@ -379,14 +380,14 @@ class Game:
             self.current_player.resources += self.bank.distribute(1, choice)
 
     def play_road_building(self):
-        self.current_player.development_cards["road_building"] -= 1
+        self.current_player.development_cards[road_building] -= 1
         self.bank.development_card_deck.append(DevelopmentCardKind.road_building)
         for _ in range(2):
             if self.current_player.can_build_road():
                 self.build_road(for_free=True)
 
     def play_knight(self):
-        self.current_player.development_cards["knight"] -= 1
+        self.current_player.development_cards[knight] -= 1
         self.bank.development_card_deck.append(DevelopmentCardKind.knight)
         tile_choice = self.current_player.prompt_robber_location()
         self.board.robber_location = tile_choice.location

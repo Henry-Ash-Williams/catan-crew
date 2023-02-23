@@ -8,9 +8,11 @@ from resources import (
     Resources,
     RESOURCE_REQUIREMENTS,
     ResourceKind,
-    DevelopmentCardKind,
     NO_RESOURCES,
     brick, lumber, ore, grain, wool,
+    DevelopmentCardKind,
+    DevelopmentCards,
+    knight, hidden_victory_point, road_building, year_of_plenty, monopoly
 )
 from trade import Trade
 
@@ -42,13 +44,7 @@ class Player:
         # player.hidden_victory_points = 0
 
         player.resources = Resources()
-        player.development_cards = {
-            "knight": 0,
-            "hidden_victory_point": 0,
-            "road_building": 0,
-            "year_of_plenty": 0,
-            "monopoly": 0,
-        }  # TODO: either dict or dataclass
+        player.development_cards = DevelopmentCards()
 
         player.exchange_rate = {
             # player side to bank: identical resource to 1 target resource
@@ -77,21 +73,21 @@ class Player:
         t = Table(title="Available Development Card")
         t.add_column("Dev Card")
         t.add_column("Count")
-        t.add_row("Knight", str(self.development_cards["knight"]), style="blue_violet")
+        t.add_row("Knight", str(self.development_cards[knight]), style="blue_violet")
         t.add_row(
             "Road Building",
-            str(self.development_cards["road_building"]),
+            str(self.development_cards[road_building]),
             style="chartreuse4",
         )
         t.add_row(
             "Year of Plenty",
-            str(self.development_cards["year_of_plenty"]),
+            str(self.development_cards[year_of_plenty]),
             style="red3",
         )
-        t.add_row("Monopoly", str(self.development_cards["monopoly"]), style="gold1")
+        t.add_row("Monopoly", str(self.development_cards[monopoly]), style="gold1")
         t.add_row(
             "Hidden Victory Point",
-            str(self.development_cards["hidden_victory_point"]),
+            str(self.development_cards[hidden_victory_point]),
             style="grey70",
         )
         return t
@@ -175,20 +171,20 @@ class Player:
     #    player.game.play_knight(location)
 
     def play_monopoly(player, resource_type: ResourceKind):
-        player.development_cards["monopoly"] -= 1
+        player.development_cards[monopoly] -= 1
         player.game.play_monopoly(resource_type)
 
     def play_year_of_plenty(player, resource1: str, resource2: str):
         # check dev card
-        if player.development_cards["year_of_plenty"] <= 0:
+        if player.development_cards[year_of_plenty] <= 0:
             raise Exception("Player has no available year_of_plenty card to play")
 
-        player.development_cards["year_of_plenty"] -= 1
+        player.development_cards[year_of_plenty] -= 1
         player.game.play_monopoly(player, resource1, resource2)
 
     def play_road_building(player, location1, location2):
         # can place 2 roads immediately
-        player.development_cards["road_building"] -= 1
+        player.development_cards[road_building] -= 1
         player.game.add_road(location1)
         player.game.add_road(location2)
 
@@ -279,19 +275,19 @@ class Player:
 
     def has_knight_card(player):
         """Returns True if player has a Knight card."""
-        return player.development_cards["knight"] > 0
+        return player.development_cards[knight] > 0
 
     def can_play_road_building(player):
         """Returns True if player has a Road_Building card."""
-        return player.can_build_road() and player.development_cards["road_building"] > 0
+        return player.can_build_road() and player.development_cards[road_building] > 0
 
     def has_year_of_plenty_card(player):
         """Returns True if player has a year_of_plenty card."""
-        return player.development_cards["year_of_plenty"] > 0
+        return player.development_cards[year_of_plenty] > 0
 
     def has_monopoly_card(player):
         """Returns True if player has a Monopoly card."""
-        return player.development_cards["monopoly"] > 0
+        return player.development_cards[monopoly] > 0
 
     def calculate_visible_victory_points(player):
         """for each action, the game can update this, so that every players can view other players' VP in real time"""
@@ -309,12 +305,12 @@ class Player:
         """for each action, the game can update this, so that by the time player do an action to win, the game just ends"""
         return (
             player.calculate_visible_victory_points()
-            + player.development_cards["hidden_victory_point"]
+            + player.development_cards[hidden_victory_point]
         )
 
     def gets_development_card(player, dev_card: DevelopmentCardKind):
         """Takes a development card parameter, adds it to this player's development cards."""
-        player.development_cards[dev_card.name] += 1
+        player.development_cards[dev_card] += 1
 
     def message(player, msg: str):
         c = Console()
