@@ -78,7 +78,7 @@ class Game:
 
     def prompt_human_player(self):
         player_number = len(self.players) + 1
-        color = self.getter("Player #%i's color: " % player_number)
+        color = self.getter(f"Player #{player_number}'s color: ")
         while color in self.player_colors:
             color = self.getter(
                 "Sorry, that color is already taken. Please choose a different color: "
@@ -112,7 +112,7 @@ class Game:
 
     def dice_roll(self):
         self.dice = random.randint(1, 6) + random.randint(1, 6)
-        print("Dice rolled. Result: %i" % self.dice)
+        print(f"Dice rolled. Result: {self.dice}")
 
     def print_current_player(self):
         player_color = self.current_player.color
@@ -428,7 +428,7 @@ class Game:
         resource_to_steal = random.choice(available_to_steal)
         robbee.resources[resource_to_steal] -= 1
         self.current_player.resources[resource_to_steal] += 1
-        self.current_player.message("You got a %s." % resource_to_steal)
+        self.current_player.message(f"You got a {resource_to_steal}.")
 
     def verify_current_player_is(self, player):
         if player != self.current_player:

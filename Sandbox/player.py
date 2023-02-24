@@ -37,11 +37,8 @@ class Player:
         player.built_cities = []
         player.built_roads = []
 
-        # Victory point related
         player.road_length = 0
         player.knights_played = 0
-        player.visible_victory_points = 0
-        # player.hidden_victory_points = 0
 
         player.resources = Resources()
         player.development_cards = DevelopmentCards()
@@ -61,9 +58,6 @@ class Player:
         player.proposed_trades = []
 
     def __str__(player):
-        return player.color.capitalize()
-
-    def __repr__(player):
         return player.color.capitalize()
 
     def roll_dice(player):
@@ -124,7 +118,8 @@ class Player:
         console.print(
             Columns(
                 [Panel(resource_table), Panel(building_table), Panel(devcard_table)]
-            )
+            ),
+            justify="center"
         )
 
     def builds_settlement(player, location, for_free=False):
@@ -193,32 +188,6 @@ class Player:
 
     def handle_trade(self, trade):
         pass
-
-    # def propose_trade(
-    #    self,
-    #    offered_to,
-    #    resources_offered: Resources,
-    #    resources_requested: Resources,
-    # ):
-    #    # check resource
-    #    for offering_resources, player_resources in zip(
-    #        resources_offered, self.resources
-    #    ):
-    #        if offering_resources > player_resources:
-    #            raise Exception(
-    #                "player doesn't have enough resources to for this trade"
-    #            )
-    #
-    #    t = Trade(
-    #        sender=self,
-    #        resources_offered=resources_offered,
-    #        resources_requested=resources_requested,
-    #    )
-    #
-    #    for player in offered_to + [self.game.bank]:
-    #        new_trade = copy(t)
-    #        new_trade.recipient = player
-    #        player.proposed_trades.append(new_trade)
 
     def update_exchange_rate(
         player, special_harbour: bool = False, resource_type: ResourceKind = None
@@ -359,8 +328,7 @@ class HumanPlayer(Player):
                 print("Player doesn't have enough resources to for this trade")
 
         resources_requested_input = player.get(
-            "Enter resources you want to get in format (%s): "
-            % ", ".join(ResourceKind.__members__)
+            f"Enter resources you want to get in format ({', '.join(RESOURCE_NAMES)}): "
         )
         
         while True:
@@ -373,9 +341,8 @@ class HumanPlayer(Player):
                 )
 
         print("\nYou can propose this trade to:")
-        other_players = [p for p in player.game.players if not(p is player)]
-        for index, proposee in enumerate(other_players, 1):
-            print("%i. %s" % (index, proposee))
+        for index, proposee in enumerate(player.game.players, 1):
+            print(f"{index}. {proposee}")
 
         prompt1 = "Who would you like to propose this trade to? "
         choices = [p.strip() for p in player.get(prompt1).split(",")]
@@ -414,7 +381,7 @@ class HumanPlayer(Player):
     def prompt_trade_partner(player, trade):
         print("\nYou can trade with:")
         for index, accepter in enumerate(trade.accepters, 1):
-            print("%i. %s" % (index, accepter))
+            print(f"{i}. {accepter}")
 
         choice = int(player.get("Pick a trade partner: "))
 
@@ -509,7 +476,7 @@ class HumanPlayer(Player):
 
         print("\nYou can rob:")
         for index, (color, robbee) in enumerate(available_robbees, 1):
-            print("%i. %s" % (index, color))
+            print(f"{index}. {color}")
 
         choice = int(player.get("Who would you like to rob? ")) - 1
 
@@ -556,7 +523,7 @@ class HumanPlayer(Player):
     def prompt_action(player, action_labels):
         print("\nYou can:")
         for index, action_label in enumerate(action_labels, 1):
-            print("%i. %s" % (index, action_label))
+            print(f"{index}. {action_label}")
         return int(player.get("What would you like to do? ")) - 1
 
 
