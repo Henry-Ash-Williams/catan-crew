@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from collections import Counter
-from random import randint
+import random
 
 class ResourceKind(Enum):
     brick = 0
@@ -24,16 +24,22 @@ class DevelopmentCardKind(Enum):
 
 globals().update(DevelopmentCardKind.__members__)
 
-class DevelopmentCards(Counter): pass
-
-
-DEVELOPMENT_CARD_COUNTS = {
-    DevelopmentCardKind.knight: 14,
-    DevelopmentCardKind.hidden_victory_point: 5,
-    DevelopmentCardKind.road_building: 2,
-    DevelopmentCardKind.year_of_plenty: 2,
-    DevelopmentCardKind.monopoly: 2,
-}
+class DevelopmentCards(Counter):
+    def pop(self):
+        total = self.total()
+        if total==0:
+            raise IndexError("pop from empty stack of development cards")
+        choice = random.randint(0,total-1)
+        for resource_kind in self:
+            if choice < self[resource_kind]:
+                self[resource_kind] -= 1
+                return DevelopmentCards([resource_kind])
+            else: choice -= self[resource_kind]
+    
+    def __str__(self):
+        if   self.total() == 0: return "Nothing!"
+        elif self.total() == 1: return self.most_common()[0][0].name.replace('_',' ').title()
+        else: return ", ".join(f"{amount}x {kind}" for kind, amount in self.items() if amount > 0)
 
 class InsufficientResources(Exception):
     pass

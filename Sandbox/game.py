@@ -133,8 +133,7 @@ class Game:
                 player.road_length,
                 player.knights_played,
                 player.resources.total(),
-                
-                sum(player.development_cards.values()),
+                player.development_cards.total(),
             )
             for player in self.players
         ]
@@ -341,10 +340,8 @@ class Game:
         )
         self.bank.return_resources(cost)
         dev_card = self.bank.distribute_dev_card()
-        self.current_player.gets_development_card(dev_card)
-        self.current_player.message(
-            f"Congrats, you got [b]{dev_card.name.capitalize()}[/b]"
-        )
+        self.current_player.gets_development_cards(dev_card)
+        self.current_player.message(f"Congrats, you got [b]{str(dev_card)}[/b]")
 
     def upgrade_settlement(self):
         settlement = self.current_player.prompt_settlement_for_upgrade()
@@ -352,7 +349,7 @@ class Game:
 
     def play_monopoly(self):
         self.current_player.development_cards[monopoly] -= 1
-        self.bank.development_card_deck.append(DevelopmentCardKind.monopoly)
+        self.bank.development_cards[monopoly] += 1
         resource = self.current_player.prompt_monopoly_resource()
         total_gained = 0
         for player in self.players:
@@ -367,7 +364,7 @@ class Game:
 
     def play_year_of_plenty(self):
         self.current_player.development_cards[year_of_plenty] -= 1
-        self.bank.development_card_deck.append(DevelopmentCardKind.year_of_plenty)
+        self.bank.development_cards[year_of_plenty] += 1
         for _ in range(2):
             choice = self.current_player.prompt_YoP_resource()
             remaining_tries = 4
@@ -381,14 +378,14 @@ class Game:
 
     def play_road_building(self):
         self.current_player.development_cards[road_building] -= 1
-        self.bank.development_card_deck.append(DevelopmentCardKind.road_building)
+        self.bank.development_cards[road_building] += 1
         for _ in range(2):
             if self.current_player.can_build_road():
                 self.build_road(for_free=True)
 
     def play_knight(self):
         self.current_player.development_cards[knight] -= 1
-        self.bank.development_card_deck.append(DevelopmentCardKind.knight)
+        self.bank.development_cards[knight] += 1
         tile_choice = self.current_player.prompt_robber_location()
         self.board.robber_location = tile_choice.location
         self.current_player.knights_played += 1

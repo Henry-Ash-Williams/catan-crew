@@ -1,31 +1,26 @@
 #!/usr/bin/env python3
 import random
-from resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind, InsufficientResources, DEVELOPMENT_CARD_COUNTS
+from resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind, InsufficientResources, DevelopmentCards
 from player import Player
 
+DEFAULT_BANK_DEV_CARDS = DevelopmentCards({
+    DevelopmentCardKind.knight: 14,
+    DevelopmentCardKind.hidden_victory_point: 5,
+    DevelopmentCardKind.road_building: 2,
+    DevelopmentCardKind.year_of_plenty: 2,
+    DevelopmentCardKind.monopoly: 2,
+})
+
+DEFAULT_BANK_RESOURCES = Resources(19,19,19,19,19)
 
 class BankException(Exception): pass
 
 
 class Bank:
-    development_card_deck = []
 
-    # In the standard board game, there are 19 of each resource card.
-    def __init__(self, available: int = 19):
-        self.resources = Resources(
-            available, available, available, available, available
-        )
-        """self.development_card_deck = DevelopmentCard(
-            tuple(DEVELOPMENT_CARD_COUNTS.values())
-        )"""
-        self.development_card_deck = (
-            [DevelopmentCardKind.knight for i in range(14)]
-            + [DevelopmentCardKind.hidden_victory_point for i in range(5)]
-            + [DevelopmentCardKind.road_building for i in range(2)]
-            + [DevelopmentCardKind.year_of_plenty for i in range(2)]
-            + [DevelopmentCardKind.monopoly for i in range(2)]
-        )
-        random.shuffle(self.development_card_deck)
+    def __init__(self):
+        self.development_cards = DEFAULT_BANK_DEV_CARDS.copy()
+        self.resources = DEFAULT_BANK_RESOURCES.copy()
         self.color = "Bank"
         
     def __str__(self): return 'Bank'
@@ -51,18 +46,18 @@ class Bank:
     def sell_development_card(self, player: Player):
         if not player.can_buy_dev_card():
             raise Exception("Player does not have resources to purchase dev card")
-        elif len(self.development_card_deck) <= 0:
+        elif self.development_cards.total() <= 0:
             raise Exception("Bank is out of development cards")
         else:
             player.resources -= RESOURCE_REQUIREMENTS["development_card"]
-            dev_card = self.development_card_deck.pop().name.replace("_", " ")
-            player.development_cards[dev_card] += 1
+            dev_card = self.development_cards.pop()
+            player.development_cards += dev_card
 
     def distribute_dev_card(self):
         """ pops a development card from the development card stack and returns it"""
-        if not self.development_card_deck:
+        if self.development_cards.total() <= 0:
             raise BankException('Bank is out of development cards')
-        return self.development_card_deck.pop()
+        return self.development_cards.pop()
         
     def accepts_trade(self, trade):
         # TODO
