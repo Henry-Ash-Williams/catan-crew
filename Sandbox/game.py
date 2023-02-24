@@ -17,6 +17,7 @@ from rich.console import Console
 from rich.rule import Rule
 from rich.table import Table
 from rich.panel import Panel
+from rich import print
 
 
 ROAD_LENGTH_THRESHOLD = 5
@@ -29,8 +30,7 @@ inp = fileinput.input()
 
 
 def get(s, inp):
-    sys.stdout.write(s)
-    sys.stdout.flush()
+    print(s, end="")
     k = inp.__next__().strip()
     if inp.fileno() > 0:
         print(k)

@@ -146,7 +146,7 @@ class Board:
             for direction in board.cardinal_directions:
                 middle = (harbor.location + direction) % board.cell_count
                 location_across = (harbor.location + 2*direction) % board.cell_count
-                if board.has_intersection(location_across):
+                if board.has(Intersection)(location_across):
                     bridge_candidate_locations.append((middle,location_across))
                     
             chosen_bridge_locations = random.sample(bridge_candidate_locations, 2)
@@ -227,17 +227,12 @@ class Board:
         r = list(filter(matching, out))
         return map(lambda n: board.cells[n], r) if return_cells else r
 
-    def has_path(board, location):
-        return type(board.cells[location]) is Path
-
-    def has_intersection(board, location):
-        return type(board.cells[location]) is Intersection
-    
-    def has_tile(board, location):
-        return type(board.cells[location]) is Tile
+    def has(board, cell_type):
+        def matches_type(location): return isinstance(board.cells[location],cell_type)
+        return matches_type
 
     def add_road(board, location, road):
-        if not board.has_path(location):
+        if not board.has(Path)(location):
             raise RoadBuildingException("Given cell is not a path")
 
         if board.cells[location].has_road:
@@ -246,7 +241,7 @@ class Board:
             )
 
         neighboring_intersections = board.select(
-            location, 1, matching=board.has_intersection, return_cells=True
+            location, 1, matching=board.has(Intersection), return_cells=True
         )
 
         for intersection in neighboring_intersections:
@@ -258,7 +253,7 @@ class Board:
 
             else:
                 paths_this_side = board.select(
-                    location, 1, (1, 1), matching=board.has_path, return_cells=True
+                    location, 1, (1, 1), matching=board.has(Path), return_cells=True
                 )
                 if road.owner in [
                     path.road.owner for path in paths_this_side if path.has_road
@@ -270,7 +265,7 @@ class Board:
         raise RoadBuildingException("Player can't reach given path")
 
     def add_settlement(board, location, settlement, allow_disconnected_settlement):
-        if not board.has_intersection(location):
+        if not board.has(Intersection)(location):
             raise SettlementBuildingException("Given cell is not an intersection")
 
         if board.cells[location].has_settlement:
@@ -279,7 +274,7 @@ class Board:
             )
 
         adjacent_paths = board.select(
-            location, 1, matching=board.has_path, return_cells=True
+            location, 1, matching=board.has(Path), return_cells=True
         )
 
         if not allow_disconnected_settlement and not settlement.owner in [
@@ -290,7 +285,7 @@ class Board:
             )
 
         neighboring_intersections = board.select(
-            location, 1, (2,), matching=board.has_intersection, return_cells=True
+            location, 1, (2,), matching=board.has(Intersection), return_cells=True
         )
 
         if [
@@ -307,7 +302,7 @@ class Board:
 
         intersections_to_make_unavailable = set(
             [location]
-            + board.select(location, 1, (2,), matching=board.has_intersection)
+            + board.select(location, 1, (2,), matching=board.has(Intersection))
         )
 
         board.available_intersection_locations -= intersections_to_make_unavailable
@@ -317,7 +312,7 @@ class Board:
                 settlement.owner.update_exchange_rate(harbor.flavor=='special',harbor.resource)
 
     def upgrade_settlement(board, location):
-        if not board.has_intersection(location):
+        if not board.has(Intersection)(location):
             raise SettlementUpgradeException("Given cell is not an intersection.")
 
         if not board.cells[location].has_settlement:
@@ -341,7 +336,7 @@ class Board:
             around=tile.location,
             distance=1,
             dir_pattern=(2,),
-            matching=board.has_intersection,
+            matching=board.has(Intersection),
             return_cells=True,
         )
         settlements = [
@@ -356,7 +351,7 @@ class Board:
             around=settlement.location,
             distance=1,
             dir_pattern=(2,),
-            matching=board.has_tile,
+            matching=board.has(Tile),
             return_cells=True,
         )
         return tiles
@@ -397,7 +392,7 @@ class Board:
             = join(board.select(around = location,
                                 distance = 1,
                                 dir_pattern = (2,),
-                                matching = board.has_intersection)
+                                matching = board.has(Intersection))
                    for location in occupied_intersection_locations)
         
         if not needs_to_be_reachable:
@@ -410,7 +405,7 @@ class Board:
         reachable_intersection_locations \
             = join(board.select(around = road_location,
                                 distance = 1,
-                                matching = board.has_intersection)
+                                matching = board.has(Intersection))
                    for road_location in player_road_locations)
                    
         return list(set(reachable_intersection_locations) \

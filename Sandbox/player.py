@@ -60,6 +60,9 @@ class Player:
     def __str__(player):
         return player.color.capitalize()
 
+    def __repr__(player):
+        return player.color.capitalize()
+
     def roll_dice(player):
         player.game.dice_roll()
 
@@ -366,15 +369,20 @@ class HumanPlayer(Player):
         )
 
     def accepts_trade(player, trade):
-        # TODO
-        # This is just some filler code that makes the player always
-        # accept the trade if they have the resources for it
-        return player.resources >= trade.resources_requested
+        if player.resources >= trade.resources_requested:
+            response = player.get(f"[b {player.color}]{player}[/b {player.color}]: would you like to accept this trade? (y/n) ")
+            decision = True if response.lower()=='y' else False
+        else:
+            decision = False
+        print(
+            f"[b {player.color}]{player}[/b {player.color}] {['rejects','accepts'][decision]} trade proposed by {trade.sender}"
+        )
+        return decision
 
     def prompt_trade_partner(player, trade):
         print("\nYou can trade with:")
         for index, accepter in enumerate(trade.accepters, 1):
-            print(f"{i}. {accepter}")
+            print(f"{index}. {accepter}")
 
         choice = int(player.get("Pick a trade partner: "))
 
@@ -480,7 +488,7 @@ class HumanPlayer(Player):
         chosen_tile_location = int(
             player.get("Pick a location at which to place the robber: ")
         )
-        valid_tile = player.game.board.has_tile(chosen_tile_location)
+        valid_tile = player.game.board.has(Tile)(chosen_tile_location)
         robber_moved = chosen_tile_location != player.game.board.robber_location
         while not (valid_tile and robber_moved):
             if not robber_moved:
@@ -493,7 +501,7 @@ class HumanPlayer(Player):
                         "Sorry, that's not a valid tile location. Pick another: "
                     )
                 )
-            valid_tile = player.game.board.has_tile(chosen_tile_location)
+            valid_tile = player.game.board.has(Tile)(chosen_tile_location)
             robber_moved = chosen_tile_location != player.game.board.robber_location
         chosen_tile = player.game.board.cells[chosen_tile_location]
         return chosen_tile
