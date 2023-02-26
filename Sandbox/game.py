@@ -13,6 +13,8 @@ from clear import clear
 from dill import Pickler, Unpickler
 
 import random, sys, fileinput
+import datetime
+from time import gmtime, strftime
 from rich.console import Console
 from rich.rule import Rule
 from rich.table import Table
@@ -485,6 +487,8 @@ if __name__ == "__main__":
         has_human_players=False,
     )
     game.start()
+    now = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
+    game.save_state(f"pickled_data/game-{now}.pickle")
 
 
 # iterate over players
