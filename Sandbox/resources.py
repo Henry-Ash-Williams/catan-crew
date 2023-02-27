@@ -76,6 +76,11 @@ class Resources(Counter):
     def __str__(self):
         if self == NO_RESOURCES: return "Nothing!"
         else: return ", ".join(f"{amount}x {kind}" for kind, amount in self.items() if amount > 0)
+    
+    def of_one_kind(self):
+        nonzero_kinds = [kind for kind in self if self[kind]>0]
+        if len(nonzero_kinds) != 1: return False
+        return nonzero_kinds[0]
 
 
 RESOURCE_REQUIREMENTS = {

@@ -3,6 +3,8 @@ from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
 
+from rich import print as rich_print
+
 from board import Settlement, City, Road, Tile
 from resources import (
     Resources,
@@ -41,6 +43,7 @@ class Player:
         player.knights_played = 0
 
         player.resources = Resources()
+        player.new_dev_cards = DevelopmentCards()
         player.development_cards = DevelopmentCards()
 
         player.exchange_rate = {
@@ -186,12 +189,6 @@ class Player:
         player.game.add_road(location1)
         player.game.add_road(location2)
 
-    def ends_turn(player):
-        player.game.end_turn()
-
-    def handle_trade(self, trade):
-        pass
-
     def update_exchange_rate(
         player, special_harbour: bool = False, resource_type: ResourceKind = None
     ):
@@ -282,7 +279,7 @@ class Player:
 
     def gets_development_cards(player, dev_cards: DevelopmentCards):
         """Takes a development card parameter, adds it to this player's development cards."""
-        player.development_cards += dev_cards
+        player.new_dev_cards += dev_cards
 
     def message(player, msg: str):
         c = Console()
@@ -374,7 +371,7 @@ class HumanPlayer(Player):
             decision = True if response.lower()=='y' else False
         else:
             decision = False
-        print(
+        rich_print(
             f"[b {player.color}]{player}[/b {player.color}] {['rejects','accepts'][decision]} trade proposed by {trade.sender}"
         )
         return decision
@@ -421,52 +418,6 @@ class HumanPlayer(Player):
         while not (choice in player.game.board.paths_reachable_by(player)):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
-
-    # Possibly not needed
-
-    # def prompt_year_of_plenty(player):
-    #    """Called when user plays year_of_plenty card.
-    #    Prompts user for a resource type to get from bank,
-    #    passes it to them, then repeats this again for second
-    #    resource type."""
-    #    # don't return 2 chocie at the same time
-    #    # the supply stack (bank) can ran out of resource
-    #    # after the player make the first choice
-    #    # FIXME: need to double check the logic, also promot options to players
-    #    choice = player.get("Pick a resource type: ")
-    #    while not (player.game.bank.resources[choice]):
-    #        choice = player.get("Pick a resource type: ")
-    #    return choice
-
-    # def prompt_monopoly(player):
-    #    """Called when user plays Monopoly card.
-    #    Prompts user for a resource type to steal from all players,
-    #    then steals it for them.
-    #    Return: ResourceKind
-    #    """
-    #    choice = None
-    #    print(
-    #        """
-    #        Brick = 0
-    #        Lumber = 1
-    #        Ore = 2
-    #        Grain = 3
-    #        Wool = 4
-    #        """
-    #    )
-    #    while not (choice in [0, 1, 2, 3, 4]):  # working on this line
-    #        choice = int(player.get("Pick a resource type: "))
-    #    return ResourceKind[choice]
-
-    # Deprecated method
-    # TODO: delete once sure it's not going to be used
-
-    # def buy_development_card(player):
-    #    """Called when user chooses to buy a development card.
-    #    Passes development card to them and prints out which card
-    #    they got."""
-    #    name_of_dev_card = player.game.bank.sell_development_card(player)
-    #    print(f"Congratulations, you got [b]{name_of_dev_card}[/b]")
 
     def prompt_robbing_victim(player, robbee_options: list[Player]) -> Player:
         """Prompts the player for a choice of other player to rob."""

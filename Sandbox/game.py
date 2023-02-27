@@ -6,6 +6,7 @@ from resources import (
     Resources,
     RESOURCE_REQUIREMENTS,
     DevelopmentCardKind,
+    DevelopmentCards,
     ResourceKind,
     knight, hidden_victory_point, road_building, year_of_plenty, monopoly
 )
@@ -25,7 +26,8 @@ from rich import print
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
-STARTING_RESOURCES = Resources()  # Resources(5,5,5,5,5)
+STARTING_RESOURCES = Resources()
+#STARTING_RESOURCES = Resources(5,5,5,5,5)
 VP_TO_WIN = 10
 
 inp = fileinput.input()
@@ -73,7 +75,7 @@ class Game:
         self.is_won = False
 
         self.turn_count = 0
-        # self.start()
+        self.dev_card_played = False
 
     def prompt_player_number(self):
         return int(self.getter("How many players would like to play? "))
@@ -211,6 +213,7 @@ class Game:
         print(f"\n\n{str(self.current_player).upper()} WINS!!")
 
     def do_turn(self):
+        self.dev_card_played = False
         self.print_current_player()
         self.dice_roll()
 
@@ -265,20 +268,20 @@ class Game:
                     ("Buy a development card", self.sell_development_card)
                 )
 
-            if player.has_knight_card():
+            if (not self.dev_card_played) and player.has_knight_card():
                 available_actions.append(("Play Knight card", self.play_knight))
 
-            if player.can_play_road_building():
+            if (not self.dev_card_played) and player.can_play_road_building():
                 available_actions.append(
                     ("Play Road Building card", self.play_road_building)
                 )
 
-            if player.has_year_of_plenty_card():
+            if (not self.dev_card_played) and player.has_year_of_plenty_card():
                 available_actions.append(
                     ("Play Year of Plenty card", self.play_year_of_plenty)
                 )
 
-            if player.has_monopoly_card():
+            if (not self.dev_card_played) and player.has_monopoly_card():
                 available_actions.append(("Play Monopoly card", self.play_monopoly))
 
             available_actions.append(("End turn", self.end_turn))
@@ -350,6 +353,7 @@ class Game:
         self.current_player.upgrade_settlement(settlement)
 
     def play_monopoly(self):
+        self.dev_card_played = True
         self.current_player.development_cards[monopoly] -= 1
         self.bank.development_cards[monopoly] += 1
         resource = self.current_player.prompt_monopoly_resource()
@@ -365,6 +369,7 @@ class Game:
         )
 
     def play_year_of_plenty(self):
+        self.dev_card_played = True
         self.current_player.development_cards[year_of_plenty] -= 1
         self.bank.development_cards[year_of_plenty] += 1
         for _ in range(2):
@@ -379,6 +384,7 @@ class Game:
             self.current_player.resources += self.bank.distribute(1, choice)
 
     def play_road_building(self):
+        self.dev_card_played = True
         self.current_player.development_cards[road_building] -= 1
         self.bank.development_cards[road_building] += 1
         for _ in range(2):
@@ -386,6 +392,7 @@ class Game:
                 self.build_road(for_free=True)
 
     def play_knight(self):
+        self.dev_card_played = True
         self.current_player.development_cards[knight] -= 1
         self.bank.development_cards[knight] += 1
         tile_choice = self.current_player.prompt_robber_location()
@@ -445,6 +452,9 @@ class Game:
 
     def end_turn(self):
         self.turn_ongoing = False
+        
+        self.current_player.development_cards += self.current_player.new_dev_cards
+        self.current_player.new_dev_cards = DevelopmentCards()
 
         # print('VP:',self.current_player.calculate_total_victory_points())
         if self.current_player.calculate_total_victory_points() >= VP_TO_WIN:
@@ -480,12 +490,17 @@ class Game:
 if __name__ == "__main__":
     # get = input
     getter = lambda prompt: get(prompt, inp)
-    #game = Game(getter=getter, players = [], has_human_players=True)
-    game = Game(
-        getter=getter,
-        players=[TesterPlayer(color) for color in ["red", "green", "blue", "purple"]],
-        has_human_players=False,
-    )
+    
+    humans_to_play = True
+    
+    if humans_to_play:
+        game = Game(getter=getter, players = [], has_human_players=True)
+    else:
+        game = Game(
+            getter=getter,
+            players=[TesterPlayer(color) for color in ["red", "green", "blue", "purple"]],
+            has_human_players=False,
+        )
     game.start()
     now = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
     game.save_state(f"pickled_data/game-{now}.pickle")

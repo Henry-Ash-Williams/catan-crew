@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import random
+
 from resources import Resources, ResourceKind, RESOURCE_REQUIREMENTS, DevelopmentCardKind, InsufficientResources, DevelopmentCards
 from player import Player
 
@@ -60,7 +60,19 @@ class Bank:
         return self.development_cards.pop()
         
     def accepts_trade(self, trade):
-        # TODO
-        # This is just some filler code that makes the bank always
-        # accept the trade if they have the resources for it
-        return self.resources >= trade.resources_requested
+        
+        if not(self.resources >= trade.resources_requested): return False
+        
+        single_kind_offered = trade.resources_offered.of_one_kind()
+        if not single_kind_offered: return False
+        
+        single_kind_requested = trade.resources_requested.of_one_kind()
+        if not single_kind_requested: return False
+        
+        if single_kind_offered == single_kind_requested: return False
+        
+        exchange_rate = trade.sender.exchange_rate[single_kind_requested][single_kind_offered]
+        amount_requested = trade.resources_requested.total()
+        amount_offered = trade.resources_offered.total()
+        
+        return amount_requested * exchange_rate <= amount_offered

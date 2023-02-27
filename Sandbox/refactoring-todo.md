@@ -13,14 +13,14 @@
 #### Other
 
 - [ ] add `Game.play_robber` 
-- [x] `bank.development_card_deck` should be `DevelopmentCard` object
 - [ ] refactor `board.py`
-- [x] `Player.exchange_rates` should use `ResourceKind` as keys, not a priority 
-- [x] `Player.prompt_trade_details` should be cleaned up 
 - [ ] `Player.get_location` function to handle getting and validating locations from the user
+- [x] finish `Bank.accepts_trade`
+- [x] `bank.development_card_deck` should be `DevelopmentCard` object
+- [x] `Player.exchange_rates` should use `ResourceKind` as keys, not a priority
+- [x] `Player.prompt_trade_details` should be cleaned up
 - [x] add method to create `Resources` object from a `ResourceKind`
-- [ ] finish `Player.accepts_trade`
-- [ ] finish `Bank.accepts_trade`
+- [x] finish `Player.accepts_trade`
 
 ## Henry's Tasks 
 
