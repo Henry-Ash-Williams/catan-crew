@@ -288,6 +288,20 @@ class Player:
     def distribute_resources(player, resources: Resources) -> Resources:
         player.resources -= resources
         return resources
+        
+    def get_valid_resources_to_give_up(player):
+        resources = player.prompt_resources_to_give_up()
+        while not(player.resources >= resources) \
+              or resources.total() < player.resources.total()//2:
+            if not(player.resources >= resources):
+                player.message("That's more than you have. Try again.")
+                resources = player.prompt_resources_to_give_up()
+            else:
+                player.message(f"You're giving up {resources.total()} " +
+                               f"resource cards but the minimum is {player.resources.total()//2}. Try again")
+                resources = player.prompt_resources_to_give_up()
+        print()
+        return resources
 
 
 class HumanPlayer(Player):
@@ -314,6 +328,11 @@ class HumanPlayer(Player):
             except:
                 resources_requested_input = player.get(
                     "That doesn't look right. Try again: ")
+        
+    def prompt_resources_to_give_up(player):
+        rich_print(f"[b {player.color}]{player}[/b {player.color}]: you have {player.resources}")
+        resources = player.prompt_resources(f"[b {player.color}]{player}[/b {player.color}]: choose resources to give up")
+        return resources
 
     def prompt_trade_proposees(player) -> list[Player]:
     
@@ -563,6 +582,12 @@ class AutonomousPlayer(Player):
         action_index = random.randint(0, len(action_labels) - 1)
         print(f"{player} chooses to ({action_labels[action_index]})")
         return action_index
+        
+    def prompt_resources_to_give_up(player):
+        resources = player.resources.random_subset()
+        while resources.total() > player.resources.total()//2:
+            resources = player.resources.random_subset()
+        return resources
 
 
 class TesterPlayer(AutonomousPlayer):

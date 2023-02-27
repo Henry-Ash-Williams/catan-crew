@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from collections import Counter
-import random
+from random import randint
 
 class ResourceKind(Enum):
     brick = 0
@@ -29,7 +29,7 @@ class DevelopmentCards(Counter):
         total = self.total()
         if total==0:
             raise IndexError("pop from empty stack of development cards")
-        choice = random.randint(0,total-1)
+        choice = randint(0,total-1)
         for resource_kind in self:
             if choice < self[resource_kind]:
                 self[resource_kind] -= 1
@@ -82,6 +82,8 @@ class Resources(Counter):
         if len(nonzero_kinds) != 1: return False
         return nonzero_kinds[0]
 
+    def random_subset(self):
+        return Resources({kind:randint(0,self[kind]) for kind in self})
 
 RESOURCE_REQUIREMENTS = {
     "road": Resources({brick:1, lumber:1}),

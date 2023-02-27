@@ -5,7 +5,6 @@ from board import Board
 from resources import (
     Resources,
     RESOURCE_REQUIREMENTS,
-    DevelopmentCardKind,
     DevelopmentCards,
     ResourceKind,
     knight, hidden_victory_point, road_building, year_of_plenty, monopoly
@@ -221,18 +220,18 @@ class Game:
 
         if self.dice == 7:
             self.current_player.message(
-                f"You rolled a 7. Any player with more than {ROBBING_THRESHOLD} resource cards now has to give up half of them!"
+                f"You rolled a 7. Any player with more than {ROBBING_THRESHOLD} resource cards now has to give up half of them!\n"
             )
             for other_player in self.players:
                 player_wealth = other_player.resources.total()
                 if player_wealth > ROBBING_THRESHOLD:
                     amount_robbed = player_wealth // 2
                     other_player.message(
-                        f"A 7 has been rolled. You have {player_wealth} resource cards. You have to give up {amount_robbed} of them."
+                        f"[b {other_player.color}]{other_player}[/b {other_player.color}]: a 7 has been rolled. " + 
+                        f"You have {player_wealth} resource cards. You have to give up {amount_robbed} of them."
                     )
-                    other_player.message(
-                        f"Select {amount_robbed} cards out of the following to give up: {player.resources}"
-                    )
+                    resources_robbed = other_player.get_valid_resources_to_give_up()
+                    other_player.resources -= resources_robbed
         else:
             resources_before = player.resources.copy()
             self.distribute_resources()
@@ -491,7 +490,7 @@ if __name__ == "__main__":
     # get = input
     getter = lambda prompt: get(prompt, inp)
     
-    humans_to_play = True
+    humans_to_play = False
     
     if humans_to_play:
         game = Game(getter=getter, players = [], has_human_players=True)
@@ -502,7 +501,7 @@ if __name__ == "__main__":
             has_human_players=False,
         )
     game.start()
-    now = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
+    now = strftime("%Y-%m-%d_%H-%M=%S", gmtime())
     game.save_state(f"pickled_data/game-{now}.pickle")
 
 
