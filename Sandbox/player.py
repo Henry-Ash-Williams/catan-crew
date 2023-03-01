@@ -21,6 +21,10 @@ from trade import Trade
 import random
 
 
+
+def join(ll): return [i for k in ll for i in k]
+
+
 class PlayerException(Exception):
     pass
 
@@ -201,11 +205,27 @@ class Player:
                 for key in keys:
                     inner_dict[key] = 3
 
+    def reachable_paths(player):
+        """Returns paths that player can reach based on their currently built settlements and roads"""
+        board = player.game.board
+        adjacent_to_settlement = join(
+            board.select(around=settlement.location, distance=1)
+            for settlement in player.built_settlements
+        )
+        adjacent_to_road = join(
+            board.select(around=road.location, distance=1, dir_pattern=(1, 1))
+            for road in player.built_roads
+        )
+        return list(
+            (set(adjacent_to_settlement) | set(adjacent_to_road))
+            & set(board.available_path_locations)
+        )
+
     ####### avavilable actions validation #######
 
     def can_build_road(player):
         """Returns whether a player can build a road or not."""
-        if len(player.game.board.paths_reachable_by(player)) < 1:
+        if len(player.reachable_paths()) < 1:
             return False
         return len(player.available_roads) > 0 and player.resources >= RESOURCE_REQUIREMENTS["road"]
         
@@ -434,7 +454,7 @@ class HumanPlayer(Player):
         # the reason why we don't return 2 chocie at the same time
         # is because we can build 1 road and build the next road next to the first road
         choice = None
-        while not (choice in player.game.board.paths_reachable_by(player)):
+        while not (choice in player.reachable_paths()):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
 

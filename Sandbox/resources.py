@@ -12,6 +12,7 @@ class ResourceKind(Enum):
     wool = 4
 
     def __str__(self): return self.name.capitalize()
+    def __repr__(self): return str(self)
 
 globals().update(ResourceKind.__members__)
 

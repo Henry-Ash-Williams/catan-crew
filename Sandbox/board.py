@@ -1,13 +1,11 @@
 import random
-from functools import reduce
 from resources import ResourceKind
 from dill import Pickler, Unpickler
 
 from typing import Union
 
 
-def join(l):
-    return list(set(reduce(lambda x, y: x + y, l, [])))
+def join(ll): return [i for k in ll for i in k]
 
 
 class Intersection:
@@ -311,17 +309,6 @@ class Board:
             for harbor in intersection.harbors:
                 settlement.owner.update_exchange_rate(harbor.flavor=='special',harbor.resource)
 
-    def upgrade_settlement(board, location):
-        if not board.has(Intersection)(location):
-            raise SettlementUpgradeException("Given cell is not an intersection.")
-
-        if not board.cells[location].has_settlement:
-            raise SettlementUpgradeException(
-                "No settlement to upgrade at given intersection."
-            )
-
-        board.cells[location].settlement = City(board.cells[location].settlement.owner)
-
     def get_settlements_and_cities(board):
         settlement_dict = {player: [] for player in board.game.players}
         for location in board.intersection_locations:
@@ -366,21 +353,6 @@ class Board:
         with open(filename, "rb") as file:
             pickle = Unpickler(file)
             return pickle.load()
-
-    def paths_reachable_by(board, player):
-        """Returns paths that player can reach based on their currently built settlements and roads"""
-        adjacent_to_settlement = join(
-            board.select(around=settlement.location, distance=1)
-            for settlement in player.built_settlements
-        )
-        adjacent_to_road = join(
-            board.select(around=road.location, distance=1, dir_pattern=(1, 1))
-            for road in player.built_roads
-        )
-        return list(
-            (set(adjacent_to_settlement) | set(adjacent_to_road))
-            & set(board.available_path_locations)
-        )
         
     def valid_settlement_locations(board, player, needs_to_be_reachable=True):
                    
@@ -418,8 +390,4 @@ class RoadBuildingException(Exception):
 
 
 class SettlementBuildingException(Exception):
-    pass
-
-
-class SettlementUpgradeException(Exception):
     pass

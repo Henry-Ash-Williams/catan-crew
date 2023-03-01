@@ -232,6 +232,7 @@ class Game:
                     )
                     resources_robbed = other_player.get_valid_resources_to_give_up()
                     other_player.resources -= resources_robbed
+                    game.bank.return_resources(resources_robbed)
         else:
             resources_before = player.resources.copy()
             self.distribute_resources()
@@ -334,7 +335,7 @@ class Game:
         return self.current_player.builds_settlement(choice, for_free)
 
     def build_road(self, for_free=False):
-        valid_road_locations = self.board.paths_reachable_by(self.current_player)
+        valid_road_locations = self.current_player.reachable_paths()
         choice = self.current_player.prompt_road_location(valid_road_locations)
         self.current_player.builds_road(choice, for_free)
 
