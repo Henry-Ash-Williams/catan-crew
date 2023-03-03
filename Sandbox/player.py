@@ -6,6 +6,7 @@ from rich.panel import Panel
 from rich import print as rich_print
 
 from board import Settlement, City, Road, Tile
+
 from resources import (
     Resources,
     RESOURCE_REQUIREMENTS,
@@ -37,13 +38,14 @@ class Player:
 
         player.available_settlements = [Settlement(player) for i in range(5)]
         player.available_cities = [City(player) for i in range(4)]
-        player.available_roads = [Road(0, player) for i in range(15)]
+        player.available_roads = [Road(player) for i in range(15)]
 
         player.built_settlements = []
         player.built_cities = []
         player.built_roads = []
 
-        player.road_length = 0
+        # TODO: calculate actual road length
+        player.road_length = random.randint(5,10)
         player.knights_played = 0
 
         player.resources = Resources()
@@ -150,14 +152,14 @@ class Player:
         player.game.bank.return_resources(cost)
 
         city = player.available_cities.pop()
-        city.location = settlement.location
+        city.intersection = settlement.intersection
         player.built_cities.append(city)
 
         player.built_settlements.remove(settlement)
-        settlement.location = None
+        settlement.intersection = None
         player.available_settlements.append(settlement)
 
-        player.game.board.cells[city.location].settlement = city
+        city.intersection.settlement = city
 
     def builds_road(player, location, for_free=False):
         cost = (
@@ -204,22 +206,14 @@ class Player:
                 keys = inner_dict.keys()
                 for key in keys:
                     inner_dict[key] = 3
-
+    
     def reachable_paths(player):
-        """Returns paths that player can reach based on their currently built settlements and roads"""
-        board = player.game.board
-        adjacent_to_settlement = join(
-            board.select(around=settlement.location, distance=1)
-            for settlement in player.built_settlements
-        )
-        adjacent_to_road = join(
-            board.select(around=road.location, distance=1, dir_pattern=(1, 1))
-            for road in player.built_roads
-        )
-        return list(
-            (set(adjacent_to_settlement) | set(adjacent_to_road))
-            & set(board.available_path_locations)
-        )
+        adjacent_to_settlement = join(settlement.neighboring_paths() for settlement in player.built_settlements)
+        adjacent_to_city = join(city.neighboring_paths() for city in player.built_cities)
+        adjacent_to_road = join(road.potential_expansions() for road in player.built_roads)
+        paths = set(adjacent_to_settlement)|set(adjacent_to_city)|set(adjacent_to_road)
+        path_locations = {path.location for path in paths}
+        return list(path_locations & player.game.board.available_path_locations)
 
     ####### avavilable actions validation #######
 
@@ -280,7 +274,6 @@ class Player:
 
     def calculate_visible_victory_points(player):
         """for each action, the game can update this, so that every players can view other players' VP in real time"""
-        # please refactor this line
         player.visible_victory_points = (
             1 * len(player.built_settlements)
             + 2 * len(player.built_cities)
@@ -327,7 +320,7 @@ class Player:
 class HumanPlayer(Player):
     def prompt_settlement_location(player, valid_settlement_locations):
         choice = None
-        print(f"Valid settlement locations: {valid_settlement_locations}")  # TODO
+        print(f"Valid settlement locations: {valid_settlement_locations}")
         while not (choice in valid_settlement_locations):
             choice = int(player.get("Pick a location to place a settlement: "))
         return choice
@@ -475,10 +468,11 @@ class HumanPlayer(Player):
 
     def prompt_robber_location(player) -> Tile:
         """Prompts player for a location at which to place the robber."""
+        print("Pick a location at which to place the robber: ")
         chosen_tile_location = int(
-            player.get("Pick a location at which to place the robber: ")
+            player.get(f"Valid locations: {player.game.board.land_locations}")
         )
-        valid_tile = player.game.board.has(Tile)(chosen_tile_location)
+        valid_tile = chosen_tile_location in player.game.board.land_locations
         robber_moved = chosen_tile_location != player.game.board.robber_location
         while not (valid_tile and robber_moved):
             if not robber_moved:
@@ -491,9 +485,9 @@ class HumanPlayer(Player):
                         "Sorry, that's not a valid tile location. Pick another: "
                     )
                 )
-            valid_tile = player.game.board.has(Tile)(chosen_tile_location)
+            valid_tile = chosen_tile_location in player.game.board.land_locations
             robber_moved = chosen_tile_location != player.game.board.robber_location
-        chosen_tile = player.game.board.cells[chosen_tile_location]
+        chosen_tile = player.game.board.tiles[chosen_tile_location]
         return chosen_tile
 
     def prompt_resource(player, prompt) -> ResourceKind:
@@ -526,7 +520,6 @@ class AutonomousPlayer(Player):
 
     def prompt_road_location(player, valid_road_locations):
         location = random.choice(valid_road_locations)
-        print(f"{player} builds a road at location {location}")
         return location
 
     def prompt_trade_details(player):
@@ -580,13 +573,13 @@ class AutonomousPlayer(Player):
         return robbing_victim
 
     def prompt_robber_location(player) -> Tile:
-        options = player.game.board.tile_locations[:]
+        options = list(player.game.board.land_locations)
         print("Options:", options)
         print("Current robber location:", player.game.board.robber_location)
         options.remove(player.game.board.robber_location)
         tile_location = random.choice(options)
         print(f"{player} moves robber to location {tile_location}")
-        return player.game.board.cells[tile_location]
+        return player.game.board.tiles[tile_location]
 
     def prompt_monopoly_resource(player) -> ResourceKind:
         choice = ResourceKind(random.randint(0, 4))
@@ -612,8 +605,8 @@ class AutonomousPlayer(Player):
 
 class TesterPlayer(AutonomousPlayer):
     def upgrade_settlement(player, settlement: Settlement):
-        settlement_location = settlement.location
-        settlement_intersection = player.game.board.cells[settlement.location]
+        settlement_location = settlement.intersection.location
+        settlement_intersection = settlement.intersection
 
         assert settlement in player.built_settlements
         assert not (settlement in player.available_settlements)
@@ -623,10 +616,10 @@ class TesterPlayer(AutonomousPlayer):
         assert not (settlement in player.built_settlements)
         assert settlement in player.available_settlements
 
-        assert settlement_intersection.has_settlement
+        assert settlement_intersection.settlement
         assert type(settlement_intersection.settlement) is City
 
         new_city = settlement_intersection.settlement
-        assert new_city.location == settlement_location
+        assert new_city.intersection.location == settlement_location
         assert new_city in player.built_cities
         assert not (new_city in player.available_cities)

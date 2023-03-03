@@ -1,393 +1,653 @@
 import random
-from resources import ResourceKind
-from dill import Pickler, Unpickler
-
-from typing import Union
-
+from resources import grain, wool, lumber, brick, ore, ResourceKind
 
 def join(ll): return [i for k in ll for i in k]
 
+class Tile:
+    
+    def __init__(tile, board, location):
+        """
+        Constructor method.
+
+        :param board: The board that this tile belongs to
+        :type board: Board
+        :param location: The location on the board at which this tile is placed
+        :type location: int
+        :return: None
+        """
+        tile.board = board
+        tile.location = location
+        
+        tile.south_intersection = tile.si = board.new_intersection(location*2)
+        tile.north_intersection = tile.ni = board.new_intersection(location*2+1)
+        
+        tile.east_path      = tile.ep  = board.new_path(location*3)
+        tile.southwest_path = tile.swp = board.new_path(location*3+1)
+        tile.northwest_path = tile.nwp = board.new_path(location*3+2)
+        
+        tile.cached_neighboring_intersections = None
+        tile.cached_neighboring_settlements = None
+        
+    def neighbor(tile, direction):
+        """
+        Finds the tile neighboring the current tile in the given direction.
+
+        :param direction: Usually one of the board's six cardinal directions (given as integers), representing a step in that direction. Can also be a combination of moves. For example, passing (direction = board.east + board.northeast) would return the tile on the board which is one step east and one step northeast from the current tile. If the direction given takes you outside the board, this just "wraps around" to enter the board at the opposite side.
+        :type direction: int
+        :return: The neighboring tile
+        :rtype: Tile
+        """
+        return tile.board.tiles[(tile.location+direction)%tile.board.tile_count]
+    
+    def neighboring_intersections(tile):
+        """
+        Finds all intersections neighboring the current tile.
+
+        :return: Six intersections neighboring the current tile.
+        :rtype: list[Intersection]
+        """
+        if tile.cached_neighboring_intersections != None:
+            return tile.cached_neighboring_intersections
+        e, ne, nw, w, sw, se = tile.board.directions
+        out = [tile.neighbor(ne).si, tile.ni, tile.neighbor(nw).si, \
+               tile.neighbor(sw).ni, tile.si, tile.neighbor(se).ni]
+        tile.cached_neighboring_intersections = out
+        return out
+    
+    def neighboring_settlements(tile):
+        """
+        Finds all settlements neighboring the current tile.
+
+        :return: The tile's neighboring settlements. This can include cities as City is a subclass of Settlement.
+        :rtype: list[Settlement]
+        """
+
+        if tile.cached_neighboring_settlements != None:
+            return tile.cached_neighboring_settlements
+        intersections = tile.neighboring_intersections()
+        out = [intersection.settlement for intersection in intersections if intersection.settlement]
+        tile.cached_neighboring_settlements = out
+        return out
+    
+class LandTile(Tile): pass
+
+class ResourceTile(LandTile):
+    
+    def __init__(tile, board, location, resource_kind, number_token):
+        """
+        Constructor method.
+
+        :param board: The board that this tile belongs to.
+        :type board: Board
+        :param location: The location on the board where this tile is placed.
+        :type location: int
+        :param resource_kind: The resource type of the tile.
+        :type resource_kind: ResourceKind
+        :param number_token: The number token for this tile.
+        :type number_token: int
+        :return: None
+        """
+
+        tile.resource = resource_kind
+        tile.number_token = number_token
+        super().__init__(board, location)
+        
+    def __repr__(tile):
+        """
+        Generates a string representation of the resource tile.
+
+        :return: string representation of the tile giving its location and resource type
+        :rtype: str
+        """
+        return f'ResourceTile(loc={tile.location}, res={tile.resource})'
+
+class DesertTile(LandTile):
+    
+    def __repr__(tile):
+        """
+        Generates a string representation of the desert tile.
+
+        :return: string representation of the tile giving its location
+        :rtype: str
+        """
+        return f'DesertTile(loc={tile.location})'
+
+class SeaTile(Tile):
+    
+    def __init__(tile, board, location):
+        """
+        Constructor method.
+
+        :param board: The board that this tile belongs to.
+        :type board: Board
+        :param location: The location on the board where this tile is placed.
+        :type location: int
+        :return: None
+        """
+        # TODO: harbor logic
+        tile.harbor = None
+        super().__init__(board, location)
+    
+    def __repr__(tile):
+        """
+        Generates a string representation of the sea tile.
+
+        :return: string representation of the tile giving its location
+        :rtype: str
+        """
+        return f'SeaTile(loc={tile.location})'
+
+class Path:
+    def __init__(path, board, location):
+        """
+        Constructor method.
+        
+        :param board: The board that the path belongs to.
+        :type board: Board
+        :param location: The location on the board where the path is.
+        :type location: int
+        :return: None
+        """
+        path.board = board
+        path.location = location
+        path.type = location % 3
+        path.road = None
+        path.cached_neighboring_intersections = []
+        path.cached_neighboring_paths = None
+        
+    def neighboring_intersections(path):
+        """
+        Finds the endpoints of the current path.
+        
+        :return: A list containing the two intersections which are the endpoints of the path.
+        :rtype: list[Intersection]
+        """
+        if path.cached_neighboring_intersections:
+            return path.cached_neighboring_intersections
+        tile = path.board.tiles[path.location//3]
+        e, ne, nw, w, sw, se = path.board.directions
+        if   path.type == 0: out = [tile.neighbor(ne).si, tile.neighbor(se).ni]
+        elif path.type == 1: out = [tile.si, tile.neighbor(sw).ni]
+        elif path.type == 2: out = [tile.neighbor(nw).si, tile.ni]
+        path.cached_neighboring_intersections = out
+        return out
+        
+    def neighboring_paths(path):
+        """
+        Finds the paths which share an endpoint with the current path.
+        
+        :return: A list containing the four paths which share an endpoint with the current path. Since the geometry of the board "wraps around" to the opposite side, this list is guaranteed to have four items.
+        :rtype: list[Path]
+        """
+        if path.cached_neighboring_paths != None: return path.cached_neighboring_paths
+        endpoints = path.neighboring_intersections()
+        paths = set(endpoints[0].neighboring_paths()) | set(endpoints[1].neighboring_paths())
+        out = paths - set([path])
+        assert len(out)==4
+        path.cached_neighboring_paths = out
+        return out
+        
+    def __repr__(path):
+        """
+        Generates a string representation of the path.
+
+        :return: string representation of the path giving its location and its endpoints.
+        :rtype: str
+        """
+        return f'Path{path.location}(endpoints={[i.location for i in path.neighboring_intersections()]})'
+
+class Road: 
+    def __init__(road, owner):
+        """
+        Constructor method
+        
+        :param owner: The player who owns the road token.
+        :type owner: Player
+        :return: None
+        """
+        road.owner = owner
+        road.path = None
+        
+    def potential_expansions(road):
+        """
+        Generates a list of paths adjacent to the current road which are accessible from it and therefore can be expanded into. An adjacent path is considered accessible if it's empty (doesn't have a road built) and if access to it is not blocked by a settlement owned by another player.
+        
+        :return: a list of accessible paths
+        :rtype: list[Path]
+        """
+        out = []
+        for intersection in road.path.neighboring_intersections():
+           if intersection.settlement and not(intersection.settlement.owner is road.owner): pass
+           else:
+               out += [path for path in intersection.neighboring_paths() \
+               if not(path.road) and not(path is road.path)]
+        return out
+        
+    def __repr__(road):
+        """
+        Generates a string representation of the road, giving its location.
+
+        :return: string representation of the tile giving its location, owner, and endpoints
+        :rtype: str
+        """
+        # TODO: make location optional as road may not have been placed on board
+        return f'Road{road.path.location}(owner={road.owner}, endpoints={[i.location for i in road.path.neighboring_intersections()]})'
+        
+        
 
 class Intersection:
-    def __init__(intersection):
-        intersection.has_settlement = False
+    def __init__(intersection, board, location):
+        """
+        Constructor method
+        
+        :param board: The board the intersection belongs to.
+        :type board: Board
+        :param location: The location on the board where the intersection is.
+        :type location: int
+        :return: None
+        """
+        intersection.board = board
+        intersection.location = location
+        intersection.type = location % 2
         intersection.settlement = None
-        intersection.has_harbor = False
-        intersection.harbors = []
+        intersection.cached_neighboring_tiles = []
+        intersection.cached_neighboring_paths = []
+        intersection.cached_neighboring_intersections = []
+        intersection.cached_harbors = None
+        
+    def neighboring_paths(intersection):
+        """
+        Generates a list of paths adjacent to the intersection.
+        
+        :return: a list of three paths adjacent to the intersection. Since the board "wraps around" at the edges, this is guaranteed to be a list of three paths.
+        :rtype: list[Path]
+        """
+        if intersection.cached_neighboring_paths: return intersection.cached_neighboring_paths
+        tile = intersection.board.tiles[intersection.location//2]
+        e, ne, nw, w, sw, se = intersection.board.directions
+        if   intersection.type == 0: out = [tile.neighbor(se).nwp, tile.swp, tile.neighbor(sw).ep]
+        elif intersection.type == 1: out = [tile.neighbor(nw).ep, tile.neighbor(ne).swp, tile.nwp]
+        intersection.cached_neighboring_paths = out
+        return out
+    
+    def neighboring_tiles(intersection):
+        """
+        Generates a list of tiles neighboring the intersection.
+        
+        :return: a list of tiles neighboring the intersection. Since the board "wraps around" at the edges, this is guarnateed to be a list of three tiles.
+        :rtype: list[Tile]
+        """
+        if intersection.cached_neighboring_tiles: return intersection.cached_neighboring_tiles
+        tile = intersection.board.tiles[intersection.location//2]
+        e, ne, nw, w, sw, se = intersection.board.directions
+        if   intersection.type == 0: out = [tile.neighbor(se), tile, tile.neighbor(sw)]
+        elif intersection.type == 1: out = [tile.neighbor(nw), tile.neighbor(ne), tile]
+        intersection.cached_neighboring_tiles = out
+        return out
+    
+    def neighboring_intersections(intersection):
+        """
+        Generates a list of intersections which are one path away from the current intersection.
+        
+        :return: a list of intersections which are one path away from the current intersection. Since the board "wraps" around, this is guaranteed to be a list of three Intersections.
+        :rtype: list[Intersection]
+        """
+        if intersection.cached_neighboring_intersections:
+            return intersection.cached_neighboring_intersections
+        tile = intersection.board.tiles[intersection.location//2]
+        e, ne, nw, w, sw, se = intersection.board.directions
+        if   intersection.type == 0: out = [tile.neighbor(d).ni for d in [se,se+sw,sw]]
+        elif intersection.type == 1: out = [tile.neighbor(d).si for d in [nw,nw+ne,ne]]
+        intersection.cached_neighboring_intersections = out
+        return out
+        
+    def neighboring_settlements(intersection):
+        """
+        Generates a list of settlements at neighboring intersections.
+        
+        :return: a list of settlements (and cities) at neighboring intersections.
+        :rtype: list[Settlement]
+        """
+        return [neighbor.settlement for neighbor in \
+                intersection.neighboring_intersections() if \
+                neighbor.settlement]
+    
+    def harbors(intersection):
+        """
+        Generates a list of harbors that are accessible from the current intersection.
+        
+        :return: a list of harbors that are accessible from the current intersection.
+        :rtype: list[Harbor]
+        """
+        if intersection.cached_harbors != None: return intersection.cached_harbors
+        out = [tile.harbor for tile in intersection.neighboring_tiles() if \
+               isinstance(tile,SeaTile) and tile.harbor and intersection.location in tile.harbor.ports]
+        intersection.cached_harbors = out
+        return out
+    
+    def __repr__(intersection):
+        """
+        Generates a string representation of the intersection.
 
-    def build_settlement(intersection, settlement):
-        intersection.settlement = settlement
-        intersection.has_settlement = True
+        :return: string representation of the intersection giving its location
+        :rtype: str
+        """
+        return f'Intersection(location={intersection.location})'
 
 
 class Settlement:
     def __init__(settlement, owner):
+        """
+        Constructor method
+        
+        :param owner: The owner of the newly created settlement token.
+        :type owner: Player
+        :return: None
+        """
         settlement.owner = owner
-        settlement.color = owner.color
         settlement.distribution_rate = 1
+        settlement.intersection = None
+        settlement.cached_neighboring_resource_tiles = None
+    
+    def neighboring_paths(settlement):
+        """
+        Generates a list of paths neighboring the settlement
+        
+        :return: list of paths neighboring the settlement
+        :rtype: list[Path]
+        """
+        if not settlement.intersection: raise Exception("Settlement isn't placed on board")
+        return settlement.intersection.neighboring_paths()
+        
+    def neighboring_resource_tiles(settlement):
+        """
+        Generates a list of resource tiles neighboring the settlement.
+        
+        :return: a list of resource tiles neighboring the settlement
+        :rtype: list[ResourceTile]
+        """
+        if settlement.cached_neighboring_resource_tiles != None:
+            return settlement.cached_neighboring_resource_tiles
+        if not settlement.intersection: raise Exception("Settlement isn't placed on board")
+        tiles = settlement.intersection.neighboring_tiles()
+        out = [tile for tile in tiles if isinstance(tile,ResourceTile)]
+        settlement.cached_neighboring_resource_tiles = out
+        return out
+    
+    def __repr__(settlement):
+        """
+        Generates a string representation of the settlement.
 
+        :return: string representation of the settlement giving its owner and optionally its location if it has been placed on the board
+        :rtype: str
+        """
+        return f'Settlement(owner={settlement.owner}' + \
+               (f', location={settlement.intersection.location})' \
+               if settlement.intersection else ')')
 
-class Path:
-    def __init__(path, location):
-        path.location = location
-        path.has_road = False
-
-    def build_road(path, road):
-        path.road = road
-        path.has_road = True
-
-
-class Road:
-    def __init__(road, location, owner):
-        road.location = location
-        road.owner = owner
-        road.color = owner.color
-
-
-class Tile:
-    def __init__(tile, location, resource: ResourceKind, number_token):
-        tile.location = location
-        tile.resource = resource
-        tile.number_token = number_token
 
 
 class City(Settlement):
     def __init__(city, owner):
-        city.distribution_rate = 2
+        """
+        Constructor method
+        
+        :param owner: The owner of the newly created City token.
+        :type owner: Player
+        :return: None
+        """
         super().__init__(owner)
+        city.distribution_rate = 2
+    
+    def __repr__(city):
+        """
+        Generates a string representation of the city.
 
-class Sea:
-    def _init__(sea):
-        sea.has_harbor = False
-        sea.harbor = None
+        :return: string representation of the city giving its owner and optionally its location if it has been placed on the board
+        :rtype: str
+        """
+        return f'City(owner={city.owner}' + \
+               (f', location={city.intersection.location})' \
+               if city.intersection else ')')
 
-class Coast:
-    def _init__(coast):
-        coast.has_bridge = False
 
-class Harbor:
-    def __init__(harbor, flavor, resource=None):
-        harbor.flavor = flavor
-        harbor.resource = resource
-        harbor.location = None
 
-class Bridge: pass
+#        30  31  32  33
+#      19  20  21  22  23
+#     8   9  10  11  12  13
+#  34  35  36   0   1   2   3
+#    24  25  26  27  28  29
+#      14  15  16  17  18
+#	     4   5   6   7
+
+
 
 class Board:
-    # Spec says Board should be initializable with a game state
-    def __init__(board, size=3, initial_data=None, seed=None):
+    
+    def __init__(board, size = 3, initial_data = None, seed = None):
+        """
+        Constructor method.
+        
+        :param size: The size of the newly created board. Currently this is given as the width of a side of the landmass on the board. Defaults to 3.
+        :type size: int
+        :param initial_data: A description of the board specifying the resource tiles, the harbors, the number tokens, etc. to initialize the board from. Currently not implemented
+        :type initial_data: unknown
+        :param seed: a random seed to use in initializing the board
+        :type: any hashable object
+        :return: None
+        """
+        # TODO: check this line is needed
         random.seed(seed)
         
         board.game = None
-
-        # Size of the board is the number of tiles at each edge
-        board.size = n = size
-
-        # Cell count is the number of hexagonal cells it contains
-        # Cells can contain tiles, intersections, paths, etc.
-        board.cell_count = m = 36 * n * n + 54 * n + 21
-
-        # The six cardinal directions, represented as integers
-        # This array contains, in order: northeast, north, northwest, southwest, south, and southeast
-
-        board.cardinal_directions = d = [pow(6 * n + 5, i, m) for i in range(6)]
-
-        # Using this layout, if X is the index of a cell,
-        #  (X + cardinal_directions[3]*2)%board.cell_count would be the index
-        #  of the cell 2 steps away in the southwest direction from cell X
-
-        board.cells : list(Union[None, Intersection, Path, Tile, Coast, Sea]) \
-            = [None] * board.cell_count
-        board.sea_locations = board.select(0, size, dir_pattern=(2, 2))
-        board.coast_locations = join(
-            board.select(h, 1) for h in board.sea_locations
-        )
-        board.tile_locations = join(
-            board.select(0, i, dir_pattern=(2, 2)) for i in range(n)
-        ) + [0]
-        board.intersection_locations = join(
-            board.select(t, 1, (2,)) for t in board.tile_locations
-        )
-        board.path_locations = join(
-            board.select(t, 1, (1, 1)) for t in board.tile_locations
-        )
-
-        board.available_intersection_locations = set(board.intersection_locations)
-        board.available_path_locations = set(board.path_locations)
-
-        for location in board.intersection_locations:
-            board.cells[location] = Intersection()
-
-        for location in board.path_locations:
-            board.cells[location] = Path(location)
-
-        for location in board.sea_locations:
-            board.cells[location] = Sea()
-
-        for location in board.coast_locations:
-            board.cells[location] = Coast()
-            
-        board.harbors = [Harbor('generic') for i in range(4)]+[Harbor('special',ResourceKind(i)) for i in range(5)]
-        random.shuffle(board.harbors)
+    
+        board.size = size
+        board.tile_count = n = 1 + 3 * size * (size + 1)
+        board.land_tile_count = q = 1 + 3 * (size - 1) * size
         
-        board.harbor_locations = random.sample(board.sea_locations, 9)
-        board.bridge_locations = []
+        board.intersections = [None] * board.tile_count * 2
+        board.paths         = [None] * board.tile_count * 3
+        board.tiles         = [None] * board.tile_count
         
-        for harbor,location in zip(board.harbors,board.harbor_locations):
+        # TODO: make this generalize to boards of size != 3
         
-            sea = board.cells[location]
-            sea.has_harbor = True
-            sea.harbor = harbor
-            harbor.location = location
+        ne = size * (size + 1) - 1
+        board.directions = d = [1, ne, ne-1, -1, -ne, 1-ne]
+        board.east, board.northeast, board.northwest = board.directions[:3]
+        board.west, board.southwest, board.southeast = board.directions[3:]
+        
+        # All possible tile locations
+        board.all_tile_locations = set(range(board.tile_count))
+        
+        # Specify locations of sea tiles
+        board.sea_locations = {(d[i]*size + d[(i+2)%6]*k)%n for i in range(6) for k in range(size)}
+        
+        # Specify land tile locations
+        board.land_locations = board.all_tile_locations - board.sea_locations
+        
+        # Specify locations of desert tiles
+        board.desert_locations = {0}
+        
+        # Specify locations of resource tiles
+        board.resource_locations = board.land_locations - board.desert_locations
+        
+        resource_tile_specs = zip(board.resource_locations, Board.random_resource_kinds(), Board.random_number_tokens())
+        
+        board.tiles_by_token = {number_token:[] for number_token in range(2,13)}
+        
+        for specification in resource_tile_specs:
+            board.new_resource_tile(*specification)
+        
+        for location in board.desert_locations: board.new_desert_tile(location)
             
-            bridge_candidate_locations = []
-            for direction in board.cardinal_directions:
-                middle = (harbor.location + direction) % board.cell_count
-                location_across = (harbor.location + 2*direction) % board.cell_count
-                if board.has(Intersection)(location_across):
-                    bridge_candidate_locations.append((middle,location_across))
-                    
-            chosen_bridge_locations = random.sample(bridge_candidate_locations, 2)
+        for location in board.sea_locations: board.new_sea_tile(location)
+        
+        board.land_intersections = {intersection for intersection in board.intersections if \
+                                    any(isinstance(tile,LandTile) for tile in intersection.neighboring_tiles())}
+        board.available_path_locations = {path.location for path in board.paths if len(set(path.neighboring_intersections())&board.land_intersections)==2}
+        board.robber_location = random.choice(list(board.desert_locations))
+        
+    def random_resource_kinds():
+        """
+        A generator of ResourceKind objects. Ensures that they are produced randomly but still conforming to the proportions of different resources in the original Settlers board.
+        
+        :yield: ResourceKind objects
+        :rtype: ResourceKind
+        """
+        # Resource kinds for resource tiles
+        while True:
+            resource_kinds = [grain]*4 + [wool]*4 + [lumber]*4 + [brick]*3 + [ore]*3
+            random.shuffle(resource_kinds)
+            for resource_kind in resource_kinds: yield resource_kind
+        
+    def random_number_tokens():
+        """
+        A generator of number tokens. Ensures that they are produced randomly but still conforming to the proportions of different number tokens in the original Settlers board.
+        
+        :yield: integers representing the values of number tokens
+        :rtype: int
+        """
+        
+        # Number tokens for resource tiles
+        while True:
+            number_tokens = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11]
+            random.shuffle(number_tokens)
+            for number_token in number_tokens: yield number_token
             
-            for middle,location_across in chosen_bridge_locations:
-                board.bridge_locations.append(middle)
-                board.cells[middle] = Bridge()
-                intersection = board.cells[location_across]
-                intersection.has_harbor = True
-                intersection.harbors.append(harbor)
-               
-                    
-        board.desert_tiles = [0]
-        board.robber_location = random.choice(board.desert_tiles)
-        board.resource_number = len(board.tile_locations) - len(board.desert_tiles)
-        resources = (
-            [ResourceKind.grain] * 4
-            + [ResourceKind.wool] * 4
-            + [ResourceKind.lumber] * 4
-            + [ResourceKind.brick] * 3
-            + [ResourceKind.ore] * 3
-        )
-        number_tokens = [5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11]
-
-        board.resources = (resources * ((board.resource_number + 17) // 18))[
-            : board.resource_number
-        ]
-
-        board.number_tokens = (number_tokens * ((board.resource_number + 17) // 18))[
-            : board.resource_number
-        ]
-
-        random.shuffle(board.resources)
-        random.shuffle(board.number_tokens)
-
-        del resources, number_tokens
-
-        board.tiles_with_token = [[] for i in range(13)]
-
-        for location in board.tile_locations:
-            resource = (
-                None if (location in board.desert_tiles) else board.resources.pop()
-            )
-            number_token = (
-                None if (location in board.desert_tiles) else board.number_tokens.pop()
-            )
-            tile = Tile(location, resource, number_token)
-            board.cells[location] = tile
-            if number_token:
-                board.tiles_with_token[number_token].append(tile)
-
-    def select(
-        board,
-        around,
-        distance,
-        dir_pattern=None,
-        matching=lambda o: True,
-        return_cells=False,
-    ):
-        if dir_pattern == None:
-            directions = board.cardinal_directions
-        else:
-            directions = [
-                sum(
-                    board.cardinal_directions[(i + j) % 6] * dir_pattern[j]
-                    for j in range(len(dir_pattern))
-                )
-                % board.cell_count
-                for i in range(6)
-            ]
-
-        out = [
-            (around + distance * directions[i] + directions[(i + 2) % 6] * j)
-            % board.cell_count
-            for i in range(6)
-            for j in range(distance)
-        ]
-        r = list(filter(matching, out))
-        return map(lambda n: board.cells[n], r) if return_cells else r
-
-    def has(board, cell_type):
-        def matches_type(location): return isinstance(board.cells[location],cell_type)
-        return matches_type
-
-    def add_road(board, location, road):
-        if not board.has(Path)(location):
-            raise RoadBuildingException("Given cell is not a path")
-
-        if board.cells[location].has_road:
-            raise RoadBuildingException(
-                "There is already a road built at the given path."
-            )
-
-        neighboring_intersections = board.select(
-            location, 1, matching=board.has(Intersection), return_cells=True
-        )
-
-        for intersection in neighboring_intersections:
-            if intersection.has_settlement:
-                if intersection.settlement.owner == road.owner:
-                    board.cells[location].build_road(road)
+    
+    def add_road(board, road, location):
+        """
+        Adds a given road token to the board at a given location.
+        
+        :param road: The road token to add to the board
+        :type road: Road
+        :param location: The location at which to place the road. Must be a valid path location.
+        :type location: int
+        :return: None
+        """
+        path = board.paths[location]
+        
+        if path.road: raise RoadBuildingException(
+                "There is already a road built at the given path.")
+        
+        # This bit has some tricky logic, don't change unless you're
+        # sure you know what you're doing
+        
+        for intersection in path.neighboring_intersections():
+            if intersection.settlement:
+                if intersection.settlement.owner is road.owner:
+                    path.road = road
+                    road.path = path
                     board.available_path_locations.discard(location)
                     return
-
             else:
-                paths_this_side = board.select(
-                    location, 1, (1, 1), matching=board.has(Path), return_cells=True
-                )
-                if road.owner in [
-                    path.road.owner for path in paths_this_side if path.has_road
-                ]:
-                    board.cells[location].build_road(road)
+                paths_this_side = [(path,path.road) for path in intersection.neighboring_paths()]
+                paths_this_side = [path for path in intersection.neighboring_paths() \
+                                   if path.road and path.road.owner is road.owner]
+                if paths_this_side:
+                    path.road = road
+                    road.path = path
                     board.available_path_locations.discard(location)
                     return
-
         raise RoadBuildingException("Player can't reach given path")
-
-    def add_settlement(board, location, settlement, allow_disconnected_settlement):
-        if not board.has(Intersection)(location):
-            raise SettlementBuildingException("Given cell is not an intersection")
-
-        if board.cells[location].has_settlement:
+    
+    def add_settlement(board, settlement, location, allow_disconnected_settlement=True):
+        """
+        Adds a given settlement token to the board at a given location.
+        
+        :param settlement: The settlement token to add to the board
+        :type settlement: Settlement
+        :param location: The location at which to place the settlement. Must be a valid intersection location.
+        :type location: int
+        :param allow_disconnected_settlement: a boolean indicating whether the settlement can be placed on the board at a location which is not connected to any of the player's existing roads.
+        :type allow_disconnected_settlement: bool
+        :return: None
+        """
+    
+        intersection = board.intersections[location]
+        
+        if intersection.settlement:
             raise SettlementBuildingException(
                 "There is already a settlement built at the given intersection."
             )
 
-        adjacent_paths = board.select(
-            location, 1, matching=board.has(Path), return_cells=True
-        )
+        is_connected = settlement.owner in [path.road.owner for path in \
+                                            intersection.neighboring_paths() if path.road]
 
-        if not allow_disconnected_settlement and not settlement.owner in [
-            path.road.owner for path in adjacent_paths if path.has_road
-        ]:
+        if not allow_disconnected_settlement and not is_connected:
             raise SettlementBuildingException(
                 "Settlement can't be built because intersection is not connected to a road of the settlement's color."
             )
-
-        neighboring_intersections = board.select(
-            location, 1, (2,), matching=board.has(Intersection), return_cells=True
-        )
-
-        if [
-            intersection
-            for intersection in neighboring_intersections
-            if intersection.has_settlement
-        ]:
+        
+        if intersection.neighboring_settlements():
             raise SettlementBuildingException(
                 "Settlement can't be built at this intersection because it's too close to another settlement."
             )
 
-        intersection = board.cells[location]
-        intersection.build_settlement(settlement)
-
-        intersections_to_make_unavailable = set(
-            [location]
-            + board.select(location, 1, (2,), matching=board.has(Intersection))
-        )
-
-        board.available_intersection_locations -= intersections_to_make_unavailable
+        intersection.settlement = settlement
+        settlement.intersection = intersection
         
-        if intersection.has_harbor:
-            for harbor in intersection.harbors:
-                settlement.owner.update_exchange_rate(harbor.flavor=='special',harbor.resource)
-
+        for harbor in intersection.harbors():
+            print(harbor)
+            settlement.owner.update_exchange_rate(harbor.flavor=='special',harbor.resource)
+    
     def get_settlements_and_cities(board):
-        settlement_dict = {player: [] for player in board.game.players}
-        for location in board.intersection_locations:
-            intersection = board.cells[location]
-            if intersection.has_settlement:
-                settlement = intersection.settlement
-                settlement_dict[settlement.owner].append(settlement)
-        return settlement_dict
-
-    def settlements_neighboring(board, tile):
-        intersections = board.select(
-            around=tile.location,
-            distance=1,
-            dir_pattern=(2,),
-            matching=board.has(Intersection),
-            return_cells=True,
-        )
-        settlements = [
-            intersection.settlement
-            for intersection in intersections
-            if intersection.has_settlement
-        ]
-        return settlements
-
-    def tiles_neighboring(board, settlement):
-        tiles = board.select(
-            around=settlement.location,
-            distance=1,
-            dir_pattern=(2,),
-            matching=board.has(Tile),
-            return_cells=True,
-        )
-        return tiles
-
-    # This should return the board state in some format which the board can be initialized from
-    def save_state(self, filename: str):
-        with open(filename, "wb") as file:
-            pickle = Pickler(file)
-            pickle.dump(self)
-
-    def read_state(filename: str):
-        with open(filename, "rb") as file:
-            pickle = Unpickler(file)
-            return pickle.load()
+        """
+        Generates a dictionary which maps players to the settlements and cities they have placed on the board.
         
-    def valid_settlement_locations(board, player, needs_to_be_reachable=True):
+        :return: a dictionary which maps players to the settlements and cities they have placed on the board.
+        :rtype: dict[Player,list[Settlement]]
+        """
+        settlement_dict = {}
+        for intersection in board.intersections:
+            if intersection.settlement:
+                settlement = intersection.settlement
+                if settlement.owner in settlement_dict:
+                    settlement_dict[settlement.owner].append(settlement)
+                else: settlement_dict[settlement.owner] = [settlement]
+        return settlement_dict
+        
+    
+    def valid_settlement_intersections(board, player, needs_to_be_reachable=True):
                    
-        occupied_intersection_locations \
-            = [location for location in board.intersection_locations \
-               if board.cells[location].has_settlement]
-               
-        blocked_intersection_locations \
-            = join(board.select(around = location,
-                                distance = 1,
-                                dir_pattern = (2,),
-                                matching = board.has(Intersection))
-                   for location in occupied_intersection_locations)
+        occupied_intersections = [intersection for intersection in board.intersections if intersection.settlement]
+        
+        blocked_intersections = join([intersection.neighboring_intersections() for intersection in occupied_intersections])
+        
+        unavailable_intersections = set(occupied_intersections) | set(blocked_intersections)
         
         if not needs_to_be_reachable:
-            return list(set(board.intersection_locations) \
-                    - (set(occupied_intersection_locations) \
-                      |set(blocked_intersection_locations)))
+            return list(set(board.land_intersections) - unavailable_intersections)
         
-        player_road_locations = [road.location for road in player.built_roads]
+        reachable_intersections = join([path.neighboring_intersections() for path in board.paths if path.road])
         
-        reachable_intersection_locations \
-            = join(board.select(around = road_location,
-                                distance = 1,
-                                matching = board.has(Intersection))
-                   for road_location in player_road_locations)
-                   
-        return list(set(reachable_intersection_locations) \
-                    - (set(occupied_intersection_locations) \
-                      |set(blocked_intersection_locations)))
+        return list(set(reachable_intersections) - unavailable_intersections)
+        
+    def valid_settlement_locations(board, player, needs_to_be_reachable=True):
+        return [intersection.location for intersection in board.valid_settlement_intersections(player,needs_to_be_reachable)]
+
+    def new_intersection(board, location):
+        board.intersections[location] = Intersection(board, location)
+        return board.intersections[location]
+        
+    def new_path(board, location):
+        board.paths[location] = Path(board, location)
+        return board.paths[location]
+
+    def new_resource_tile(board, location, resource_kind, number_token):
+        board.tiles[location] = ResourceTile(board, location, resource_kind, number_token)
+        board.tiles_by_token[number_token].append(board.tiles[location])
+        return board.tiles[location]
+    
+    def new_desert_tile(board, location):
+        board.tiles[location] = DesertTile(board, location)
+        return board.tiles[location]
+    
+    def new_sea_tile(board, location):
+        board.tiles[location] = SeaTile(board, location)
+        return board.tiles[location]
 
 
-class RoadBuildingException(Exception):
-    pass
+class RoadBuildingException(Exception): pass
 
-
-class SettlementBuildingException(Exception):
-    pass
+class SettlementBuildingException(Exception): pass

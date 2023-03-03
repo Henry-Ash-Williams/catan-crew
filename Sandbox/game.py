@@ -49,6 +49,7 @@ class Game:
         clear()
         self.getter = getter
         self.bank = Bank()
+        random.seed(seed)
         self.board = Board(seed=seed)
         self.board.game = self
 
@@ -101,9 +102,9 @@ class Game:
         return player if player.knights_played > ARMY_SIZE_THRESHOLD else None
 
     def distribute_resources(self):
-        tiles = self.board.tiles_with_token[self.dice]
+        tiles = self.board.tiles_by_token[self.dice]
         for tile in tiles:
-            neighboring_settlements = self.board.settlements_neighboring(tile)
+            neighboring_settlements = tile.neighboring_settlements()
             for settlement in neighboring_settlements:
                 new_resource = self.bank.distribute(
                     settlement.distribution_rate, tile.resource
@@ -190,7 +191,7 @@ class Game:
 
     def distribute_bonus(self, settlement):
         bonus_resources = Resources()
-        for tile in self.board.tiles_neighboring(settlement):
+        for tile in settlement.neighboring_resource_tiles():
             bonus_resources += self.bank.distribute(
                 settlement.distribution_rate, tile.resource
             )
@@ -398,7 +399,7 @@ class Game:
         tile_choice = self.current_player.prompt_robber_location()
         self.board.robber_location = tile_choice.location
         self.current_player.knights_played += 1
-        neighboring_settlements = self.board.settlements_neighboring(tile_choice)
+        neighboring_settlements = tile_choice.neighboring_settlements()
         if not neighboring_settlements:
             self.current_player.message(
                 "The tile where the robber has been placed has no neighboring settlements"
@@ -468,12 +469,12 @@ class Game:
 
     def add_road(self, location, road):
         self.verify_current_player_is(road.owner)
-        self.board.add_road(location, road)
+        self.board.add_road(road, location)
 
     def add_settlement(self, location, settlement):
         self.verify_current_player_is(settlement.owner)
         self.board.add_settlement(
-            location, settlement, allow_disconnected_settlement=self.is_just_starting
+            settlement, location, allow_disconnected_settlement=self.is_just_starting
         )
 
     def save_state(self, filename: str):
@@ -491,7 +492,7 @@ if __name__ == "__main__":
     # get = input
     getter = lambda prompt: get(prompt, inp)
     
-    humans_to_play = False
+    humans_to_play = True
     
     if humans_to_play:
         game = Game(getter=getter, players = [], has_human_players=True)
@@ -500,20 +501,8 @@ if __name__ == "__main__":
             getter=getter,
             players=[TesterPlayer(color) for color in ["red", "green", "blue", "purple"]],
             has_human_players=False,
+            seed = 0
         )
     game.start()
     now = strftime("%Y-%m-%d_%H-%M=%S", gmtime())
     game.save_state(f"pickled_data/game-{now}.pickle")
-
-
-# iterate over players
-#  - roll dice
-#  - give player list of options among
-#    - propose a trade
-#    - build a road
-#    - build a settlement
-#    - upgrade settlement to a city
-#    - buy a development card
-#    - play a development card (multiple kinds)
-#    - end turn
-#   after each action, check to see if player has won
