@@ -12,18 +12,26 @@ from resources import (
     RESOURCE_REQUIREMENTS,
     ResourceKind,
     NO_RESOURCES,
-    brick, lumber, ore, grain, wool,
+    brick,
+    lumber,
+    ore,
+    grain,
+    wool,
     DevelopmentCardKind,
     DevelopmentCards,
-    knight, hidden_victory_point, road_building, year_of_plenty, monopoly
+    knight,
+    hidden_victory_point,
+    road_building,
+    year_of_plenty,
+    monopoly,
 )
 from trade import Trade
 
 import random
 
 
-
-def join(ll): return [i for k in ll for i in k]
+def join(ll):
+    return [i for k in ll for i in k]
 
 
 class PlayerException(Exception):
@@ -131,7 +139,7 @@ class Player:
             Columns(
                 [Panel(resource_table), Panel(building_table), Panel(devcard_table)]
             ),
-            justify="center"
+            justify="center",
         )
 
     def builds_settlement(player, location, for_free=False):
@@ -221,8 +229,10 @@ class Player:
         """Returns whether a player can build a road or not."""
         if len(player.reachable_paths()) < 1:
             return False
-        return len(player.available_roads) > 0 and player.resources >= RESOURCE_REQUIREMENTS["road"]
-        
+        return (
+            len(player.available_roads) > 0
+            and player.resources >= RESOURCE_REQUIREMENTS["road"]
+        )
 
     def can_build_settlement(player):
         """Returns whether a player can build a settlement or not."""
@@ -301,17 +311,21 @@ class Player:
     def distribute_resources(player, resources: Resources) -> Resources:
         player.resources -= resources
         return resources
-        
+
     def get_valid_resources_to_give_up(player):
         resources = player.prompt_resources_to_give_up()
-        while not(player.resources >= resources) \
-              or resources.total() < player.resources.total()//2:
-            if not(player.resources >= resources):
+        while (
+            not (player.resources >= resources)
+            or resources.total() < player.resources.total() // 2
+        ):
+            if not (player.resources >= resources):
                 player.message("That's more than you have. Try again.")
                 resources = player.prompt_resources_to_give_up()
             else:
-                player.message(f"You're giving up {resources.total()} " +
-                               f"resource cards but the minimum is {player.resources.total()//2}. Try again")
+                player.message(
+                    f"You're giving up {resources.total()} "
+                    + f"resource cards but the minimum is {player.resources.total()//2}. Try again"
+                )
                 resources = player.prompt_resources_to_give_up()
         print()
         return resources
@@ -331,38 +345,45 @@ class HumanPlayer(Player):
         while not (choice in valid_road_locations):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
-        
+
     def prompt_resources(player, prompt_string) -> Resources:
         resources_requested_input = player.get(
-            f"{prompt_string} in format {', '.join(ResourceKind.__members__)}: ")
-        
+            f"{prompt_string} in format {', '.join(ResourceKind.__members__)}: "
+        )
+
         while True:
-            try:    return Resources(*eval(resources_requested_input))
+            try:
+                return Resources(*eval(resources_requested_input))
             except:
                 resources_requested_input = player.get(
-                    "That doesn't look right. Try again: ")
-        
+                    "That doesn't look right. Try again: "
+                )
+
     def prompt_resources_to_give_up(player):
-        rich_print(f"[b {player.color}]{player}[/b {player.color}]: you have {player.resources}")
-        resources = player.prompt_resources(f"[b {player.color}]{player}[/b {player.color}]: choose resources to give up")
+        rich_print(
+            f"[b {player.color}]{player}[/b {player.color}]: you have {player.resources}"
+        )
+        resources = player.prompt_resources(
+            f"[b {player.color}]{player}[/b {player.color}]: choose resources to give up"
+        )
         return resources
 
     def prompt_trade_proposees(player) -> list[Player]:
-    
         print("You can propose this trade to:")
-        other_players = [p for p in player.game.players if not(p is player)]
-        
+        other_players = [p for p in player.game.players if not (p is player)]
+
         for index, proposee in enumerate(other_players, 1):
             print("%i. %s" % (index, proposee))
 
         prompt1 = "Who would you like to propose this trade to? "
         choices = [p.strip() for p in player.get(prompt1).split(",")]
         choices_are_numbers = all(p.isnumeric() for p in choices)
-        
+
         if choices_are_numbers:
             numeric_choices = [int(choice) for choice in choices]
-            choices_in_range = min(numeric_choices) > 0 and \
-                               max(numeric_choices) <= len(other_players)
+            choices_in_range = min(numeric_choices) > 0 and max(numeric_choices) <= len(
+                other_players
+            )
 
         while not (choices_are_numbers and choices_in_range):
             prompt2 = "That is not a valid selection of players. Try again: "
@@ -370,8 +391,9 @@ class HumanPlayer(Player):
             choices_are_numbers = all([p.isnumeric() for p in choices])
             if choices_are_numbers:
                 numeric_choices = [int(choice) for choice in choices]
-                choices_in_range = min(numeric_choices) > 0 and \
-                                   max(numeric_choices) <= len(other_players)
+                choices_in_range = min(numeric_choices) > 0 and max(
+                    numeric_choices
+                ) <= len(other_players)
 
         return [other_players[choice - 1] for choice in numeric_choices]
 
@@ -379,14 +401,18 @@ class HumanPlayer(Player):
         """Called when user chooses to propose a trade.
         Prompts user for proposed trade details, verifies
         the trade is valid, then returns trade object."""
-        
+
         resources_offered = player.prompt_resources("Enter resources you're offering")
         while not (player.resources >= resources_offered):
-            resources_offered = player.prompt_resources("You don't have that many resources. Try again:")
-            
-        resources_requested = player.prompt_resources('Enter resources you want to get')
+            resources_offered = player.prompt_resources(
+                "You don't have that many resources. Try again:"
+            )
+
+        resources_requested = player.prompt_resources("Enter resources you want to get")
         while not (player.resources >= resources_offered):
-            resources_offered = player.prompt_resources("You don't have that many resources. Try again:")
+            resources_offered = player.prompt_resources(
+                "You don't have that many resources. Try again:"
+            )
 
         proposees = player.prompt_trade_proposees()
 
@@ -399,8 +425,10 @@ class HumanPlayer(Player):
 
     def accepts_trade(player, trade):
         if player.resources >= trade.resources_requested:
-            response = player.get(f"[b {player.color}]{player}[/b {player.color}]: would you like to accept this trade? (y/n) ")
-            decision = True if response.lower()=='y' else False
+            response = player.get(
+                f"[b {player.color}]{player}[/b {player.color}]: would you like to accept this trade? (y/n) "
+            )
+            decision = True if response.lower() == "y" else False
         else:
             decision = False
         rich_print(
@@ -526,10 +554,8 @@ class AutonomousPlayer(Player):
         individual_resources = [Resources(kind) for kind in ResourceKind]
         resources_offered = random.choice(individual_resources)
         resources_requested = random.choice(individual_resources)
-        other_players = [p for p in player.game.players if not(p is player)]
-        proposees = random.sample(
-            other_players, random.randint(1, len(other_players))
-        )
+        other_players = [p for p in player.game.players if not (p is player)]
+        proposees = random.sample(other_players, random.randint(1, len(other_players)))
         print(
             f"{player} proposes a trade of {resources_offered} for {resources_requested} to {proposees}"
         )
@@ -595,10 +621,10 @@ class AutonomousPlayer(Player):
         action_index = random.randint(0, len(action_labels) - 1)
         print(f"{player} chooses to ({action_labels[action_index]})")
         return action_index
-        
+
     def prompt_resources_to_give_up(player):
         resources = player.resources.random_subset()
-        while resources.total() > player.resources.total()//2:
+        while resources.total() > player.resources.total() // 2:
             resources = player.resources.random_subset()
         return resources
 

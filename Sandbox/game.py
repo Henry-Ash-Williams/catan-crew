@@ -1,5 +1,5 @@
 from bank import Bank
-from player import Player, HumanPlayer, AutonomousPlayer, TesterPlayer
+from player import Player, HumanPlayer, TesterPlayer
 from trade import Trade
 from board import Board
 from resources import (
@@ -7,13 +7,15 @@ from resources import (
     RESOURCE_REQUIREMENTS,
     DevelopmentCards,
     ResourceKind,
-    knight, hidden_victory_point, road_building, year_of_plenty, monopoly
+    knight,
+    road_building,
+    year_of_plenty,
+    monopoly,
 )
 from clear import clear
 from dill import Pickler, Unpickler
 
-import random, sys, fileinput
-import datetime
+import random, fileinput
 from time import gmtime, strftime
 from rich.console import Console
 from rich.rule import Rule
@@ -21,12 +23,11 @@ from rich.table import Table
 from rich.panel import Panel
 from rich import print
 
-
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
 STARTING_RESOURCES = Resources()
-#STARTING_RESOURCES = Resources(5,5,5,5,5)
+# STARTING_RESOURCES = Resources(5,5,5,5,5)
 VP_TO_WIN = 10
 
 inp = fileinput.input()
@@ -131,9 +132,7 @@ class Game:
         player_data = [
             (
                 player.color,
-                str(
-                    player.calculate_visible_victory_points()
-                ),  # +','+str(player.calculate_total_victory_points()),
+                str(player.calculate_visible_victory_points()),
                 player.road_length,
                 player.knights_played,
                 player.resources.total(),
@@ -141,7 +140,7 @@ class Game:
             )
             for player in self.players
         ]
-
+        stats_player_data.append(player_data)
         t = Table(title="Player worth")
         t.add_column("Player")
         t.add_column("Victory Points")
@@ -204,12 +203,16 @@ class Game:
         while not self.is_won:
             self.do_turn()
             table = self.display_game_state()
-            clear()
             c.print(table, justify="center")
-            c.print(Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center")
-            c.print(Panel(f"Largest Army:\n{self.check_largest_army()}") , justify="center") # self.getter("Press any key to continue")
+            # input("Breakpoint")
+            c.print(
+                Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center"
+            )
+            c.print(
+                Panel(f"Largest Army:\n{self.check_largest_army()}"), justify="center"
+            )  # self.getter("Press any key to continue")
             clear()
-            
+
         print(f"\n\n{str(self.current_player).upper()} WINS!!")
 
     def do_turn(self):
@@ -228,8 +231,8 @@ class Game:
                 if player_wealth > ROBBING_THRESHOLD:
                     amount_robbed = player_wealth // 2
                     other_player.message(
-                        f"[b {other_player.color}]{other_player}[/b {other_player.color}]: a 7 has been rolled. " + 
-                        f"You have {player_wealth} resource cards. You have to give up {amount_robbed} of them."
+                        f"[b {other_player.color}]{other_player}[/b {other_player.color}]: a 7 has been rolled. "
+                        + f"You have {player_wealth} resource cards. You have to give up {amount_robbed} of them."
                     )
                     resources_robbed = other_player.get_valid_resources_to_give_up()
                     other_player.resources -= resources_robbed
@@ -297,11 +300,13 @@ class Game:
         trade = self.current_player.prompt_trade_details()
 
         while True:
-            if   self.current_player in trade.proposees:
+            if self.current_player in trade.proposees:
                 self.current_player.message("You can't propose a trade to yourself")
                 trade = self.current_player.prompt_trade_details()
-            elif not(self.current_player.resources >= trade.resources_offered):
-                self.current_player.message("You don't have enough resources for this trade")
+            elif not (self.current_player.resources >= trade.resources_offered):
+                self.current_player.message(
+                    "You don't have enough resources for this trade"
+                )
                 trade = self.current_player.prompt_trade_details()
             else:
                 break
@@ -365,9 +370,7 @@ class Game:
             total_gained += player.resources[resource]
             player.resources[resource] = 0
         self.current_player.resources[resource] += total_gained
-        self.current_player.message(
-            f"Congrats, you got {total_gained} {resource}s!"
-        )
+        self.current_player.message(f"Congrats, you got {total_gained} {resource}s!")
 
     def play_year_of_plenty(self):
         self.dev_card_played = True
@@ -428,9 +431,7 @@ class Game:
             return
         robbee = self.current_player.prompt_robbing_victim(potential_robbees)
         available_to_steal = [
-            resource
-            for resource in ResourceKind
-            if robbee.resources[resource] > 0
+            resource for resource in ResourceKind if robbee.resources[resource] > 0
         ]
         resource_to_steal = random.choice(available_to_steal)
         robbee.resources[resource_to_steal] -= 1
@@ -453,7 +454,7 @@ class Game:
 
     def end_turn(self):
         self.turn_ongoing = False
-        
+
         self.current_player.development_cards += self.current_player.new_dev_cards
         self.current_player.new_dev_cards = DevelopmentCards()
 
@@ -491,15 +492,17 @@ class Game:
 if __name__ == "__main__":
     # get = input
     getter = lambda prompt: get(prompt, inp)
-    
-    humans_to_play = True
-    
+
+    humans_to_play = False
+
     if humans_to_play:
-        game = Game(getter=getter, players = [], has_human_players=True)
+        game = Game(getter=getter, players=[], has_human_players=True)
     else:
         game = Game(
             getter=getter,
-            players=[TesterPlayer(color) for color in ["red", "green", "blue", "purple"]],
+            players=[
+                TesterPlayer(color) for color in ["red", "green", "blue", "purple"]
+            ],
             has_human_players=False,
             seed = 0
         )
