@@ -140,7 +140,8 @@ class Game:
             )
             for player in self.players
         ]
-        stats_player_data.append(player_data)
+        # Line below commented out because it throws an exception - Guy
+        #stats_player_data.append(player_data)
         t = Table(title="Player worth")
         t.add_column("Player")
         t.add_column("Victory Points")

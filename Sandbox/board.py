@@ -609,7 +609,16 @@ class Board:
         
     
     def valid_settlement_intersections(board, player, needs_to_be_reachable=True):
-                   
+        """
+        Generates a list of intersections at which the given player can build a settlement.
+        
+        :param player: The player who is to build a settlement.
+        :type player: Player
+        :param needs_to_be_reachable: True if the newly built settlement needs to be connected to the player's existing roads, False otherwise.
+        :type needs_to_be_reachable: bool
+        :return: a list of intersections that the player can build a settlement at
+        :rtype: list[Intersection]
+        """
         occupied_intersections = [intersection for intersection in board.intersections if intersection.settlement]
         
         blocked_intersections = join([intersection.neighboring_intersections() for intersection in occupied_intersections])
@@ -624,26 +633,76 @@ class Board:
         return list(set(reachable_intersections) - unavailable_intersections)
         
     def valid_settlement_locations(board, player, needs_to_be_reachable=True):
+        """
+        Generates a list of intersection locations at which the given player can build a settlement.
+        
+        :param player: The player who is to build a settlement.
+        :type player: Player
+        :param needs_to_be_reachable: True if the newly built settlement needs to be connected to the player's existing roads, False otherwise.
+        :type needs_to_be_reachable: bool
+        :return: a list of intersection locations that the player can build a settlement at
+        :rtype: list[int]
+        """
         return [intersection.location for intersection in board.valid_settlement_intersections(player,needs_to_be_reachable)]
 
     def new_intersection(board, location):
+        """
+        Adds a new Intersection object to the board at the given location.
+        
+        :param location: The location of the new intersection.
+        :type location: int
+        :return: the newly created Intersection object
+        :rtype: Intersection
+        """
         board.intersections[location] = Intersection(board, location)
         return board.intersections[location]
         
     def new_path(board, location):
+        """
+        Adds a new Path object to the board at the given location.
+        
+        :param location: The location of the new path.
+        :type location: int
+        :return: the newly created Path object
+        :rtype: Path
+        """
         board.paths[location] = Path(board, location)
         return board.paths[location]
 
     def new_resource_tile(board, location, resource_kind, number_token):
+        """
+        Adds a new ResourceTile object to the board at the given location.
+        
+        :param location: The location of the new resource tile.
+        :type location: int
+        :return: the newly created ResourceTile object
+        :rtype: ResourceTile
+        """
         board.tiles[location] = ResourceTile(board, location, resource_kind, number_token)
         board.tiles_by_token[number_token].append(board.tiles[location])
         return board.tiles[location]
     
     def new_desert_tile(board, location):
+        """
+        Adds a new DesertTile object to the board at the given location.
+        
+        :param location: The location of the new desert tile.
+        :type location: int
+        :return: the newly created DesertTile object
+        :rtype: DesertTile
+        """
         board.tiles[location] = DesertTile(board, location)
         return board.tiles[location]
     
     def new_sea_tile(board, location):
+        """
+        Adds a new SeaTile object to the board at the given location.
+        
+        :param location: The location of the new sea tile.
+        :type location: int
+        :return: the newly created SeaTile object
+        :rtype: SeaTile
+        """
         board.tiles[location] = SeaTile(board, location)
         return board.tiles[location]
 
