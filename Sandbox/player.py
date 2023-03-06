@@ -34,8 +34,11 @@ def join(ll):
     return [i for k in ll for i in k]
 
 
-class PlayerException(Exception):
-    pass
+class PlayerException(Exception):  pass
+
+
+
+
 
 
 class Player:
@@ -73,9 +76,6 @@ class Player:
         }
 
         player.proposed_trades = []
-
-    def __str__(player):
-        return player.color.capitalize()
 
     def __repr__(player):
         return player.color.capitalize()
@@ -373,7 +373,7 @@ class HumanPlayer(Player):
         other_players = [p for p in player.game.players if not (p is player)]
 
         for index, proposee in enumerate(other_players, 1):
-            print("%i. %s" % (index, proposee))
+            print(f"{index}. {proposees}")
 
         prompt1 = "Who would you like to propose this trade to? "
         choices = [p.strip() for p in player.get(prompt1).split(",")]
@@ -540,6 +540,10 @@ class HumanPlayer(Player):
         return int(player.get("What would you like to do? ")) - 1
 
 
+
+
+
+
 class AutonomousPlayer(Player):
     def prompt_settlement_location(player, valid_settlement_locations):
         location = random.choice(valid_settlement_locations)
@@ -627,6 +631,10 @@ class AutonomousPlayer(Player):
         while resources.total() > player.resources.total() // 2:
             resources = player.resources.random_subset()
         return resources
+
+
+
+
 
 
 class TesterPlayer(AutonomousPlayer):

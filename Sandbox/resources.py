@@ -32,12 +32,19 @@ class DevelopmentCardKind(Enum):
 
 globals().update(DevelopmentCardKind.__members__)
 
+class InsufficientDevelopmentCard(Exception): pass
 
 class DevelopmentCards(Counter):
-    def pop(self):
+    def pop(self, kind: DevelopmentCardKind = None):
+        if kind!=None:
+            if self[kind]:
+                self[kind] -= 1
+                return DevelopmentCards([kind])
+            else:
+                raise InsufficientDevelopmentCards("pop from empty stack of development cards")
         total = self.total()
         if total == 0:
-            raise IndexError("pop from empty stack of development cards")
+            raise InsufficientDevelopmentCards("pop from empty stack of development cards")
         choice = randint(0, total - 1)
         for resource_kind in self:
             if choice < self[resource_kind]:
@@ -57,8 +64,7 @@ class DevelopmentCards(Counter):
             )
 
 
-class InsufficientResources(Exception):
-    pass
+class InsufficientResources(Exception): pass
 
 
 class Resources(Counter):
