@@ -27,11 +27,9 @@ ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
 STARTING_RESOURCES = Resources()
-# STARTING_RESOURCES = Resources(5,5,5,5,5)
 VP_TO_WIN = 10
 
 inp = fileinput.input()
-
 
 def get(s, inp):
     print(s, end="")
@@ -46,9 +44,7 @@ class GameException(Exception):
 
 
 class Game:
-    def __init__(self, getter, players=[], has_human_players=False, seed=None):
-        clear()
-        self.getter = getter
+    def __init__(self, players=[], has_human_players=False, seed=None):
         self.bank = Bank()
         random.seed(seed)
         self.board = Board(seed=seed)
@@ -140,8 +136,7 @@ class Game:
             )
             for player in self.players
         ]
-        # Line below commented out because it throws an exception - Guy
-        #stats_player_data.append(player_data)
+        player_data.append(player_data)
         t = Table(title="Player worth")
         t.add_column("Player")
         t.add_column("Victory Points")
