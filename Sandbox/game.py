@@ -46,11 +46,10 @@ class GameException(Exception):
 
 
 class Game:
-
-    def __init__(self, seed=None):
+    def __init__(self, players=[], num_of_human_players=0, num_of_ai_player=0, color_of_player=[], board_size=3, seed=None):
         self.bank = Bank()
         random.seed(seed)
-        self.board = Board(seed=seed)
+        self.board = Board(board_size=board_size,seed=seed)
         self.board.game = self
 
         self.players = []
@@ -60,6 +59,14 @@ class Game:
             # player_number = self.prompt_player_number()
             # for number in range(player_number):
                 # self.prompt_human_player()
+
+        # if has_human_players:
+        #     player_number = self.prompt_player_number()
+        #     for number in range(player_number):
+        #         self.prompt_human_player()
+
+        if len(self.players) < 1:
+            raise GameException("You can't have a game with no players")
 
         self.current_player_number = 0
         # self.current_player = self.players[self.current_player_number]

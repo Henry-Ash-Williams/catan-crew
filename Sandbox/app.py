@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI
 from random import randint
+from pydantic import BaseModel
 from game import Game
 from pydantic import BaseModel
 
@@ -20,6 +21,29 @@ def create_player(player: PlayerColour):
 
     g.add_player(player.colour)
     return { "player": g.players[-1] }
+
+class GameConfig(BaseModel):
+    num_of_human_player: int
+    num_of_ai_player: int
+    color_of_player: list[str]
+    board_size: int = 3
+
+
+@app.post("/start_game")
+def start_game(game_config: GameConfig):
+    g = Game(
+        num_of_human_players = game_config.num_of_ai_player,
+        num_of_ai_player = game_config.num_of_ai_player,
+        color_of_player = game_config.color_of_player,
+        board_size=game_config.board_size
+        )
+    gid = g.get_game_id()
+    board_state = g.board.to_json()
+    return {
+        "game id": gid,
+        "board state": board_state,
+    }
+
 
 @app.get("/roll_dice")
 def read_roll_dice():
