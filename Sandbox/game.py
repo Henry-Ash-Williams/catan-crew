@@ -49,7 +49,7 @@ class Game:
     def __init__(self, players=[], num_of_human_players=0, num_of_ai_player=0, color_of_player=[], board_size=3, seed=None):
         self.bank = Bank()
         random.seed(seed)
-        self.board = Board(board_size=board_size,seed=seed)
+        self.board = Board(size=board_size,seed=seed)
         self.board.game = self
 
         self.players = []

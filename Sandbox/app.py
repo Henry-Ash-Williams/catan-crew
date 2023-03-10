@@ -7,7 +7,7 @@ from game import Game
 from pydantic import BaseModel
 
 app = FastAPI()
-g = Game()
+g = Game.__new__(Game)
 
 class PlayerColour(BaseModel):
     colour: str
@@ -28,10 +28,9 @@ class GameConfig(BaseModel):
     color_of_player: list[str]
     board_size: int = 3
 
-
 @app.post("/start_game")
 def start_game(game_config: GameConfig):
-    g = Game(
+    g.__init__(
         num_of_human_players = game_config.num_of_ai_player,
         num_of_ai_player = game_config.num_of_ai_player,
         color_of_player = game_config.color_of_player,
