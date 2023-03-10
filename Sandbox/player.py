@@ -56,7 +56,7 @@ class Player:
         player.built_roads = []
 
         # TODO: calculate actual road length
-        player.road_length = random.randint(5,10)
+        player.road_length = random.randint(5, 10)
         player.knights_played = 0
 
         player.resources = Resources()
@@ -214,12 +214,20 @@ class Player:
                 keys = inner_dict.keys()
                 for key in keys:
                     inner_dict[key] = 3
-    
+
     def reachable_paths(player):
-        adjacent_to_settlement = join(settlement.neighboring_paths() for settlement in player.built_settlements)
-        adjacent_to_city = join(city.neighboring_paths() for city in player.built_cities)
-        adjacent_to_road = join(road.potential_expansions() for road in player.built_roads)
-        paths = set(adjacent_to_settlement)|set(adjacent_to_city)|set(adjacent_to_road)
+        adjacent_to_settlement = join(
+            settlement.neighboring_paths() for settlement in player.built_settlements
+        )
+        adjacent_to_city = join(
+            city.neighboring_paths() for city in player.built_cities
+        )
+        adjacent_to_road = join(
+            road.potential_expansions() for road in player.built_roads
+        )
+        paths = (
+            set(adjacent_to_settlement) | set(adjacent_to_city) | set(adjacent_to_road)
+        )
         path_locations = {path.location for path in paths}
         return list(path_locations & player.game.board.available_path_locations)
 

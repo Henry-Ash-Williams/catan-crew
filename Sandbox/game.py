@@ -16,6 +16,7 @@ from clear import clear
 from dill import Pickler, Unpickler
 
 import random, fileinput
+from copy import deepcopy
 from time import gmtime, strftime
 from rich.console import Console
 from rich.rule import Rule
@@ -31,6 +32,7 @@ VP_TO_WIN = 10
 
 inp = fileinput.input()
 
+
 def get(s, inp):
     print(s, end="")
     k = inp.__next__().strip()
@@ -44,29 +46,23 @@ class GameException(Exception):
 
 
 class Game:
-    def __init__(self, players=[], has_human_players=False, seed=None):
+
+    def __init__(self, seed=None):
         self.bank = Bank()
         random.seed(seed)
         self.board = Board(seed=seed)
         self.board.game = self
 
-        for i in range(len(players)):
-            players[i].number = i + 1
-            players[i].game = self
-            players[i].resources = STARTING_RESOURCES.copy()
-        self.players = players
-        self.player_colors = [player.color for player in players]
-
-        if has_human_players:
-            player_number = self.prompt_player_number()
-            for number in range(player_number):
-                self.prompt_human_player()
-
-        if len(self.players) < 1:
-            raise GameException("You can't have a game with no players")
+        self.players = []
+        self.player_colors = ["red", "green", "blue", "purple"]
+        # DEPRECATED: use Game.add_player instead
+        # if has_human_players:
+            # player_number = self.prompt_player_number()
+            # for number in range(player_number):
+                # self.prompt_human_player()
 
         self.current_player_number = 0
-        self.current_player = self.players[self.current_player_number]
+        # self.current_player = self.players[self.current_player_number]
 
         self.is_just_starting = True
         self.is_won = False
@@ -74,21 +70,12 @@ class Game:
         self.turn_count = 0
         self.dev_card_played = False
 
-    def prompt_player_number(self):
-        return int(self.getter("How many players would like to play? "))
-
-    def prompt_human_player(self):
-        player_number = len(self.players) + 1
-        color = self.getter(f"Player #{player_number}'s color: ")
-        while color in self.player_colors:
-            color = self.getter(
-                "Sorry, that color is already taken. Please choose a different color: "
-            )
-        new_player = HumanPlayer(color, self.getter)
-        new_player.number = player_number
-        new_player.game = self
-        new_player.resources = STARTING_RESOURCES.copy()
-        self.players.append(new_player)
+    def add_player(self, colour: str):
+        temp_player = HumanPlayer(colour)
+        temp_player.number = len(self.players) + 1
+        temp_player.game = self
+        temp_player.resources = STARTING_RESOURCES.copy()
+        self.players.append(temp_player)
 
     def check_longest_road(self) -> Player:
         player = max(self.players, key=lambda player: player.road_length)
@@ -485,6 +472,8 @@ class Game:
             return pickle.load()
 
 
+
+
 if __name__ == "__main__":
     # get = input
     getter = lambda prompt: get(prompt, inp)
@@ -500,7 +489,7 @@ if __name__ == "__main__":
                 TesterPlayer(color) for color in ["red", "green", "blue", "purple"]
             ],
             has_human_players=False,
-            seed = 0
+            seed=0,
         )
     game.start()
     now = strftime("%Y-%m-%d_%H-%M=%S", gmtime())
