@@ -65,9 +65,6 @@ class Game:
         #     for number in range(player_number):
         #         self.prompt_human_player()
 
-        if len(self.players) < 1:
-            raise GameException("You can't have a game with no players")
-
         self.current_player_number = 0
         # self.current_player = self.players[self.current_player_number]
 
