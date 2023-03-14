@@ -40,7 +40,7 @@ class GameConfig(BaseModel):
 # Therefore, need to use class as dependency
 # Otherwise, you won't be able to test it with docs
 class GPlayerInfo:
-    def __init__(self, game_id: int, player_colour: str):
+    def __init__(self, game_id: str, player_colour: str):
         self.game_id = Query(game_id)
         self.player_colour = Query( player_colour )
         # Query(...) means explicitly declare that a value is required
@@ -80,7 +80,10 @@ def start_game(game_config: GameConfig):
     )
     gid = g.get_game_id()
     board_state = g.board.to_json()
+    [g.add_player(player_colour.lower())
+     for player_colour in game_config.color_of_player]
     games[gid] = deepcopy(g)
+    print(games)
     return {
         "game_id": gid,
         "board_state": board_state,
@@ -90,6 +93,8 @@ def start_game(game_config: GameConfig):
 @app.get("/dump_games")
 def dump_games():
     print(games)
+    return { "status": 200 }
+
 
 
 @app.get("/roll_dice")
@@ -115,39 +120,44 @@ def update_player_resource(player_info: GPlayerInfo = Depends()):
 
 @app.get("/available_actions")
 def available_actions(player_info: GPlayerInfo = Depends()):
-    game = get_game(player_info.game_id, games)
-    player = game.players[player_info.player_colour]
-    available_actions = {}
+    game = get_game(player_info.game_id.default, games)
+    player = [
+        player
+        for idx, player in enumerate( game.players )
+        if player.color.lower() == player_info.player_colour.default.lower()
+    ][0]
+
+    actions = []
+
     if player.has_resources():
-        available_actions.append("trade")
-        # available_actions.append(("Propose a trade", game.start_trade))
+        actions.append("trade")
 
     if player.can_build_road():
-        available_actions.append("build_road")
+        actions.append("build_road")
 
     if player.can_build_settlement():
-        available_actions.append("build_settlement")
+        actions.append("build_settlement")
 
     if player.can_upgrade_settlement():
-        available_actions.append("upgrade_settlement")
+        actions.append("upgrade_settlement")
 
     if player.can_buy_dev_card():
-        available_actions.append("buy_dev_card")
+        actions.append("buy_dev_card")
 
     if (not game.dev_card_played) and player.has_knight_card():
-        available_actions.append("play_knight")
+        actions.append("play_knight")
 
     if (not game.dev_card_played) and player.can_play_road_building():
-        available_actions.append("play_road_building")
+        actions.append("play_road_building")
 
     if (not game.dev_card_played) and player.has_year_of_plenty_card():
-        available_actions.append("play_year_of_plenty")
+        actions.append("play_year_of_plenty")
 
     if (not game.dev_card_played) and player.has_monopoly_card():
-        available_actions.append("play_monopoly")
+        actions.append("play_monopoly")
 
-    available_actions.append("end_turn")
-    return available_actions
+    actions.append("end_turn")
+    return actions
 
 
 @app.get("/valid_location/{infrastructures}")
