@@ -34,10 +34,11 @@ inp = fileinput.input()
 
 
 def get(s, inp):
-    print(s, end="")
+    import rich
+    rich.print(s, end="")
     k = inp.__next__().strip()
     if inp.fileno() > 0:
-        print(k)
+        rich.print(k)
     return k
 
 
@@ -66,7 +67,7 @@ class Game:
         #         self.prompt_human_player()
 
         self.current_player_number = 0
-        # self.current_player = self.players[self.current_player_number]
+        self.current_player = None
 
         self.is_just_starting = True
         self.is_won = False
@@ -80,6 +81,7 @@ class Game:
         temp_player.game = self
         temp_player.resources = STARTING_RESOURCES.copy()
         self.players.append(temp_player)
+
 
     def check_longest_road(self) -> Player:
         player = max(self.players, key=lambda player: player.road_length)
@@ -127,7 +129,7 @@ class Game:
             )
             for player in self.players
         ]
-        player_data.append(player_data)
+        # player_data.append(player_data)
         t = Table(title="Player worth")
         t.add_column("Player")
         t.add_column("Victory Points")
@@ -138,7 +140,7 @@ class Game:
 
         for player in player_data:
             t.add_row(
-                player[0],
+                str(player[0]),
                 str(player[1]),
                 str(player[2]),
                 str(player[3]),
@@ -154,6 +156,10 @@ class Game:
         self.print_current_player()
 
     def start(self):
+        if len(self.players) > 0:
+            self.current_player = self.players[0]
+        else:
+            raise GameException("Cannot have a game with no players")
         self.set_up_board()
         self.game_loop()
 
@@ -191,6 +197,7 @@ class Game:
             self.do_turn()
             table = self.display_game_state()
             c.print(table, justify="center")
+            input()
             # input("Breakpoint")
             c.print(
                 Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center"
@@ -475,6 +482,10 @@ class Game:
             pickle = Unpickler(file)
             return pickle.load()
 
+    def get_game_id(self) -> str:
+        import uuid
+        return str(uuid.uuid4())
+
 
 
 
@@ -485,16 +496,17 @@ if __name__ == "__main__":
     humans_to_play = False
 
     if humans_to_play:
-        game = Game(getter=getter, players=[], has_human_players=True)
+        game = Game(getter=getter, players=[])
     else:
         game = Game(
-            getter=getter,
-            players=[
-                TesterPlayer(color) for color in ["red", "green", "blue", "purple"]
-            ],
-            has_human_players=False,
-            seed=0,
+            num_of_human_players=1,
+            num_of_ai_player=3,
+            seed=0
         )
+        game.add_player("red")
+        game.add_player("blue")
+        game.add_player("green")
+        game.add_player("purple")
     game.start()
     now = strftime("%Y-%m-%d_%H-%M=%S", gmtime())
     game.save_state(f"pickled_data/game-{now}.pickle")

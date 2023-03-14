@@ -3,7 +3,7 @@ from rich.table import Table
 from rich.columns import Columns
 from rich.panel import Panel
 
-from rich import print as rich_print
+import rich
 
 from board import Settlement, City, Road, Tile
 
@@ -335,21 +335,21 @@ class Player:
                     + f"resource cards but the minimum is {player.resources.total()//2}. Try again"
                 )
                 resources = player.prompt_resources_to_give_up()
-        print()
+        rich.print()
         return resources
 
 
 class HumanPlayer(Player):
     def prompt_settlement_location(player, valid_settlement_locations):
         choice = None
-        print(f"Valid settlement locations: {valid_settlement_locations}")
+        rich.print(f"Valid settlement locations: {valid_settlement_locations}")
         while not (choice in valid_settlement_locations):
             choice = int(player.get("Pick a location to place a settlement: "))
         return choice
 
     def prompt_road_location(player, valid_road_locations):
         choice = None
-        print(f"Valid road locations: {valid_road_locations}")
+        rich.print(f"Valid road locations: {valid_road_locations}")
         while not (choice in valid_road_locations):
             choice = int(player.get("Pick a location to place a road: "))
         return choice
@@ -368,7 +368,7 @@ class HumanPlayer(Player):
                 )
 
     def prompt_resources_to_give_up(player):
-        rich_print(
+        rich.print(
             f"[b {player.color}]{player}[/b {player.color}]: you have {player.resources}"
         )
         resources = player.prompt_resources(
@@ -377,11 +377,11 @@ class HumanPlayer(Player):
         return resources
 
     def prompt_trade_proposees(player) -> list[Player]:
-        print("You can propose this trade to:")
+        rich.print("You can propose this trade to:")
         other_players = [p for p in player.game.players if not (p is player)]
 
         for index, proposee in enumerate(other_players, 1):
-            print("%i. %s" % (index, proposee))
+            rich.print("%i. %s" % (index, proposee))
 
         prompt1 = "Who would you like to propose this trade to? "
         choices = [p.strip() for p in player.get(prompt1).split(",")]
@@ -439,15 +439,15 @@ class HumanPlayer(Player):
             decision = True if response.lower() == "y" else False
         else:
             decision = False
-        rich_print(
+        rich_rich.print(
             f"[b {player.color}]{player}[/b {player.color}] {['rejects','accepts'][decision]} trade proposed by {trade.sender}"
         )
         return decision
 
     def prompt_trade_partner(player, trade):
-        print("\nYou can trade with:")
+        rich.print("\nYou can trade with:")
         for index, accepter in enumerate(trade.accepters, 1):
-            print(f"{index}. {accepter}")
+            rich.print(f"{index}. {accepter}")
 
         choice = int(player.get("Pick a trade partner: "))
 
@@ -457,7 +457,7 @@ class HumanPlayer(Player):
         """Called when the user chooses to upgrade a settlement.
         Prompts user for settlement they want to upgrade."""
         choice = None
-        print(
+        rich.print(
             f"Your settlements: {[settlement.location for settlement in player.built_settlements]}"
         )
         while not (
@@ -494,9 +494,9 @@ class HumanPlayer(Player):
             for potential_robbee in robbee_options
         ]
 
-        print("\nYou can rob:")
+        rich.print("\nYou can rob:")
         for index, (color, robbee) in enumerate(available_robbees, 1):
-            print(f"{index}. {color}")
+            rich.print(f"{index}. {color}")
 
         choice = int(player.get("Who would you like to rob? ")) - 1
 
@@ -504,7 +504,7 @@ class HumanPlayer(Player):
 
     def prompt_robber_location(player) -> Tile:
         """Prompts player for a location at which to place the robber."""
-        print("Pick a location at which to place the robber: ")
+        rich.print("Pick a location at which to place the robber: ")
         chosen_tile_location = int(
             player.get(f"Valid locations: {player.game.board.land_locations}")
         )
@@ -542,16 +542,16 @@ class HumanPlayer(Player):
         return player.prompt_resource("Select a resource to get from bank: ")
 
     def prompt_action(player, action_labels):
-        print("\nYou can:")
+        rich.print("\nYou can:")
         for index, action_label in enumerate(action_labels, 1):
-            print(f"{index}. {action_label}")
+            rich.print(f"{index}. {action_label}")
         return int(player.get("What would you like to do? ")) - 1
 
 
 class AutonomousPlayer(Player):
     def prompt_settlement_location(player, valid_settlement_locations):
         location = random.choice(valid_settlement_locations)
-        print(f"{player} builds a settlement at location {location}")
+        rich.print(f"{player} builds a settlement at location {location}")
         return location
 
     def prompt_road_location(player, valid_road_locations):
@@ -564,7 +564,7 @@ class AutonomousPlayer(Player):
         resources_requested = random.choice(individual_resources)
         other_players = [p for p in player.game.players if not (p is player)]
         proposees = random.sample(other_players, random.randint(1, len(other_players)))
-        print(
+        rich.print(
             f"{player} proposes a trade of {resources_offered} for {resources_requested} to {proposees}"
         )
         return Trade(player, resources_offered, resources_requested, proposees)
@@ -574,60 +574,60 @@ class AutonomousPlayer(Player):
             decision = random.choice([True, False])
         else:
             decision = False
-        print(
+        rich.print(
             f"{player} {['rejects','accepts'][decision]} trade proposed by {trade.sender}"
         )
         return decision
 
     def prompt_trade_partner(player, trade):
         chosen_trade_partner = random.choice(trade.accepters)
-        print(f"{player} chooses to trade with {chosen_trade_partner}")
+        rich.print(f"{player} chooses to trade with {chosen_trade_partner}")
         return chosen_trade_partner
 
     def prompt_settlement_for_upgrade(player) -> Settlement:
         settlement = random.choice(player.built_settlements)
-        print(f"{player} upgrades settlement at location {settlement.location}")
+        rich.print(f"{player} upgrades settlement at location {settlement.location}")
         return settlement
 
     def prompt_knight(player):
         options = player.game.board.tile_locations[:]
         options.remove(player.game.board.robber_location)
         chosen_location = random.choice(options)
-        print(f"{player} places Knight at location {chosen_location}")
+        rich.print(f"{player} places Knight at location {chosen_location}")
         return chosen_location
 
     def prompt_road_building(player):
         location = random.choice(player.game.board.valid_road_locations(player))
-        print(f"{player} builds a road at location {location}")
+        rich.print(f"{player} builds a road at location {location}")
         return location
 
     def prompt_robbing_victim(player, robbee_options: list[Player]) -> Player:
         robbing_victim = random.choice(robbee_options)
-        print(f"{player} robs {robbing_victim}")
+        rich.print(f"{player} robs {robbing_victim}")
         return robbing_victim
 
     def prompt_robber_location(player) -> Tile:
         options = list(player.game.board.land_locations)
-        print("Options:", options)
-        print("Current robber location:", player.game.board.robber_location)
+        rich.print("Options:", options)
+        rich.print("Current robber location:", player.game.board.robber_location)
         options.remove(player.game.board.robber_location)
         tile_location = random.choice(options)
-        print(f"{player} moves robber to location {tile_location}")
+        rich.print(f"{player} moves robber to location {tile_location}")
         return player.game.board.tiles[tile_location]
 
     def prompt_monopoly_resource(player) -> ResourceKind:
         choice = ResourceKind(random.randint(0, 4))
-        print(f"{player} monopolizes {choice}")
+        rich.print(f"{player} monopolizes {choice}")
         return choice
 
     def prompt_YoP_resource(player) -> ResourceKind:
         choice = ResourceKind(random.randint(0, 4))
-        print(f"{player} uses Year of Plenty to get {choice} from the bank")
+        rich.print(f"{player} uses Year of Plenty to get {choice} from the bank")
         return choice
 
     def prompt_action(player, action_labels):
         action_index = random.randint(0, len(action_labels) - 1)
-        print(f"{player} chooses to ({action_labels[action_index]})")
+        rich.print(f"{player} chooses to ({action_labels[action_index]})")
         return action_index
 
     def prompt_resources_to_give_up(player):

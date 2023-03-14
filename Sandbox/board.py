@@ -1,4 +1,5 @@
 import random
+import json
 from resources import grain, wool, lumber, brick, ore, ResourceKind
 
 def join(ll): return [i for k in ll for i in k]
@@ -27,7 +28,8 @@ class Tile:
         
         tile.cached_neighboring_intersections = None
         tile.cached_neighboring_settlements = None
-        
+
+
     def neighbor(tile, direction):
         """
         Finds the tile neighboring the current tile in the given direction.
@@ -486,7 +488,7 @@ class Board:
                                     any(isinstance(tile,LandTile) for tile in intersection.neighboring_tiles())}
         board.available_path_locations = {path.location for path in board.paths if len(set(path.neighboring_intersections())&board.land_intersections)==2}
         board.robber_location = random.choice(list(board.desert_locations))
-        
+
     def random_resource_kinds():
         """
         A generator of ResourceKind objects. Ensures that they are produced randomly but still conforming to the proportions of different resources in the original Settlers board.
@@ -647,6 +649,12 @@ class Board:
         board.tiles[location] = SeaTile(board, location)
         return board.tiles[location]
 
+    def to_json(self) -> str:
+        return "TODO: Write the encoder for the board"
+
+class BoardEncoder(json.JSONEncoder):
+    def default(self, obj):
+        return obj.__dict__
 
 class RoadBuildingException(Exception): pass
 
