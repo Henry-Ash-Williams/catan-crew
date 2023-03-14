@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from random import randint
 from pydantic import BaseModel
 from game import Game
@@ -15,6 +15,18 @@ g = Game.__new__(Game)
 # https://fastapi.tiangolo.com/tutorial/background-tasks/
 # https://fastapi.tiangolo.com/tutorial/testing/
 ###########
+
+# plus: I think you can just return an dictionary like object.
+# It should just cast to JSON automatically
+# localhost/docs is useful when u run it
+
+
+### ** to run it: uvicorn app:app --reload ** ###
+
+@app.get("/")
+def hello_word():
+    return "I am running"
+
 class PlayerColour(BaseModel):
     colour: str
 
@@ -49,32 +61,42 @@ def start_game(game_config: GameConfig):
         "board state": board_state,
     }
 
+# This is stupid, but because you can't have request body for get request
+# you can only use query parameter, which doesn't support by using BaseModel
+# Therefore, need to use class as dependency
+# Otherwise, you won't be able to test it with docs
+class GPlayerInfo:
+    def __init__(self, game_id: int, player_colour: str):
+        self.game_id = game_id
+        self.player_colour = player_colour
 class PlayerInfo(BaseModel):
     game_id: int
     player_colour: str
 
+
+
 @app.get("/roll_dice")
-def read_roll_dice(player_info: PlayerInfo):
-    pass
+def read_roll_dice(player_info: GPlayerInfo = Depends()):
+    return {player_info.game_id, player_info.player_colour} # this for test
 
 @app.get("/end_turn")
-def end_turn(player_info: PlayerInfo):
+def end_turn(player_info: GPlayerInfo = Depends()):
     pass
 
 @app.get("/board_state")
-def get_board_state(player_info: PlayerInfo):
+def get_board_state(player_info: GPlayerInfo = Depends()):
     pass
 
 @app.get("/updated_player_resource")
-def update_player_resource(player_info: PlayerInfo):
+def update_player_resource(player_info: GPlayerInfo = Depends()):
     pass
 
 @app.get("/available_actions")
-def available_actions(player_info: PlayerInfo):
+def available_actions(player_info: GPlayerInfo = Depends()):
     pass
 
 @app.get("/valid_location/{infrastructures}")
-def get_valid_locations(player_info: PlayerInfo, infrastructures: str, reachable: bool = None):
+def get_valid_locations(infrastructures: str, reachable: bool = None, player_info: GPlayerInfo = Depends()):
     if infrastructures == "roads":
         pass
     elif infrastructures == "cities":
@@ -89,7 +111,7 @@ def get_valid_locations(player_info: PlayerInfo, infrastructures: str, reachable
 #   I add extra parameters in stead of creating a new class
 
 @app.get("/build/{infrastructures}")
-def get_valid_locations(player_info: PlayerInfo, hexagon_id: int, infrastructures: str):
+def get_valid_locations(hexagon_id: int, infrastructures: str,player_info: GPlayerInfo = Depends(), ):
     if infrastructures == "roads":
         pass
     elif infrastructures == "cities":
