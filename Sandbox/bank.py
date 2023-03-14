@@ -28,11 +28,6 @@ class BankException(Exception):
 
 
 class Bank:
-    def __new__(cls):
-        if not hasattr(cls, "instance"):
-            cls.instance = super(Bank, cls).__new__(cls)
-
-        return cls.instance
     def __init__(self):
         self.development_cards = DEFAULT_BANK_DEV_CARDS.copy()
         self.resources = DEFAULT_BANK_RESOURCES.copy()
