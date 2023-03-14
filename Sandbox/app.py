@@ -110,8 +110,8 @@ def get_valid_locations(infrastructures: str, reachable: bool = None, player_inf
 #     intersection_id: int
 #   I add extra parameters in stead of creating a new class
 
-@app.get("/build/{infrastructures}")
-def get_valid_locations(hexagon_id: int, infrastructures: str,player_info: GPlayerInfo = Depends(), ):
+@app.post("/build/{infrastructures}")
+def build_infrastructures(hexagon_id: int, infrastructures: str, player_info: PlayerInfo):
     if infrastructures == "roads":
         pass
     elif infrastructures == "cities":
