@@ -9,6 +9,12 @@ from pydantic import BaseModel
 app = FastAPI()
 g = Game.__new__(Game)
 
+###########
+# check out these three please:
+# https://fastapi.tiangolo.com/tutorial/body-multiple-params/
+# https://fastapi.tiangolo.com/tutorial/background-tasks/
+# https://fastapi.tiangolo.com/tutorial/testing/
+###########
 class PlayerColour(BaseModel):
     colour: str
 
@@ -76,13 +82,14 @@ def get_valid_locations(player_info: PlayerInfo, infrastructures: str, reachable
     elif infrastructures == "settlements" and (reachable is not None):
         pass
 
-class PlayerAtPosition(BaseModel):
-    game_id: int
-    colour: str
-    intersection_id: int
+# class PlayerAtPosition(BaseModel):
+#     game_id: int
+#     colour: str
+#     intersection_id: int
+#   I add extra parameters in stead of creating a new class
 
 @app.get("/build/{infrastructures}")
-def get_valid_locations(info: PlayerAtPosition, infrastructures: str):
+def get_valid_locations(player_info: PlayerInfo, hexagon_id: int, infrastructures: str):
     if infrastructures == "roads":
         pass
     elif infrastructures == "cities":
