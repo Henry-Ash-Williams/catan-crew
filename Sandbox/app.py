@@ -43,26 +43,61 @@ def start_game(game_config: GameConfig):
         "board state": board_state,
     }
 
+class PlayerInfo(BaseModel):
+    game_id: int
+    player_colour: str
 
 @app.get("/roll_dice")
-def read_roll_dice():
-    return {"result": randint(1, 6) + randint(1, 6)}
-
-@app.get("/valid_settlement_locations")
-def get_valid_settlement_locations(colour: str, reachable: bool = True):
+def read_roll_dice(player_info: PlayerInfo):
     pass
 
+@app.get("/end_turn")
+def end_turn(player_info: PlayerInfo):
+    pass
+
+@app.get("/board_state")
+def get_board_state(player_info: PlayerInfo):
+    pass
+
+@app.get("/updated_player_resource")
+def update_player_resource(player_info: PlayerInfo):
+    pass
+
+@app.get("/available_actions")
+def available_actions(player_info: PlayerInfo):
+    pass
+
+@app.get("/valid_location/{infrastructures}")
+def get_valid_locations(player_info: PlayerInfo, infrastructures: str, reachable: bool = None):
+    if infrastructures == "roads":
+        pass
+    elif infrastructures == "cities":
+        pass
+    elif infrastructures == "settlements" and (reachable is not None):
+        pass
+
 class PlayerAtPosition(BaseModel):
+    game_id: int
     colour: str
     intersection_id: int
 
-@app.post("/place_settlement")
-def create_settlement(settlement: PlayerAtPosition):
-    pass
+@app.get("/build/{infrastructures}")
+def get_valid_locations(info: PlayerAtPosition, infrastructures: str):
+    if infrastructures == "roads":
+        pass
+    elif infrastructures == "cities":
+        pass
+    elif infrastructures == "settlements":
+        pass
 
-@app.post("/place_road")
-def place_road(info: PlayerAtPosition):
-    pass
+# refactor with the use of get valid locations method
+# @app.post("/place_settlement")
+# def create_settlement(settlement: PlayerAtPosition):
+#     pass
+
+# @app.post("/place_road")
+# def place_road(info: PlayerAtPosition):
+#     pass
 
 @app.get("valid_robber_locations")
 def get_valid_robber_locations():
