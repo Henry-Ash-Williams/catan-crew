@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Query
 from random import randint
 from pydantic import BaseModel
 from game import Game
@@ -67,8 +67,11 @@ def start_game(game_config: GameConfig):
 # Otherwise, you won't be able to test it with docs
 class GPlayerInfo:
     def __init__(self, game_id: int, player_colour: str):
-        self.game_id = game_id
-        self.player_colour = player_colour
+        self.game_id = game_id = Query(...)
+        self.player_colour = player_colour = Query(...)
+        # Query(...) means explicitly declare that a value is required
+        # but even it's not used, it should be required
+
 class PlayerInfo(BaseModel):
     game_id: int
     player_colour: str
