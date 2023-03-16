@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "ec3478a3-3f7a-4e73-9d05-20ada1a2e7fd",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26348275"
+	},
+	"item": [
+		{
+			"name": "Available Actions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8000/available_actions?game_id=8c1e7632-791c-4260-9480-f4c22351b23e&player_colour=red",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"available_actions"
+					],
+					"query": [
+						{
+							"key": "game_id",
+							"value": "8c1e7632-791c-4260-9480-f4c22351b23e"
+						},
+						{
+							"key": "player_colour",
+							"value": "red"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"num_of_human_player\": 4, \"num_of_ai_player\": 0, \"color_of_player\": [\"red\", \"green\", \"blue\", \"purple\"], \"board_size\": 3}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/start_game",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"start_game"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dump games",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8000/dump_games",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"dump_games"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Player resources",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8000/player_resources",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"player_resources"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Build settlement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"game_id\": \"7ec2c729-3352-4f6b-8c80-ee8302ca9a7c\", \"player_colour\": \"red\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/build/settlement?&hexagon_id=36",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"build",
+						"settlement"
+					],
+					"query": [
+						{
+							"key": null,
+							"value": null
+						},
+						{
+							"key": "hexagon_id",
+							"value": "36"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
