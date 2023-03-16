@@ -724,7 +724,7 @@ class Board:
         return board.tiles[location]
 
     def to_json(board):
-        return {'size': board.size, 'tiles': board.tiles, \
+        return {'size': board.size, 'directions': board.directions, 'tiles': board.tiles, \
                 'paths':board.paths, 'intersections': board.intersections}
 
 class BoardEncoder(json.JSONEncoder):
