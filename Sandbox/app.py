@@ -5,6 +5,8 @@ from fastapi import FastAPI, Depends, Query
 from pydantic import BaseModel
 from game import Game
 from player import Player
+from resources import Resources
+from typing import List
 
 app = FastAPI()
 games = {}
@@ -39,7 +41,7 @@ class GameConfig(BaseModel):
 # you can only use query parameter, which doesn't support by using BaseModel
 # Therefore, need to use class as dependency
 # Otherwise, you won't be able to test it with docs
-# tldr: use this for get reqs, use `PlayerInfo` got get reqs
+# tldr: use this for get reqs, use `PlayerInfo` for post reqs
 # if you need to get data out of a query object, use `.default`
 class GPlayerInfo:
     def __init__(self, game_id: str, player_colour: str):
@@ -47,6 +49,7 @@ class GPlayerInfo:
         self.player_colour = Query(player_colour)
         # Query(...) means explicitly declare that a value is required
         # but even it's not used, it should be required
+
     def get_game(self, games: {str, Game}) -> Game:
         if not games[str(self.game_id)]:
             raise Exception("Game not found")
@@ -99,7 +102,7 @@ def start_game(game_config: GameConfig):
 @app.get("/dump_games")
 def dump_games():
     print(games)
-    return { "status": "OK" }
+    return {"status": "OK"}
 
 
 
@@ -214,9 +217,17 @@ def get_valid_robber_locations(player_info: GPlayerInfo = Depends()):
     return { "locations": game.board.land_locations }
 
 @app.get("/discard_resource_card")
-def discard_resource_card(player_info: GPlayerInfo = Depends()):
+def no_of_cards_to_discard(player_info: GPlayerInfo = Depends()):
     from math import floor
     game = player_info.get_game(games)
     player = player_info.get_player(games)
 
     return {"no_of_cards_to_discard": floor(player.resources.total() / 2) if player.resources.total() > 7 else 0 }
+
+class ResourceInfo(PlayerInfo):
+    resources: Resources
+
+@app.post("/discard_resource_card")
+def discard_resource_card(info: ResourceInfo):
+    game = info.get_game(games)
+    game.bank.return_resources(info.resources)

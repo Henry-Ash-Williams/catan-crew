@@ -511,5 +511,5 @@ if __name__ == "__main__":
         game.add_player("green")
         game.add_player("purple")
     game.start()
-    now = strftime("%Y-%m-%d_%H-%M=%S", gmtime())
+    now = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
     game.save_state(f"pickled_data/game-{now}.pickle")
