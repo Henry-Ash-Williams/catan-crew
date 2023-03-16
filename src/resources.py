@@ -19,6 +19,8 @@ class ResourceKind(Enum):
     def __repr__(self):
         return str(self)
 
+    def to_json(self): return str(self)
+
 
 globals().update(ResourceKind.__members__)
 
