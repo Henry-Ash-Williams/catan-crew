@@ -32,9 +32,8 @@ class Bank:
         self.development_cards = DEFAULT_BANK_DEV_CARDS.copy()
         self.resources = DEFAULT_BANK_RESOURCES.copy()
         self.color = "Bank"
-
     def __str__(self):
-        return "Bank"
+        return f"Bank(resources={self.resources}, development_cards={self.development_cards})"
 
     def distribute(self, amount: int, resource_kind: ResourceKind) -> Resources:
         r = Resources() if resource_kind == None else Resources(resource_kind)
