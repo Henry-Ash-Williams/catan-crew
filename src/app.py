@@ -3,14 +3,11 @@
 from copy import deepcopy
 from fastapi import FastAPI, Depends, Query
 from pydantic import BaseModel
+from rich.console import Console
+
 from game import Game
 from player import Player
 from resources import Resources
-from typing import List
-from rich.console import Console
-
-app = FastAPI()
-games = {}
 
 ###########
 # check out these three please:
@@ -20,12 +17,13 @@ games = {}
 ###########
 
 # plus: I think you can just return an dictionary like object.
-# It should just cast to JSON automatically
+# It should just caGt to JSON automatically
 # localhost/docs is useful when u run it
 
-### ** to run it: uvicorn app:app --reload ** ###
-
+app = FastAPI()
 c = Console()
+games = {}
+
 
 class PlayerInfo(BaseModel):
     game_id: str
@@ -43,6 +41,9 @@ class GameConfig(BaseModel):
     color_of_player: list[str]
     board_size: int = 3
 
+
+class ResourceInfo(PlayerInfo):
+    resources: Resources
 
 # This is stupid, but because you can't have request body for get request
 # you can only use query parameter, which doesn't support by using BaseModel
@@ -82,7 +83,6 @@ def create_player(player: PlayerInfo):
         .add_player(player.player_colour)
 
     return {"player": games[player.game_id].players[-1]}
-
 
 @app.post("/start_game")
 def start_game(game_config: GameConfig):
@@ -231,15 +231,11 @@ def no_of_cards_to_discard(player_info: GPlayerInfo = Depends()):
 
     return {"no_of_cards_to_discard": floor(player.resources.total() / 2) if player.resources.total() > 7 else 0 }
 
-class ResourceInfo(PlayerInfo):
-    resources: Resources
 
 @app.post("/discard_resource_card")
 def discard_resource_card(info: ResourceInfo):
     game = info.get_game(games)
-    c.log(f"bank before updating: {game.bank}")
-    vals = [resource for resource in info.resources.values()]
+    vals = list(info.resources.values())
     r = Resources(*vals)
     game.bank.return_resources(r)
-    c.log(f"bank after updating: {game.bank}")
     return {"status": "ok"}
