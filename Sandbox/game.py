@@ -15,7 +15,9 @@ from resources import (
 from clear import clear
 from dill import Pickler, Unpickler
 
-import random, fileinput
+from random import randint
+import random
+import fileinput
 from copy import deepcopy
 from time import gmtime, strftime
 from rich.console import Console
@@ -69,6 +71,7 @@ class Game:
         self.current_player_number = 0
         self.current_player = None
 
+        self.dice = randint(1, 6) + randint(1, 6)
         self.is_just_starting = True
         self.is_won = False
 
@@ -106,7 +109,7 @@ class Game:
 
     def dice_roll(self):
         self.dice = random.randint(1, 6) + random.randint(1, 6)
-        print(f"Dice rolled. Result: {self.dice}")
+        return self.dice
 
     def print_current_player(self):
         player_color = self.current_player.color

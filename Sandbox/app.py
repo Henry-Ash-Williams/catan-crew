@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
+from copy import deepcopy
 from fastapi import FastAPI, Depends, Query
 from pydantic import BaseModel
 from game import Game
-from pydantic import BaseModel
-from copy import deepcopy
+from player import Player
 
 app = FastAPI()
 games = {}
@@ -24,7 +24,7 @@ games = {}
 
 
 class PlayerInfo(BaseModel):
-    game_id: int
+    game_id: str
     player_colour: str
 
 
@@ -39,34 +39,38 @@ class GameConfig(BaseModel):
 # you can only use query parameter, which doesn't support by using BaseModel
 # Therefore, need to use class as dependency
 # Otherwise, you won't be able to test it with docs
+# tldr: use this for get reqs, use `PlayerInfo` got get reqs
+# if you need to get data out of a query object, use `.default`
 class GPlayerInfo:
     def __init__(self, game_id: str, player_colour: str):
         self.game_id = Query(game_id)
-        self.player_colour = Query( player_colour )
+        self.player_colour = Query(player_colour)
         # Query(...) means explicitly declare that a value is required
         # but even it's not used, it should be required
+    def get_game(self, games: {str, Game}) -> Game:
+        if not games[str(self.game_id)]:
+            raise Exception("Game not found")
+        return games[str(self.game_id)]
 
-
-def get_game(game_uuid: str, games: {str, Game}) -> Game:
-    if not games[str( game_uuid )]:
-        raise Exception("Game not found")
-    return games[str(game_uuid)]
-
+    def get_player(self, game: Game, games: {str, Game}) -> Player:
+        return [
+            player
+            for idx, player in enumerate(self.get_game(games).players)
+            if player.color.lower() == self.player_colour.default.lower()
+        ][0]
 
 
 @app.get("/")
 def hello_word():
-    return "I am running"
+    return {"hello": "world"}
 
 
 @app.post("/add_player")
 def create_player(player: PlayerInfo):
-    # curl -X POST
-    #      --header "Content-Type: application/json"
-    #      --data '{"colour": "red"}'
-    #      127.0.0.1:8000/add_player
+    player \
+        .get_game(player.game_id.default, games) \
+        .add_player(player.player_colour)
 
-    games[player.game_id].add_player(player.player_colour)
     return {"player": games[player.game_id].players[-1]}
 
 
@@ -80,10 +84,12 @@ def start_game(game_config: GameConfig):
     )
     gid = g.get_game_id()
     board_state = g.board.to_json()
-    [g.add_player(player_colour.lower())
-     for player_colour in game_config.color_of_player]
+
+    for player_colour in game_config.color_of_player:
+        g.add_player(player_colour.lower())
+
     games[gid] = deepcopy(g)
-    print(games)
+
     return {
         "game_id": gid,
         "board_state": board_state,
@@ -93,7 +99,7 @@ def start_game(game_config: GameConfig):
 @app.get("/dump_games")
 def dump_games():
     print(games)
-    return { "status": 200 }
+    return { "status": "OK" }
 
 
 
@@ -104,28 +110,34 @@ def read_roll_dice(player_info: GPlayerInfo = Depends()):
 
 @app.get("/end_turn")
 def end_turn(player_info: GPlayerInfo = Depends()):
-    pass
+    game = player_info.get_game(games)
+    game.end_turn()
+    return {"status": "OK"}
 
 
 @app.get("/board_state")
 def get_board_state(player_info: GPlayerInfo = Depends()):
-    game = get_game(player_info.game_id, games)
+    game = player_info.get_game(games)
     return str(game.board.to_json())
 
 
 @app.get("/updated_player_resource")
 def update_player_resource(player_info: GPlayerInfo = Depends()):
-    pass
+    game = player_info.get_game(games)
+    game.distribute_resources()
+    return { "status": "OK" }
+
+
+@app.get("/player_resources")
+def get_player_resources(player_info: GPlayerInfo = Depends()):
+    player = player_info.get_player(games)
+    return player.resources
 
 
 @app.get("/available_actions")
 def available_actions(player_info: GPlayerInfo = Depends()):
-    game = get_game(player_info.game_id.default, games)
-    player = [
-        player
-        for idx, player in enumerate( game.players )
-        if player.color.lower() == player_info.player_colour.default.lower()
-    ][0]
+    game = player_info.get_game(games)
+    player = player_info.get_player(games)
 
     actions = []
 
@@ -164,7 +176,7 @@ def available_actions(player_info: GPlayerInfo = Depends()):
 def get_valid_locations(
     infrastructures: str, reachable: bool = None, player_info: GPlayerInfo = Depends()
 ):
-    game = get_game(player_info.game_id, games)
+    game = player_info.get_game(games)
     valid_locations = []
     if infrastructures == "roads":
         valid_locations = ["TODO: idk how to get the road locations"]
@@ -184,24 +196,27 @@ def get_valid_locations(
 def build_infrastructures(
     hexagon_id: int, infrastructures: str, player_info: PlayerInfo
 ):
+    game = player_info.get_game(games)
+    player = player_info.get_player
+
     if infrastructures == "roads":
-        pass
+        player.build_road(hexagon_id)
     elif infrastructures == "cities":
-        pass
+        player.upgrade_settlement(hexagon_id)
     elif infrastructures == "settlements":
-        pass
+        player.build_settlement(hexagon_id)
 
+    return { "status": "OK" }
 
-# refactor with the use of get valid locations method
-# @app.post("/place_settlement")
-# def create_settlement(settlement: PlayerAtPosition):
-#     pass
+@app.get("/valid_robber_locations")
+def get_valid_robber_locations(player_info: GPlayerInfo = Depends()):
+    game = player_info.get_game(games)
+    return { "locations": game.board.land_locations }
 
-# @app.post("/place_road")
-# def place_road(info: PlayerAtPosition):
-#     pass
+@app.get("/discard_resource_card")
+def discard_resource_card(player_info: GPlayerInfo = Depends()):
+    from math import floor
+    game = player_info.get_game(games)
+    player = player_info.get_player(games)
 
-
-@app.get("valid_robber_locations")
-def get_valid_robber_locations():
-    pass
+    return {"no_of_cards_to_discard": floor(player.resources.total() / 2) if player.resources.total() > 7 else 0 }
