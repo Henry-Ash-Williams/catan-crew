@@ -7,6 +7,7 @@ from game import Game
 from player import Player
 from resources import Resources
 from typing import List
+from rich.console import Console
 
 app = FastAPI()
 games = {}
@@ -24,10 +25,16 @@ games = {}
 
 ### ** to run it: uvicorn app:app --reload ** ###
 
+c = Console()
 
 class PlayerInfo(BaseModel):
     game_id: str
     player_colour: str
+
+    def get_game(self, games: {str, Game}) -> Game:
+        if not games[str(self.game_id)]:
+            raise Exception("Game not found")
+        return games[str(self.game_id)]
 
 
 class GameConfig(BaseModel):
@@ -230,4 +237,9 @@ class ResourceInfo(PlayerInfo):
 @app.post("/discard_resource_card")
 def discard_resource_card(info: ResourceInfo):
     game = info.get_game(games)
-    game.bank.return_resources(info.resources)
+    c.log(f"bank before updating: {game.bank}")
+    vals = [resource for resource in info.resources.values()]
+    r = Resources(*vals)
+    game.bank.return_resources(r)
+    c.log(f"bank after updating: {game.bank}")
+    return {"status": "ok"}
