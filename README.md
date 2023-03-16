@@ -1,10 +1,10 @@
-# catan-crew
+# Catan Crew
 Source files for Software Engineering 2023 at the University of Sussex
 
 ## Install
 
 1. `$ git clone git@github.com:Henry-Ash-Williams/catan-crew`
-2. `$ cd catan-crew`
+2. `$ cd catan-crew/src`
 3. `$ pip install rich fastapi pydantic watchfiles`
 
 ## Running the API
@@ -14,7 +14,7 @@ Source files for Software Engineering 2023 at the University of Sussex
 
 ## Running the game in the terminal
 
-1. `$ python3.10 game.py `
+1. `$ python3.10 main.py `
 
 ## The coordinate system:
 
@@ -25,5 +25,5 @@ Source files for Software Engineering 2023 at the University of Sussex
    34  35  36   0   1   2   3
      24  25  26  27  28  29
        14  15  16  17  18
-	      4   5   6   7
+         4   5   6   7
 ```
