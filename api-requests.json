@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "ec3478a3-3f7a-4e73-9d05-20ada1a2e7fd",
-		"name": "New Collection",
+		"_postman_id": "7d3d2ee2-270f-436e-950f-3424fc446eb1",
+		"name": "New Collection Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26348275"
 	},
@@ -144,6 +144,79 @@
 						{
 							"key": "hexagon_id",
 							"value": "36"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Discard resource cards",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"game_id\": \"28386895-5f05-4dc0-9567-d6aa409bb83f\",\n    \"player_colour\": \"red\",\n    \"resources\": {\n        \"0\": 2, \"1\": 2, \"2\": 1, \"3\": 0, \"4\": 0\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/discard_resource_card",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"discard_resource_card"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Board state",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/board_state?game_id=48db9b16-944a-423a-8e23-060a5f5c9f8a&player_colour=red",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"board_state"
+					],
+					"query": [
+						{
+							"key": "game_id",
+							"value": "48db9b16-944a-423a-8e23-060a5f5c9f8a"
+						},
+						{
+							"key": "player_colour",
+							"value": "red"
 						}
 					]
 				}

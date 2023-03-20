@@ -4,8 +4,10 @@ from copy import deepcopy
 from fastapi import FastAPI, Depends, Query
 from pydantic import BaseModel
 from rich.console import Console
+import json
 
 from game import Game
+from board import BoardEncoder
 from player import Player
 from resources import Resources
 
@@ -34,6 +36,13 @@ class PlayerInfo(BaseModel):
             raise Exception("Game not found")
         return games[str(self.game_id)]
 
+    def get_player(self, games: {str, Game}) -> Player:
+        return [
+            player
+            for idx, player in enumerate(self.get_game(games).players)
+            if player.color.lower() == self.player_colour.default.lower()
+        ][0]
+
 
 class GameConfig(BaseModel):
     num_of_human_player: int
@@ -44,6 +53,10 @@ class GameConfig(BaseModel):
 
 class ResourceInfo(PlayerInfo):
     resources: Resources
+
+class TileInfo(PlayerInfo):
+    tile_id: int
+
 
 # This is stupid, but because you can't have request body for get request
 # you can only use query parameter, which doesn't support by using BaseModel
@@ -59,11 +72,11 @@ class GPlayerInfo:
         # but even it's not used, it should be required
 
     def get_game(self, games: {str, Game}) -> Game:
-        if not games[str(self.game_id)]:
+        if not games[str(self.game_id.default)]:
             raise Exception("Game not found")
-        return games[str(self.game_id)]
+        return games[str(self.game_id.default)]
 
-    def get_player(self, game: Game, games: {str, Game}) -> Player:
+    def get_player(self, games: {str, Game}) -> Player:
         return [
             player
             for idx, player in enumerate(self.get_game(games).players)
@@ -93,7 +106,7 @@ def start_game(game_config: GameConfig):
         board_size=game_config.board_size,
     )
     gid = g.get_game_id()
-    board_state = g.board.to_json()
+    board_state = json.dumps(g.board, cls=BoardEncoder)
 
     for player_colour in game_config.color_of_player:
         g.add_player(player_colour.lower())
@@ -128,7 +141,7 @@ def end_turn(player_info: GPlayerInfo = Depends()):
 @app.get("/board_state")
 def get_board_state(player_info: GPlayerInfo = Depends()):
     game = player_info.get_game(games)
-    return str(game.board.to_json())
+    return {"state": json.dumps(game.board, cls=BoardEncoder)}
 
 
 @app.get("/updated_player_resource")
@@ -226,7 +239,6 @@ def get_valid_robber_locations(player_info: GPlayerInfo = Depends()):
 @app.get("/discard_resource_card")
 def no_of_cards_to_discard(player_info: GPlayerInfo = Depends()):
     from math import floor
-    game = player_info.get_game(games)
     player = player_info.get_player(games)
 
     return {"no_of_cards_to_discard": floor(player.resources.total() / 2) if player.resources.total() > 7 else 0 }
@@ -239,3 +251,20 @@ def discard_resource_card(info: ResourceInfo):
     r = Resources(*vals)
     game.bank.return_resources(r)
     return {"status": "ok"}
+
+@app.post("/place_robber")
+def place_robber(info: TileInfo):
+    # game = info.get_game(games)
+    # player = info.get_player(games)
+
+    # no game.place_robber method ¯\_(ツ)_/¯
+    return {"status": "TODO", "locations": []}
+
+
+@app.post("/buy_dev_card")
+def buy_dev_card(info: PlayerInfo):
+    game = info.get_game(games)
+
+    game.sell_development_card()
+
+    return
