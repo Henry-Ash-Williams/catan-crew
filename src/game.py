@@ -104,9 +104,6 @@ class Game:
                 )
                 settlement.owner.resources += new_resource
 
-    def handle_trade(self, trade: Trade):
-        pass
-
     def dice_roll(self):
         self.dice = random.randint(1, 6) + random.randint(1, 6)
         return self.dice

@@ -5,3 +5,5 @@ src/pickled_data/game-*
 src/start-api
 
 .idea
+
+src/out.txt
