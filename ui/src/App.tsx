@@ -1,13 +1,19 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { Board } from './components/Board';
-import { Stage } from '@pixi/react';
+import { BoardComponent } from './components/Board';
+import { Container, Sprite, Stage } from '@pixi/react';
+import { Texture } from 'pixi.js';
 
 function App() {
+
+  // const boardData = fetch('../public/board.json')
+  //   .then((response) => response.json())
+  //   .then((json) => console.log(json));
+
   return (
-    <Stage>
-      <Board size={3} width={1000} height={1000}/>
+    <Stage width={1000} height={1000}>
+      <Sprite width={1000} height={1000} texture={Texture.WHITE}></Sprite>
+        <BoardComponent size={3} width={1000} height={1000}/>
+
     </Stage>
   );
 }
