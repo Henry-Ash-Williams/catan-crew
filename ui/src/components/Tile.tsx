@@ -20,8 +20,19 @@ interface TileComponentProps {
 }
 
 function TileComponent(props: TileComponentProps) {
-    const tileSvg = "/assets/board/" + props.t.resource + ".svg";
-    const svg = Texture.from(tileSvg);
+    let tileBackground = "";
+    let tileImg = "";
+    if(props.t.type != "SeaTile"){
+        tileBackground = "/assets/board/dirt_01.png";
+    } else {
+        tileBackground = "/";
+    }
+    if(props.t.resource){
+        tileImg = "/assets/board/" + props.t.resource + ".png";
+    }   else {
+        tileImg = "/assets/board/" + props.t.type + ".png";
+    }
+   
 
     // const x = props.x;
     // const y = props.y;
@@ -40,7 +51,8 @@ function TileComponent(props: TileComponentProps) {
 
     return (
         <Container x={props.x} y={props.y} width={props.width} height={props.height}>
-            <Sprite x={props.width/2} y={props.height/2} width={50} height={50} anchor={0.5} texture={svg}/>
+            <Sprite x={props.width/2} y={props.height/2} width={props.width*1.9} height={props.height*2} anchor={0.5} image={tileImg}/>
+            <Sprite x={props.width/2} y={props.height/2} width={props.width*1.9} height={props.height*2} anchor={0.5} image={tileBackground}/>
             {props.t.number_token ? <Text
                 text={props.t.number_token.toString()}
                 anchor={0.5}
