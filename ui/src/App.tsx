@@ -2,7 +2,7 @@ import './App.css';
 import { BoardComponent } from './components/Board';
 import { Container, Sprite, Stage } from '@pixi/react';
 import { Texture } from 'pixi.js';
-
+import { UiComponent } from './components/Ui';
 function App() {
 
   return (

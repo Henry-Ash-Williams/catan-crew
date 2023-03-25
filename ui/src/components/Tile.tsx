@@ -3,11 +3,14 @@ import { type } from "os";
 import { TextStyle, Texture } from 'pixi.js';
 
 interface Tile {
-    type: string,
-    location: number,
-    harbor?: boolean, //not implemented
-    resource?: string | null,
-    number_token?: number | null
+    type: string
+    location: number
+    harbor?: boolean //not implemented
+    resource?: string | undefined
+    number_token?: number | undefined 
+    owner?: number | null
+    isCity?: boolean | undefined
+    direction?: number | undefined
 }
 
 interface TileComponentProps {
@@ -20,39 +23,30 @@ interface TileComponentProps {
 }
 
 function TileComponent(props: TileComponentProps) {
+
     let tileBackground = "";
-    let tileImg = "";
-    if(props.t.type != "SeaTile"){
-        tileBackground = "/assets/board/dirt_01.png";
-    } else {
-        tileBackground = "/";
+    // let tileImg = "";
+    if(props.t.type == "SeaTile"){
+        tileBackground = "/assets/board/water_N.png";
+    } else if (props.t.type == "DesertTile") {
+        tileBackground = "/assets/board/sand_rocks_N.png";
+    } else if (props.t.type == "Intersection" || props.t.type == "PathTile") {
+        tileBackground = "/assets/board/grass_N.png";
+    } else if ( props.t.type == "ResourceTile" || props.t.type == "null") {
+        tileBackground = "/assets/board/grass_forest_N.png";
     }
-    if(props.t.resource){
-        tileImg = "/assets/board/" + props.t.resource + ".png";
-    }   else {
-        tileImg = "/assets/board/" + props.t.type + ".png";
-    }
+
+    console.log(tileBackground)
+    // if(props.t.resource){
+    //     tileImg = "/assets/board/" + props.t.resource + ".png";
+    // }   else {
+    //     tileImg = "/assets/board/" + props.t.type + ".png";
+    // }
    
-
-    // const x = props.x;
-    // const y = props.y;
-    // const tileID = props.tileID;
-    // const HEXAGON_RADIUS = props.radius;
-    // const HEXAGON_POINTS = [
-    //     0, -HEXAGON_RADIUS,
-    //     HEXAGON_RADIUS * Math.sqrt(3) / 2, -HEXAGON_RADIUS / 2,
-    //     HEXAGON_RADIUS * Math.sqrt(3) / 2, HEXAGON_RADIUS / 2,
-    //     0, HEXAGON_RADIUS,
-    //     -HEXAGON_RADIUS * Math.sqrt(3) / 2, HEXAGON_RADIUS / 2,
-    //     -HEXAGON_RADIUS * Math.sqrt(3) / 2, -HEXAGON_RADIUS / 2,
-    //     ];
-        // const draw = useCallback<Draw>((g) => {
-        // });
-
     return (
         <Container x={props.x} y={props.y} width={props.width} height={props.height}>
-            <Sprite x={props.width/2} y={props.height/2} width={props.width*1.9} height={props.height*2} anchor={0.5} image={tileImg}/>
-            <Sprite x={props.width/2} y={props.height/2} width={props.width*1.9} height={props.height*2} anchor={0.5} image={tileBackground}/>
+            {/* <Sprite x={props.width/2} y={props.height/2} width={props.width*1.8} height={props.height*2} anchor={0.5} image={tileImg}/> */}
+            <Sprite x={0} y={0} width={props.width*5} height={props.height*5} anchor={0.5} image={tileBackground}/>
             {props.t.number_token ? <Text
                 text={props.t.number_token.toString()}
                 anchor={0.5}
