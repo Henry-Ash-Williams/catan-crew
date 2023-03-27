@@ -25,7 +25,7 @@ interface TileComponentProps {
 function TileComponent(props: TileComponentProps) {
 
     let tileBackground = "";
-    // let tileImg = "";
+    let tileImg = "";
     if(props.t.type == "SeaTile"){
         tileBackground = "/assets/board/water_N.png";
     } else if (props.t.type == "DesertTile") {
@@ -33,8 +33,26 @@ function TileComponent(props: TileComponentProps) {
     } else if (props.t.type == "Intersection" || props.t.type == "PathTile") {
         tileBackground = "/assets/board/grass_N.png";
     } else if ( props.t.type == "ResourceTile" || props.t.type == "null") {
-        tileBackground = "/assets/board/grass_forest_N.png";
+        tileBackground = "/assets/board/sand_rocks_N.png";
     }
+    if(props.t.type == "PathTile"){
+        if(props.t.direction == 1){
+            tileImg = "/assets/board/path_straight_N.png"
+        } else if(props.t.direction == 2){
+            tileImg = "/assets/board/path_straight_N.png"
+        }else if(props.t.direction == 3){
+            tileImg = "/assets/board/path_straight_N.png"
+        }
+    }
+    if(props.t.type == "Intersection"){
+        if(props.t.direction == 1){
+            tileImg = "/assets/board/path_intersectionF_N.png"
+        } else if(props.t.direction == 2){
+            tileImg = "/assets/board/path_intersectionF_N.png"
+        }
+    }
+
+
 
     console.log(tileBackground)
     // if(props.t.resource){
@@ -45,13 +63,12 @@ function TileComponent(props: TileComponentProps) {
    
     return (
         <Container x={props.x} y={props.y} width={props.width} height={props.height}>
-            {/* <Sprite x={props.width/2} y={props.height/2} width={props.width*1.8} height={props.height*2} anchor={0.5} image={tileImg}/> */}
             <Sprite x={0} y={0} width={props.width*5} height={props.height*5} anchor={0.5} image={tileBackground}/>
             {props.t.number_token ? <Text
                 text={props.t.number_token.toString()}
                 anchor={0.5}
-                x={props.width/2}
-                y={props.height/2}
+                x={0}
+                y={0}
                 style={
                     new TextStyle({
                     align: 'center',
@@ -71,6 +88,13 @@ function TileComponent(props: TileComponentProps) {
                     wordWrapWidth: 440,
                 })}
             /> : null}
+            {
+                props.t.type == "Intersection" ? <Sprite x={0} y={-15} width={props.width*5} height={props.height*5} anchor={0.5} image={tileImg}/> : null
+            }
+            {
+                props.t.type == "PathTile" ? <Sprite x={0} y={-15} width={props.width*5} height={props.height*5} anchor={0.5} image={tileImg}/> : null
+            }
+            
             
         </Container>
     

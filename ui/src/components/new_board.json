@@ -20,7 +20,7 @@
             "location": 2,
             "owner": null,
             "isCity": false,
-            "direction": "E"
+            "direction": 1
         },
         {
             "type": "PathTile",
@@ -85,20 +85,20 @@
             "location": 15,
             "owner": null,
             "isCity": false,
-            "direction": "E"
+            "direction": 1
         },
         {
             "type": "PathTile",
             "location": 16,
             "owner": null,
-            "direction": 3
+            "direction": 1
         },
         {
             "type": "Intersection",
             "location": 17,
             "owner": null,
             "isCity": false,
-            "direction": "W"
+            "direction": 2
         },
         {
             "type": "null",
@@ -113,7 +113,7 @@
             "location": 20,
             "owner": null,
             "isCity": false,
-            "direction": "E"
+            "direction": 1
         },
         {
             "type": "PathTile",
@@ -126,7 +126,7 @@
             "location": 22,
             "owner": null,
             "isCity": false,
-            "direction": "W"
+            "direction": 2
         },
         {
             "type": "null",
@@ -191,7 +191,7 @@
             "location": 35,
             "owner": null,
             "isCity": false,
-            "direction": "W"
+            "direction": 2
         },
         {
             "type": "null",

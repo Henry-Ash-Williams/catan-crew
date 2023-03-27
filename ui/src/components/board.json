@@ -11,7 +11,8 @@
     "tiles": [
         {
             "type": "DesertTile",
-            "location": 0
+            "location": 0,
+            "number_token": 5
         },
         {
             "type": "ResourceTile",
