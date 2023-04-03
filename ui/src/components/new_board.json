@@ -9,7 +9,7 @@
         {
             "type": "DesertTile",
             "location": 0,
-            "number_token": 1
+            "number_token": 10
         },
         {
             "type": "null",

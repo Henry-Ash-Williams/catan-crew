@@ -23,7 +23,7 @@ interface TileComponentProps {
 }
 
 function TileComponent(props: TileComponentProps) {
-
+    let rotation = 0;
     let tileBackground = "";
     let tileImg = "";
     if(props.t.type == "SeaTile"){
@@ -39,16 +39,19 @@ function TileComponent(props: TileComponentProps) {
         if(props.t.direction == 1){
             tileImg = "/assets/board/path_straight_N.png"
         } else if(props.t.direction == 2){
-            tileImg = "/assets/board/path_straight_N.png"
+            tileImg = "/assets/board/path_straight_NW.png"
+            rotation = Math.PI
         }else if(props.t.direction == 3){
-            tileImg = "/assets/board/path_straight_N.png"
+            tileImg = "/assets/board/path_straight_NE.png"
         }
     }
     if(props.t.type == "Intersection"){
         if(props.t.direction == 1){
             tileImg = "/assets/board/path_intersectionF_N.png"
+            //tileImg = "/assets/board/building_castle_N.png"
         } else if(props.t.direction == 2){
-            tileImg = "/assets/board/path_intersectionF_N.png"
+            tileImg = "/assets/board/path_intersectionF_S.png"
+            rotation = 0
         }
     }
 
@@ -89,10 +92,10 @@ function TileComponent(props: TileComponentProps) {
                 })}
             /> : null}
             {
-                props.t.type == "Intersection" ? <Sprite x={0} y={-15} width={props.width*5} height={props.height*5} anchor={0.5} image={tileImg}/> : null
+                props.t.type == "Intersection" ? <Sprite x={0} y={-15} width={props.width*5} height={props.height*5} anchor={0.5} image={tileImg} tint={0xffffff}/> : null
             }
             {
-                props.t.type == "PathTile" ? <Sprite x={0} y={-15} width={props.width*5} height={props.height*5} anchor={0.5} image={tileImg}/> : null
+                props.t.type == "PathTile" ? <Sprite x={0} y={-15} width={props.width*5} height={props.height*5} anchor={0.5} image={tileImg} angle={rotation}/> : null
             }
             
             
