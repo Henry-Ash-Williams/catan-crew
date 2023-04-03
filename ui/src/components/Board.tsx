@@ -1,8 +1,8 @@
 import { Container } from "@pixi/react";
-import { TileComponent } from './Tile';
-import { PathComponent } from './Path';
-import { IntersectionComponent } from "./Intersection";
 import board from  "./new_board.json";
+import { IntersectionComponent } from "./Intersection";
+import { PathComponent } from "./Path";
+import { ResourceTileComponent } from "./Resource";
 
 interface BoardComponentProps {
     height: number,
@@ -16,7 +16,7 @@ interface Tile {
     harbor?: boolean //not implemented
     resource?: string | undefined
     number_token?: number | undefined 
-    owner?: number | null
+    owner?: number | undefined
     isCity?: boolean | undefined
     direction?: number | undefined
 }
@@ -26,16 +26,7 @@ interface TileData {
     x: number,
     y: number,
 }
-// interface Path {
-//     location: number,
-//     endpoints: Array<number>,
-//     road: number | null
-// }
 
-// interface Intersection {
-//     location: number,
-//     settlement: number | null
-// }
 
 function initTiles(props: BoardComponentProps, tiles: Tile[]) {
     let x = props.width/2; // centre of board ( current position when initialising)
@@ -48,25 +39,26 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
     let radiusToFace = Math.sqrt(radius**2 - (radius/2)**2);
     let n = 1 + 3 * props.size * (props.size + 1); // number of tiles
     let tile_map = new Map();
-    let tileDatas: TileData[] = [];
+    let tileDatas: Map<number, TileData> = new Map();
 
     // set first tile and move southeast
-    tileDatas.push({tile: tiles[ctx], x: x, y: y});
+    tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
     x += (radiusToFace*2);
     ctx += east; 
+    
     
     for(let i = 1; i <= props.size; i++) {
         console.log(`RUN: ${i}/${props.size}`);
         for(let j = 0; j < i-1; j++){ // south
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | South East`);
-            tileDatas.push({tile: tiles[ctx], x: x, y: y});
+            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx - northWest) % n;
             x += radiusToFace;
             y += radius*.8;
         }
         for(let j = 0; j < i; j++){ // southwest
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | South West`);
-            tileDatas.push({tile: tiles[ctx], x: x, y: y});
+            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx - northEast) % n; 
             x -= radiusToFace;
             y += radius*.8;
@@ -74,14 +66,14 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
         };
         for(let j = 0; j < i; j++){ // west
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | West`);
-            tileDatas.push({tile: tiles[ctx], x: x, y: y});
+            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx - east) % n;
             x -= (radiusToFace*2);
 
         };
         for(let j = 0; j < i; j++){ // northwest
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | North West`);
-            tileDatas.push({tile: tiles[ctx], x: x, y: y});
+            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx + northWest) % n;
             x -= radiusToFace;
             y -= radius*.8;
@@ -89,7 +81,7 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
         };
         for(let j = 0; j < i; j++){ // northeast
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | North East`);
-            tileDatas.push({tile: tiles[ctx], x: x, y: y});
+            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx + northEast) % n;
             x += radiusToFace;
             y -= radius*.8;
@@ -97,35 +89,83 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
         };
         for(let j = 0; j < i+1; j++){ // east
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | East`);
-            tileDatas.push({tile: tiles[ctx], x: x, y: y});
+            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx + east) % n;
             x += radiusToFace*2;
 
         };
     }
 
-    tileDatas.sort(compare)
+    tileDatas.forEach(function(value, key) {
+        if (value.tile.type == "Resource") {
+            for (let i = 0; i < 6; i++) {
+                console.log((n + key + board.directions[i]) % n)
+                var temp = tileDatas.get((n + key + board.directions[i]) % n)!
+                console.log(temp)
+                temp.tile.type = "ChildResource"
+                temp.tile.resource = value.tile.resource
+            }
+        }
+    })
 
-    for(let i = 0; i < tileDatas.length; i++){
-        tile_map.set(
-            tileDatas[i].tile.location, <TileComponent 
-                key={tileDatas[i].tile.location} 
-                x={tileDatas[i].x} 
-                y={tileDatas[i].y} 
-                width={radius} 
-                height={radius} 
-                t={tileDatas[i].tile}/>);
-    }
+    tileDatas = sortMap(tileDatas)
 
+    tileDatas.forEach(function(value, key) {
+        if(value.tile.type == "Intersection") {
+            tile_map.set(key, <IntersectionComponent
+                key={key}
+                x={value.x}
+                y={value.y}
+                size={radius*4}
+                />)
+        } else if(value.tile.type == "PathTile") {
+            tile_map.set(key, <PathComponent
+                key={key}
+                x={value.x}
+                y={value.y}
+                size={radius*4}
+                direction={value.tile.direction}
+                />)
+        } else if(value.tile.type == "Resource") {
+            tile_map.set(key, <ResourceTileComponent
+                key={key}
+                x={value.x}
+                y={value.y}
+                size={radius*4}
+                number_token={value.tile.number_token}
+                resource={value.tile.resource}
+                />)
+        } else if(value.tile.type == "ChildResource") {
+            tile_map.set(key, <ResourceTileComponent
+                key={key}
+                x={value.x}
+                y={value.y}
+                size={radius*4}
+                resource={value.tile.resource}
+                />)
+        }
+    })
     return tile_map
 } 
 
-function compare(a: TileData, b: TileData) {
-    if (a.y === b.y) {
-      return b.x - a.x;
+function sortMap(map: Map<number, TileData>): Map<number, TileData> {
+    const entries = Array.from(map.entries());
+    entries.sort(([a, aVal], [b, bVal]) => {
+    if (aVal.y === bVal.y) {
+      return bVal.x - aVal.x;
+    } else {
+      return aVal.y - bVal.y;
     }
-    return a.y - b.y;
-  }
+  });
+  return new Map(entries);
+}
+
+// function compare(a: TileData, b: TileData) {
+//     if (a.y === b.y) {
+//       return b.x - a.x;
+//     }
+//     return a.y - b.y;
+//   }
 
 function BoardComponent(props: BoardComponentProps){
     let tiles: Tile[] = (board.tiles as Array<
@@ -134,7 +174,7 @@ function BoardComponent(props: BoardComponentProps){
                 resource?: string | undefined
                 harbor?: boolean | null
                 number_token?: number | undefined
-                owner?: number | null | undefined
+                owner?: number | undefined
                 isCity?: boolean | undefined
                 direction?: number | undefined}>).map(tile => {
         return{

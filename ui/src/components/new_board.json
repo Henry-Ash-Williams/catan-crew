@@ -3,13 +3,17 @@
     "directions": [
         1,
         11,
-        10
+        10,
+        -1,
+        -11,
+        -10
     ],
     "tiles": [
         {
-            "type": "DesertTile",
+            "type": "Resource",
             "location": 0,
-            "number_token": 10
+            "number_token": 10,
+            "resource": "desert"
         },
         {
             "type": "null",
