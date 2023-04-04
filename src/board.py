@@ -673,7 +673,30 @@ class Board:
         board.tiles[location] = SeaTile(board, location)
         return board.tiles[location]
 
-    def to_json(board):
+    def to_json(self):
+        board = self
+        json = {
+            "size": self.size,
+            "directions": self.directions,
+            "tiles": []
+        }
+
+        for tile in self.tiles + self.paths + self.intersections:
+            if isinstance(tile, DesertTile):
+                json["tiles"].append({
+                    "type": "DesertTile",
+                    "location": tile.location,
+                    "number_token": tile.number_token
+                })
+            elif isinstance(tile, Path):
+                json["tiles"].append({
+                    "type": "PathTile",
+                    "location": tile.location,
+                    "direction": tile.direction
+                })
+            elif isinstance(tile, Intersection):
+                json["tiles"].append()
+
         return {'size': board.size, 'directions': board.directions, 'tiles': board.tiles, \
                 'paths':board.paths, 'intersections': board.intersections}
 

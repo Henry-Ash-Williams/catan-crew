@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
 from copy import deepcopy
+import json
+
 from fastapi import FastAPI, Depends, Query
 from pydantic import BaseModel
 from rich.console import Console
-import json
+from rich import print
 
 from game import Game
 from board import BoardEncoder
-from player import Player
+from player import Player, PlayerEncoder
 from resources import Resources
 
 ###########
@@ -19,7 +21,7 @@ from resources import Resources
 ###########
 
 # plus: I think you can just return an dictionary like object.
-# It should just caGt to JSON automatically
+# It should just cast to JSON automatically
 # localhost/docs is useful when u run it
 
 app = FastAPI()
@@ -53,6 +55,7 @@ class GameConfig(BaseModel):
 
 class ResourceInfo(PlayerInfo):
     resources: Resources
+
 
 class TileInfo(PlayerInfo):
     tile_id: int
@@ -91,19 +94,16 @@ def hello_word():
 
 @app.post("/add_player")
 def create_player(player: PlayerInfo):
-    player \
-        .get_game(player.game_id.default, games) \
-        .add_player(player.player_colour)
+    game = player.get_game(games)
+    game.add_player(player.player_colour)
 
-    return {"player": games[player.game_id].players[-1]}
+    return {"player": json.dumps(game.players[-1], cls=PlayerEncoder)}
+
 
 @app.post("/start_game")
 def start_game(game_config: GameConfig):
     g = Game(
-        num_of_human_players=game_config.num_of_ai_player,
-        num_of_ai_player=game_config.num_of_ai_player,
-        color_of_player=game_config.color_of_player,
-        board_size=game_config.board_size,
+        game_config.board_size,
     )
     gid = g.get_game_id()
     board_state = json.dumps(g.board, cls=BoardEncoder)
@@ -112,6 +112,7 @@ def start_game(game_config: GameConfig):
         g.add_player(player_colour.lower())
 
     games[gid] = deepcopy(g)
+    print(f"[b green]New Game Created[/b green], GameID: {gid}")
 
     return {
         "game_id": gid,
@@ -123,7 +124,6 @@ def start_game(game_config: GameConfig):
 def dump_games():
     print(games)
     return {"status": "OK"}
-
 
 
 @app.get("/roll_dice")
@@ -148,7 +148,7 @@ def get_board_state(player_info: GPlayerInfo = Depends()):
 def update_player_resource(player_info: GPlayerInfo = Depends()):
     game = player_info.get_game(games)
     game.distribute_resources()
-    return { "status": "OK" }
+    return {"status": "OK"}
 
 
 @app.get("/player_resources")
@@ -197,7 +197,9 @@ def available_actions(player_info: GPlayerInfo = Depends()):
 
 @app.get("/valid_location/{infrastructures}")
 def get_valid_locations(
-    infrastructures: str, reachable: bool = None, player_info: GPlayerInfo = Depends()
+    infrastructures: str,
+    reachable: bool = None,
+    player_info: GPlayerInfo = Depends()
 ):
     game = player_info.get_game(games)
     valid_locations = []
@@ -219,8 +221,7 @@ def get_valid_locations(
 def build_infrastructures(
     hexagon_id: int, infrastructures: str, player_info: PlayerInfo
 ):
-    game = player_info.get_game(games)
-    player = player_info.get_player
+    player = player_info.get_player(games)
 
     if infrastructures == "roads":
         player.build_road(hexagon_id)
@@ -229,19 +230,19 @@ def build_infrastructures(
     elif infrastructures == "settlements":
         player.build_settlement(hexagon_id)
 
-    return { "status": "OK" }
+    return {"status": "OK"}
 
 @app.get("/valid_robber_locations")
 def get_valid_robber_locations(player_info: GPlayerInfo = Depends()):
     game = player_info.get_game(games)
-    return { "locations": game.board.land_locations }
+    return {"locations": game.board.land_locations}
 
 @app.get("/discard_resource_card")
 def no_of_cards_to_discard(player_info: GPlayerInfo = Depends()):
     from math import floor
     player = player_info.get_player(games)
 
-    return {"no_of_cards_to_discard": floor(player.resources.total() / 2) if player.resources.total() > 7 else 0 }
+    return {"no_of_cards_to_discard": floor(player.resources.total() / 2) if player.resources.total() > 7 else 0}
 
 
 @app.post("/discard_resource_card")
@@ -265,6 +266,16 @@ def place_robber(info: TileInfo):
 def buy_dev_card(info: PlayerInfo):
     game = info.get_game(games)
 
-    game.sell_development_card()
+    card = game.sell_development_card()
 
-    return
+    return {"card": card}
+
+@app.get("/visible_victory_points")
+def get_victory_points(info: GPlayerInfo = Depends()):
+    player = info.get_player(games)
+    return { "victory_points": player.calculate_visible_victory_points() }
+
+@app.get("/victory_points")
+def get_victory_points(info: GPlayerInfo = Depends()):
+    player = info.get_player(games)
+    return { "victory_points": player.calculate_total_victory_points() }
