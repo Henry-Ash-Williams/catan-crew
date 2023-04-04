@@ -276,6 +276,6 @@ def get_victory_points(info: GPlayerInfo = Depends()):
     return { "victory_points": player.calculate_visible_victory_points() }
 
 @app.get("/victory_points")
-def get_victory_points(info: GPlayerInfo = Depends()):
+def get_total_victory_points(info: GPlayerInfo = Depends()):
     player = info.get_player(games)
     return { "victory_points": player.calculate_total_victory_points() }
