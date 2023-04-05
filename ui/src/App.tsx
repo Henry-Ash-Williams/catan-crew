@@ -1,17 +1,27 @@
-import './App.css';
+import './styles/App.css';
 import { BoardComponent } from './components/Board';
-import { Container, Sprite, Stage } from '@pixi/react';
+import { Container, Sprite, Stage, useApp } from '@pixi/react';
 import { Texture } from 'pixi.js';
 import { UiComponent } from './components/Ui';
+import { useState } from 'react';
+import Menu from './components/Menu';
+import Card from './components/Card';
 
 
 
 function App() {
 
+  const [menuActive, setMenuActive] = useState<boolean>(true)
+
   return (
-    <Stage width={2000} height={1000}>
+    <>
+    {menuActive ? <Menu onShow={() => setMenuActive(!menuActive)}/>
+    :
+    <Stage width={1000} height={1000}>
       <Sprite width={2000} height={1000} texture={Texture.WHITE} ></Sprite>
       <BoardComponent size={3} width={1000} height={1000}/>
+      <Card resourceType='ore'/>
+      <Card resourceType='wool'/>
       <UiComponent></UiComponent>
 
 
@@ -28,6 +38,8 @@ function App() {
       <ResourceTileComponent x={900} y={400} number_token={6} resource={"lumber"}/>
       <ResourceTileComponent x={1100} y={500}/> */}
     </Stage>
+}
+    </>
   );
 }
 
