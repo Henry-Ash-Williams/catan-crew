@@ -4,6 +4,7 @@ import { IntersectionComponent } from "./Intersection";
 import { PathComponent } from "./Path";
 import { ResourceTileComponent } from "./Resource";
 import { KnightComponent } from "./knight";
+import { useState } from "react";
 
 interface BoardComponentProps {
     height: number,
@@ -28,8 +29,34 @@ interface TileData {
     y: number,
 }
 
+interface Coordinates {
+    x: number,
+    y: number
+}
 
-function initTiles(props: BoardComponentProps, tiles: Tile[]) {
+
+function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordinates) => void) {
+    let tiles: Tile[] = (board.tiles as Array<
+        { type: string
+        location: number
+        resource?: string | undefined
+        harbor?: boolean | null
+        number_token?: number | undefined
+        owner?: number | undefined
+        isCity?: boolean | undefined
+        direction?: number | undefined}>).map(tile => {
+        return{
+            type: tile.type,
+            location: tile.location,
+            resource: tile.resource ? tile.resource : undefined,
+            harbour: tile.harbor ? tile.harbor : false,
+            number_token: tile.number_token ? tile.number_token : undefined,
+            owner: tile.owner ? tile.owner : undefined,
+            isCity: tile.isCity ? tile.isCity : undefined,
+            direction: tile.direction ? tile.direction : undefined
+        }
+        });
+
     let x = props.width/2; // centre of board ( current position when initialising)
     let y = props.height/2;
     let ctx = 0; // position on board when initialising 
@@ -117,25 +144,27 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
                 key={key}
                 x={value.x}
                 y={value.y}
-                size={radius*4}
+                size={radius}
+                onClick={handleClick}
                 />)
         } else if(value.tile.type == "PathTile") {
             tile_map.set(key, <PathComponent
                 key={key}
                 x={value.x}
                 y={value.y}
-                size={radius*4}
+                size={radius}
                 direction={value.tile.direction}
+                onClick={handleClick}
                 />)
         } else if(value.tile.type == "Resource") {
             tile_map.set(key, <ResourceTileComponent
                 key={key}
                 x={value.x}
                 y={value.y}
-                size={radius*4}
+                size={radius}
                 number_token={value.tile.number_token}
                 resource={value.tile.resource}
-
+                onClick={handleClick}
                 />)
             if(value.tile.resource == "desert") {
                 knight = {x: value.x, y: value.y}
@@ -145,8 +174,9 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
                 key={key}
                 x={value.x}
                 y={value.y}
-                size={radius*4}
+                size={radius}
                 resource={value.tile.resource}
+                onClick={handleClick}
                 />)
         }
     })
@@ -177,37 +207,24 @@ function getCoordinatesFromKey(key: number, components: JSX.Element[]): {x: numb
 }
 
 function BoardComponent(props: BoardComponentProps){
-    let tiles: Tile[] = (board.tiles as Array<
-                { type: string
-                location: number
-                resource?: string | undefined
-                harbor?: boolean | null
-                number_token?: number | undefined
-                owner?: number | undefined
-                isCity?: boolean | undefined
-                direction?: number | undefined}>).map(tile => {
-        return{
-            type: tile.type,
-            location: tile.location,
-            resource: tile.resource ? tile.resource : undefined,
-            harbour: tile.harbor ? tile.harbor : false,
-            number_token: tile.number_token ? tile.number_token : undefined,
-            owner: tile.owner ? tile.owner : undefined,
-            isCity: tile.isCity ? tile.isCity : undefined,
-            direction: tile.direction ? tile.direction : undefined
-        }
-    });
+    const initBoard = () => {
+        let boardInit = initTiles(props, handleResourceClick)
+        return boardInit
+    }
+    const handleResourceClick = (coordinates: Coordinates) => {
+        console.log(coordinates)
+        setKnightPosition(coordinates)
+    }
 
-    let boardInit = initTiles(props, tiles)
-    let tileComponents = boardInit.tiles
-    let knight = boardInit.knight
+    const [boardState, setBoardState] = useState<{ tiles: Map<Number, JSX.Element>, knight: Coordinates }>(initBoard)
+    const [knightPosition, setKnightPosition] = useState<Coordinates>(boardState.knight)
 
     return (
         <Container>
-            {(Array.from(tileComponents.keys())).map((key) => (
-                <>{tileComponents.get(key)}</>
+            {(Array.from(boardState.tiles.keys())).map((key) => (
+                <>{boardState.tiles.get(key)}</>
              ))}
-            <KnightComponent x={knight.x} y={knight.y} size={50}/>
+            <KnightComponent x={knightPosition.x} y={knightPosition.y} size={50}/>
         </Container>
     )
 } 

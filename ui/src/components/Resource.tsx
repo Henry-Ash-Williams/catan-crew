@@ -1,5 +1,11 @@
 import { Container, Sprite, Text } from "@pixi/react"
-import { TextStyle } from "pixi.js"
+import { TextStyle, Graphics } from "pixi.js"
+// import { Graphics } from "@pixi/react"
+
+interface Coordinates {
+    x: number,
+    y: number
+}
 
 interface ResourceTileProps{
     x: number
@@ -7,24 +13,29 @@ interface ResourceTileProps{
     size: number
     number_token?: number
     resource?: string
+    onClick: (coordinates: Coordinates) => void
 }
 
 function ResourceTileComponent(props: ResourceTileProps){
+    const x = props.x
+    const y = props.y
+    const handleClick = () => {
+        props.onClick({ x, y  })
+    }
     let tile : React.ReactElement[] = []
-    
 
     if (props.resource == "brick") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/brick/dirt_N.png"}/>)
+        tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/brick/dirt_N.png"} onclick={handleClick}/>)
     } else if (props.resource == "grain") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/grain/building_farm_N.png"}/>)
+        tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/grain/building_farm_N.png"}/>)
     } else if (props.resource == "lumber") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/lumber/grass_forest_N.png"}/>)
+        tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/lumber/grass_forest_N.png"}/>)
     } else if (props.resource == "ore") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/ore/stone_hill_N.png"}/>)
+        tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/ore/stone_hill_N.png"}/>)
     } else if (props.resource == "wool") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/wool/building_sheep_N.png"}/>)
+        tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/wool/building_sheep_N.png"}/>)
     } else if (props.resource == "desert") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/desert/sand_rocks_N.png"}/>)
+        tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/desert/sand_rocks_N.png"} interactive={true} onclick={handleClick}/>)
     }
 
     if (props.number_token) {
@@ -57,10 +68,11 @@ function ResourceTileComponent(props: ResourceTileProps){
     }
 
     return(
-        <Container x={props.x} y={props.y} width={props.size} height={props.size}>
+        <Container x={props.x} y={props.y} width={props.size} height={props.size} interactiveChildren={true}>
             {tile.map((x) => (
                 <>{x}</>
             ))}
+            
         </Container>
     )
 }
