@@ -11,6 +11,7 @@ interface ResourceTileProps{
 
 function ResourceTileComponent(props: ResourceTileProps){
     let tile : React.ReactElement[] = []
+    
 
     if (props.resource == "brick") {
         tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/brick/dirt_N.png"}/>)

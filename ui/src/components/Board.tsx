@@ -3,6 +3,7 @@ import board from  "./new_board.json";
 import { IntersectionComponent } from "./Intersection";
 import { PathComponent } from "./Path";
 import { ResourceTileComponent } from "./Resource";
+import { KnightComponent } from "./knight";
 
 interface BoardComponentProps {
     height: number,
@@ -36,7 +37,7 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
     let northEast = board.directions[1];
     let northWest = board.directions[2];
     let radius = 50;
-    let radiusToFace = Math.sqrt(radius**2 - (radius/2)**2);
+    let radiusToFace = Math.sqrt(radius**2 - (radius/2)**2) - 8;
     let n = 1 + 3 * props.size * (props.size + 1); // number of tiles
     let tile_map = new Map();
     let tileDatas: Map<number, TileData> = new Map();
@@ -54,14 +55,14 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx - northWest) % n;
             x += radiusToFace;
-            y += radius*.8;
+            y += radius*.61;
         }
         for(let j = 0; j < i; j++){ // southwest
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | South West`);
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx - northEast) % n; 
             x -= radiusToFace;
-            y += radius*.8;
+            y += radius*.61;
 
         };
         for(let j = 0; j < i; j++){ // west
@@ -76,7 +77,7 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx + northWest) % n;
             x -= radiusToFace;
-            y -= radius*.8;
+            y -= radius*.61;
  
         };
         for(let j = 0; j < i; j++){ // northeast
@@ -84,7 +85,7 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx + northEast) % n;
             x += radiusToFace;
-            y -= radius*.8;
+            y -= radius*.61;
  
         };
         for(let j = 0; j < i+1; j++){ // east
@@ -109,7 +110,7 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
     })
 
     tileDatas = sortMap(tileDatas)
-
+    let knight = {x, y}
     tileDatas.forEach(function(value, key) {
         if(value.tile.type == "Intersection") {
             tile_map.set(key, <IntersectionComponent
@@ -134,7 +135,11 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
                 size={radius*4}
                 number_token={value.tile.number_token}
                 resource={value.tile.resource}
+
                 />)
+            if(value.tile.resource == "desert") {
+                knight = {x: value.x, y: value.y}
+            }
         } else if(value.tile.type == "ChildResource") {
             tile_map.set(key, <ResourceTileComponent
                 key={key}
@@ -145,7 +150,8 @@ function initTiles(props: BoardComponentProps, tiles: Tile[]) {
                 />)
         }
     })
-    return tile_map
+
+    return {tiles: tile_map, knight}
 } 
 
 function sortMap(map: Map<number, TileData>): Map<number, TileData> {
@@ -160,12 +166,15 @@ function sortMap(map: Map<number, TileData>): Map<number, TileData> {
   return new Map(entries);
 }
 
-// function compare(a: TileData, b: TileData) {
-//     if (a.y === b.y) {
-//       return b.x - a.x;
-//     }
-//     return a.y - b.y;
-//   }
+function getCoordinatesFromKey(key: number, components: JSX.Element[]): {x: number, y: number} {
+    const component = components.find((c) => c.key === key)
+
+    if(!component) {
+        throw Error("No component found with key");
+    }
+    const {x, y} = component.props
+    return {x, y}
+}
 
 function BoardComponent(props: BoardComponentProps){
     let tiles: Tile[] = (board.tiles as Array<
@@ -189,13 +198,16 @@ function BoardComponent(props: BoardComponentProps){
         }
     });
 
-    let tileComponents = initTiles(props, tiles)
+    let boardInit = initTiles(props, tiles)
+    let tileComponents = boardInit.tiles
+    let knight = boardInit.knight
 
     return (
         <Container>
             {(Array.from(tileComponents.keys())).map((key) => (
                 <>{tileComponents.get(key)}</>
              ))}
+            <KnightComponent x={knight.x} y={knight.y} size={50}/>
         </Container>
     )
 } 
