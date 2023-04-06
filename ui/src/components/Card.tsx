@@ -2,7 +2,9 @@ import { Container, Graphics, Sprite } from "@pixi/react"
 import { useCallback } from "react"
 
 interface CardProps {
-    resourceType: string
+    resourceType: string;
+    xPos : number;
+    yPos: number;
 }
 
 export default function Card(props: CardProps){
@@ -17,14 +19,14 @@ export default function Card(props: CardProps){
     const draw = useCallback((g : any) => {
         g.clear();
         g.beginFill(resourceDict[props.resourceType][1], 1);
-        g.drawRect(0, 0, 120, 120);
+        g.drawRoundedRect(0, 0, 100, 120);
         g.endFill();
     }, []);
 
     return(
-        <Container>
+        <Container x={props.xPos} y={props.yPos}>
             <Graphics draw={draw}/>
-            <Sprite image={resourceDict[props.resourceType][0]} width={50} height={50} x={25} y={40}/>
+            <Sprite image={resourceDict[props.resourceType][0]} width={55} height={50} x={20} y={40}/>
         </Container>
     )
 }

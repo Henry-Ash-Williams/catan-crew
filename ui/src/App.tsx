@@ -3,7 +3,7 @@ import { BoardComponent } from './components/Board';
 import { Container, Sprite, Stage, useApp } from '@pixi/react';
 import { Texture } from 'pixi.js';
 import { UiComponent } from './components/Ui';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Menu from './components/Menu';
 import Card from './components/Card';
 
@@ -12,6 +12,11 @@ import Card from './components/Card';
 function App() {
 
   const [menuActive, setMenuActive] = useState<boolean>(true)
+  const cardContainer = useRef(null);
+
+  function handleRef(){
+    cardContainer.current.addChild()
+  }
 
   return (
     <>
@@ -20,9 +25,14 @@ function App() {
     <Stage width={1000} height={1000}>
       <Sprite width={2000} height={1000} texture={Texture.WHITE} ></Sprite>
       <BoardComponent size={3} width={1000} height={1000}/>
-      <Card resourceType='ore'/>
-      <Card resourceType='wool'/>
-      <UiComponent></UiComponent>
+      <Container ref={cardContainer} interactive={true} onclick={()=>{handleRef()}}>
+        <Card resourceType='ore' xPos={25} yPos={50}/>
+        <Card resourceType='wool' xPos={145} yPos={50}/>
+        <Card resourceType='lumber' xPos={265} yPos={50}/>
+        <Card resourceType='grain' xPos={385} yPos={50}/>
+        <Card resourceType='brick' xPos={505} yPos={50}/>
+      </Container>
+      {/* <UiComponent></UiComponent> */}
 
 
       {/* <IntersectionComponent x={100} y={100} isCity={false}/>
