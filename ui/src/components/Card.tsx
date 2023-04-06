@@ -1,7 +1,8 @@
-import { Container, Graphics, Sprite } from "@pixi/react"
+import { Container, Graphics, Sprite, Text } from "@pixi/react"
 import { useCallback } from "react"
 
 interface CardProps {
+    amount: number;
     resourceType: string;
     xPos : number;
     yPos: number;
@@ -16,17 +17,18 @@ export default function Card(props: CardProps){
     'grain': ["../assets/board/archive/grain.svg", '#f5d742']
     }
 
-    const draw = useCallback((g : any) => {
-        g.clear();
-        g.beginFill(resourceDict[props.resourceType][1], 1);
-        g.drawRoundedRect(0, 0, 100, 120);
-        g.endFill();
-    }, []);
+    // const draw = useCallback((g : any) => {
+    //     g.clear();
+    //     g.beginFill(resourceDict[props.resourceType][1], 1);
+    //     g.drawRoundedRect(0, 0, 100, 120);
+    //     g.endFill();
+    // }, []);
 
     return(
         <Container x={props.xPos} y={props.yPos}>
-            <Graphics draw={draw}/>
+            <Sprite image={'/assets/menu/panel_beige.png'} width={100} height={120} tint={resourceDict[props.resourceType][1]}/>
             <Sprite image={resourceDict[props.resourceType][0]} width={55} height={50} x={20} y={40}/>
+            <Text text={props.amount.toString()} x={5} y={5}/>
         </Container>
     )
 }

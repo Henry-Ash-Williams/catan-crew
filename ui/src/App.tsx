@@ -1,11 +1,12 @@
 import './styles/App.css';
 import { BoardComponent } from './components/Board';
-import { Container, Sprite, Stage, useApp } from '@pixi/react';
+import { Container, Graphics, Sprite, Stage, useApp, useTick } from '@pixi/react';
 import { Texture } from 'pixi.js';
 import { UiComponent } from './components/Ui';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import Menu from './components/Menu';
 import Card from './components/Card';
+import LeaderBoard from './components/LeaderBoard';
 
 
 
@@ -13,25 +14,33 @@ function App() {
 
   const [menuActive, setMenuActive] = useState<boolean>(true)
   const cardContainer = useRef(null);
+  const draw = useCallback((g:any)=> {
+    g.clear();
+    g.lineStyle(2, 'red');
+    g.drawRect(0, 0, 1300, 1000);
+  }, [])
 
-  function handleRef(){
-    cardContainer.current.addChild()
-  }
+  // function handleRef(){
+  //   cardContainer.current.addChild()
+  // }
+
 
   return (
     <>
     {menuActive ? <Menu onShow={() => setMenuActive(!menuActive)}/>
     :
-    <Stage width={1000} height={1000}>
-      <Sprite width={2000} height={1000} texture={Texture.WHITE} ></Sprite>
+    <Stage width={1300} height={1000}>
+      <Sprite width={1300} height={1000} texture={Texture.WHITE} ></Sprite>
       <BoardComponent size={3} width={1000} height={1000}/>
-      <Container ref={cardContainer} interactive={true} onclick={()=>{handleRef()}}>
-        <Card resourceType='ore' xPos={25} yPos={50}/>
-        <Card resourceType='wool' xPos={145} yPos={50}/>
-        <Card resourceType='lumber' xPos={265} yPos={50}/>
-        <Card resourceType='grain' xPos={385} yPos={50}/>
-        <Card resourceType='brick' xPos={505} yPos={50}/>
+      <Container ref={cardContainer} interactive={true} x={30} y={0}>
+        <Card resourceType='ore' xPos={0} yPos={50} amount={1}/>
+        <Card resourceType='wool' xPos={0} yPos={200} amount={1}/>
+        <Card resourceType='lumber' xPos={0} yPos={350} amount={1}/>
+        <Card resourceType='grain' xPos={0} yPos={500} amount={1}/>
+        <Card resourceType='brick' xPos={0} yPos={650} amount={1}/>
       </Container>
+      <LeaderBoard/>
+      <Graphics draw={draw}/>
       {/* <UiComponent></UiComponent> */}
 
 
