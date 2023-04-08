@@ -17,7 +17,7 @@ function App() {
 
   const [menuActive, setMenuActive] = useState<boolean>(true)
   const cardContainer = useRef(null);
-  const [canRoll, setCanRoll] = useState(false);
+  const [canRoll, setCanRoll] = useState(true);
   const [numbersToDisplay, setNumbersToDisplay] = useState<[number, number]>([6, 6]);
   // function handleRef(){
   //   cardContainer.current.addChild()

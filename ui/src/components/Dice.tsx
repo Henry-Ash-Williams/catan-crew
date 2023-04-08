@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Sprite, Text } from "@pixi/react";
 import { TextStyle } from "pixi.js";
 
+
 interface DiceComponentProps {
   canRoll: boolean;
   numbersToDisplay: [number, number];
@@ -13,6 +14,8 @@ interface DiceComponentProps {
 function DiceComponent(props: DiceComponentProps) {
   const [diceOpacity, setDiceOpacity] = useState(0.5);
 
+//   sound.add('dice', '/assets/dice/dieShuffle1.ogg')
+
   useEffect(() => {
     if (props.canRoll) {
       setDiceOpacity(1);
@@ -23,6 +26,7 @@ function DiceComponent(props: DiceComponentProps) {
 
   const handleClick = () => {
     if (props.canRoll) {
+    //   sound.play('dice')
       const randomNumber1 = Math.floor(Math.random() * 6) + 1;
       const randomNumber2 = Math.floor(Math.random() * 6) + 1;
       props.setNumbersToDisplay([randomNumber1, randomNumber2]);
@@ -32,12 +36,12 @@ function DiceComponent(props: DiceComponentProps) {
   return (
     <Container x={props.x} y={props.y}>
       <Sprite
-        x={0}
+        x={20}
         y={0}
         image={`/assets/dice/dieWhite${props.numbersToDisplay[0]}.png`}  
       />
       <Sprite
-        x={80}
+        x={100}
         y={0}
         image={`/assets/dice/dieWhite${props.numbersToDisplay[1]}.png`}
       />
