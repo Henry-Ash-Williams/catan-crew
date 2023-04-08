@@ -145,7 +145,6 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
                 x={value.x}
                 y={value.y}
                 size={radius}
-                onClick={handleClick}
                 />)
         } else if(value.tile.type == "PathTile") {
             tile_map.set(key, <PathComponent

@@ -11,12 +11,14 @@ import { IntersectionComponent } from './components/Intersection';
 import { PathComponent } from './components/Path';
 import { ResourceTileComponent } from './components/Resource';
 import { KnightComponent } from './components/knight';
+import { DiceComponent } from './components/Dice';
 
 function App() {
 
   const [menuActive, setMenuActive] = useState<boolean>(true)
   const cardContainer = useRef(null);
-
+  const [canRoll, setCanRoll] = useState(false);
+  const [numbersToDisplay, setNumbersToDisplay] = useState<[number, number]>([6, 6]);
   // function handleRef(){
   //   cardContainer.current.addChild()
   // }
@@ -29,6 +31,7 @@ function App() {
     <Stage width={1000} height={1000}>
       <Sprite width={2000} height={1000} texture={Texture.WHITE} ></Sprite>
       <BoardComponent size={3} width={1000} height={1000}/>
+      <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={100} y={100}/>
       {/* <Container ref={cardContainer} interactive={true} onclick={()=>{handleRef()}}>
         <Card resourceType='ore' xPos={25} yPos={50}/>
         <Card resourceType='wool' xPos={145} yPos={50}/>

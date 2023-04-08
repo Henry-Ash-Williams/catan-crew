@@ -1,16 +1,11 @@
 import { Container, Sprite } from '@pixi/react';
 
-interface Coordinates {
-    x: number,
-    y: number
-}
 interface IntersectionComponentProps {
     x: number
     y: number
     size: number
     owner?: number
     isCity?: boolean
-    onClick: (coordinates: Coordinates) => void
 }
 
 function IntersectionComponent(props: IntersectionComponentProps) {
