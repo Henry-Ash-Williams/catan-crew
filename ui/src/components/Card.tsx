@@ -4,8 +4,9 @@ import { useCallback } from "react"
 interface CardProps {
     amount: number;
     resourceType: string;
-    xPos : number;
-    yPos: number;
+    width : number;
+    height: number;
+    y: number
 }
 
 export default function Card(props: CardProps){
@@ -17,17 +18,10 @@ export default function Card(props: CardProps){
     'grain': ["../assets/board/archive/grain.svg", '#f5d742']
     }
 
-    // const draw = useCallback((g : any) => {
-    //     g.clear();
-    //     g.beginFill(resourceDict[props.resourceType][1], 1);
-    //     g.drawRoundedRect(0, 0, 100, 120);
-    //     g.endFill();
-    // }, []);
-
     return(
-        <Container x={props.xPos} y={props.yPos}>
-            <Sprite image={'/assets/menu/panel_beige.png'} width={100} height={120} tint={resourceDict[props.resourceType][1]}/>
-            <Sprite image={resourceDict[props.resourceType][0]} width={55} height={50} x={20} y={40}/>
+        <Container x={3} y={props.y}>
+            <Sprite image={'/assets/menu/panel_beige.png'} width={props.width * 1/15} height={props.height * 0.15} tint={resourceDict[props.resourceType][1]}/>
+            <Sprite image={resourceDict[props.resourceType][0]} width={props.width * 0.05} height={props.height * 0.08} x={props.width * 0.007} y={props.height * 0.045}/>
             <Text text={props.amount.toString()} x={5} y={5}/>
         </Container>
     )

@@ -3,7 +3,7 @@ import { BoardComponent } from './components/Board';
 import { Container, Graphics, Sprite, Stage, useApp, useTick } from '@pixi/react';
 import { Texture } from 'pixi.js';
 import { UiComponent } from './components/Ui';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Menu from './components/Menu';
 import Card from './components/Card';
 import LeaderBoard from './components/LeaderBoard';
@@ -11,31 +11,67 @@ import { IntersectionComponent } from './components/Intersection';
 import { PathComponent } from './components/Path';
 import { ResourceTileComponent } from './components/Resource';
 import { KnightComponent } from './components/knight';
+import ActionsBar from './components/ActionsBar';
+import PlayerInfo from './components/PlayerInfo';
 
 function App() {
 
   const [menuActive, setMenuActive] = useState<boolean>(true)
-  const cardContainer = useRef(null);
-
-  // function handleRef(){
-  //   cardContainer.current.addChild()
-  // }
-
+  const [dimensions, setDimensions] = useState({
+    height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
+    width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16)
+  }
+    )
+  useEffect(()=>{
+    function handleResize(){
+      setDimensions({
+        height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
+        width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16)
+      })
+    }
+   window.addEventListener('resize', handleResize) 
+   return () => {
+    window.removeEventListener('resize', handleResize)
+   }
+  })
 
   return (
     <>
     {menuActive ? <Menu onShow={() => setMenuActive(!menuActive)}/>
     :
-    <Stage width={1000} height={1000}>
-      <Sprite width={2000} height={1000} texture={Texture.WHITE} ></Sprite>
-      <BoardComponent size={3} width={1000} height={1000}/>
-      {/* <Container ref={cardContainer} interactive={true} onclick={()=>{handleRef()}}>
-        <Card resourceType='ore' xPos={25} yPos={50}/>
-        <Card resourceType='wool' xPos={145} yPos={50}/>
-        <Card resourceType='lumber' xPos={265} yPos={50}/>
-        <Card resourceType='grain' xPos={385} yPos={50}/>
-        <Card resourceType='brick' xPos={505} yPos={50}/>
-      </Container> */}
+    <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
+    <Stage width={dimensions.width} height={dimensions.height}>
+      {/* 
+        Background
+      */}
+      <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} ></Sprite>
+      {/* 
+        Board
+      */}
+      <BoardComponent size={3} width={dimensions.width} height={dimensions.height}/>
+      {/* 
+        Cards
+      */}
+      <Container>
+        <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5}/>
+        <Card resourceType='wool' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.16} amount={4}/>
+        <Card resourceType='lumber' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.32} amount={6}/>
+        <Card resourceType='grain' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.48} amount={3}/>
+        <Card resourceType='brick' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.64} amount={2}/>
+      </Container>
+      {/* 
+        Leaderboard
+      */}
+      <LeaderBoard width={dimensions.width} height={dimensions.height}/>
+      {/* 
+        Player
+      */}
+      <PlayerInfo score={0} fontSize={"4.5em"} width={dimensions.width * 1/13} height={dimensions.height * 0.13} y={dimensions.height * 0.80} x={dimensions.width * 0.75}/>
+      {/* 
+        Action bar
+      */}
+      <ActionsBar width={dimensions.width} height={dimensions.height * 0.8}/>
+
       {/* <UiComponent></UiComponent> */}
 
       {/* <KnightComponent x={100} y={100} size={50}/> */}
@@ -54,6 +90,7 @@ function App() {
       <ResourceTileComponent x={900} y={400} number_token={6} resource={"lumber"} size={200}/>
       <ResourceTileComponent x={1200} y={500} size={200}/> */}
     </Stage>
+    </div>
 }
     </>
   );
