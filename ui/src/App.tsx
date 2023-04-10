@@ -13,11 +13,14 @@ import { ResourceTileComponent } from './components/Resource';
 import { KnightComponent } from './components/knight';
 import ActionsBar from './components/ActionsBar';
 import PlayerInfo from './components/PlayerInfo';
-import board from './components/new_board.json'
+import { DiceComponent } from './components/Dice';
 
 function App() {
 
   const [menuActive, setMenuActive] = useState<boolean>(true)
+  const cardContainer = useRef(null);
+  const [canRoll, setCanRoll] = useState(true);
+  const [numbersToDisplay, setNumbersToDisplay] = useState<[number, number]>([6, 6]);
   const [dimensions, setDimensions] = useState({
     height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
     width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16)
@@ -26,8 +29,8 @@ function App() {
   useEffect(()=>{
     function handleResize(){
       setDimensions({
-        height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
         width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16)
+        height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
       })
     }
    window.addEventListener('resize', handleResize) 
@@ -42,18 +45,18 @@ function App() {
     :
     <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
     <Stage width={dimensions.width} height={dimensions.height}>
-      {/* 
         Background
-      */}
-      <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} ></Sprite>
       {/* 
+      */}
+      {/* 
+      <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} ></Sprite>
         Board
       */}
       <BoardComponent size={3} width={dimensions.width} height={dimensions.height}/>
       {/* 
-        Cards
       */}
-      <Container interactive={true} onclick={()=>{}}>
+        Cards
+      <Container>
         <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5}/>
         <Card resourceType='wool' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.16} amount={4}/>
         <Card resourceType='lumber' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.32} amount={6}/>

@@ -14,15 +14,15 @@ function KnightComponent(props: KnightComponentProps) {
     useEffect(() => {
         if (containerRef.current) {
             gsap.to(containerRef.current, {
-                x: props.x,
-                y: props.y + 30,
+                x: props.x - 15,
+                y: props.y + 10,
                 duration: 0.5
             })
         }
     }, [props.x, props.y])
     return(
-    <Container ref={containerRef} x={props.x} y={props.y + 30}>
-        <Sprite width={props.size} height={props.size} anchor={0.5} image={"../assets/board/knight.png"}/>
+    <Container ref={containerRef} x={props.x} y={props.y}>
+        <Sprite width={props.size/2} height={props.size/2} anchor={0.5} image={"../assets/board/knight.png"}/>
     </Container>)
 }
 

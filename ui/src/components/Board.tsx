@@ -64,14 +64,14 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
     let northEast = board.directions[1];
     let northWest = board.directions[2];
     let radius = 50;
-    let radiusToFace = Math.sqrt(radius**2 - (radius/2)**2) - 8;
+    let radiusToFace = Math.sqrt(radius**2 - (radius/2)**2);
     let n = 1 + 3 * props.size * (props.size + 1); // number of tiles
     let tile_map = new Map();
     let tileDatas: Map<number, TileData> = new Map();
 
     // set first tile and move southeast
     tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
-    x += (radiusToFace*2);
+    x += (radiusToFace);
     ctx += east; 
     
     
@@ -81,45 +81,45 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | South East`);
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx - northWest) % n;
-            x += radiusToFace;
-            y += radius*.61;
+            x += radiusToFace/2;
+            y += radius/2.4;
         }
         for(let j = 0; j < i; j++){ // southwest
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | South West`);
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx - northEast) % n; 
-            x -= radiusToFace;
-            y += radius*.61;
+            x -= radiusToFace/2;
+            y += radius/2.4;
 
         };
         for(let j = 0; j < i; j++){ // west
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | West`);
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx - east) % n;
-            x -= (radiusToFace*2);
+            x -= (radiusToFace);
 
         };
         for(let j = 0; j < i; j++){ // northwest
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | North West`);
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx + northWest) % n;
-            x -= radiusToFace;
-            y -= radius*.61;
+            x -= radiusToFace/2;
+            y -= radius/2.4;
  
         };
         for(let j = 0; j < i; j++){ // northeast
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | North East`);
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx + northEast) % n;
-            x += radiusToFace;
-            y -= radius*.61;
+            x += radiusToFace/2;
+            y -= radius/2.4;
  
         };
         for(let j = 0; j < i+1; j++){ // east
             console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | East`);
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
             ctx = (n + ctx + east) % n;
-            x += radiusToFace*2;
+            x += radiusToFace;
 
         };
     }
@@ -145,7 +145,7 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
                 x={value.x}
                 y={value.y}
                 size={radius}
-                onClick={handleClick}
+                direction={value.tile.direction? value.tile.direction : undefined}
                 />)
         } else if(value.tile.type == "PathTile") {
             tile_map.set(key, <PathComponent

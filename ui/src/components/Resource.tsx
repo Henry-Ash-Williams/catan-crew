@@ -25,7 +25,7 @@ function ResourceTileComponent(props: ResourceTileProps){
     let tile : React.ReactElement[] = []
 
     if (props.resource == "brick") {
-        tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/brick/dirt_N.png"} onclick={handleClick}/>)
+        tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/brick/dirt_N.png"} />)
     } else if (props.resource == "grain") {
         tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/grain/building_farm_N.png"}/>)
     } else if (props.resource == "lumber") {
@@ -35,7 +35,7 @@ function ResourceTileComponent(props: ResourceTileProps){
     } else if (props.resource == "wool") {
         tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/wool/building_sheep_N.png"}/>)
     } else if (props.resource == "desert") {
-        tile.push(<Sprite x={0} y={0} width={props.size*4} height={props.size*4} anchor={0.5} image={"/assets/board/resource/desert/sand_rocks_N.png"} interactive={true} onclick={handleClick}/>)
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/desert/sand_rocks_N.png"} interactive={true} onclick={handleClick} />)
     }
 
     if (props.number_token) {
@@ -44,7 +44,7 @@ function ResourceTileComponent(props: ResourceTileProps){
                 text={props.number_token.toString()}
                 anchor={0.5}
                 x={0}
-                y={0}
+                y={-20}
                 style={
                     new TextStyle({
                     align: 'center',
@@ -68,7 +68,7 @@ function ResourceTileComponent(props: ResourceTileProps){
     }
 
     return(
-        <Container x={props.x} y={props.y} width={props.size} height={props.size} interactiveChildren={true}>
+        <Container x={props.x} y={props.y} width={props.size} height={props.size} >
             {tile.map((x) => (
                 <>{x}</>
             ))}
