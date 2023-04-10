@@ -9,3 +9,5 @@ src/start-api
 src/out.txt
 
 src/todo.org
+
+/socket-server/node_modules/*
