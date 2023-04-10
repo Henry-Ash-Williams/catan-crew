@@ -13,6 +13,7 @@ import { ResourceTileComponent } from './components/Resource';
 import { KnightComponent } from './components/knight';
 import ActionsBar from './components/ActionsBar';
 import PlayerInfo from './components/PlayerInfo';
+import board from './components/new_board.json'
 
 function App() {
 
@@ -52,7 +53,7 @@ function App() {
       {/* 
         Cards
       */}
-      <Container>
+      <Container interactive={true} onclick={()=>{}}>
         <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5}/>
         <Card resourceType='wool' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.16} amount={4}/>
         <Card resourceType='lumber' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.32} amount={6}/>
@@ -66,11 +67,11 @@ function App() {
       {/* 
         Player
       */}
-      <PlayerInfo score={0} fontSize={"4.5em"} width={dimensions.width * 1/13} height={dimensions.height * 0.13} y={dimensions.height * 0.80} x={dimensions.width * 0.75}/>
+      {/* <PlayerInfo score={0} fontSize={"4.5em"} width={dimensions.width * 1/13} height={dimensions.height * 0.13} y={dimensions.height * 0.80} x={dimensions.width * 0.75}/> */}
       {/* 
         Action bar
       */}
-      <ActionsBar width={dimensions.width} height={dimensions.height * 0.8}/>
+      <ActionsBar width={dimensions.width} height={dimensions.height}/>
 
       {/* <UiComponent></UiComponent> */}
 

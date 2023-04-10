@@ -1,0 +1,23 @@
+{
+    "players": [
+        {
+            "colour" : "red",
+            "victory_points" : "0",
+            "roads" : "0",
+            "army" : "0"
+        },
+        {
+            "colour" : "blue",
+            "victory_points" : "1",
+            "roads" : "2",
+            "army" : "3"
+        },
+        {
+            "colour" : "green",
+            "victory_points" : "3",
+            "roads" : "4",
+            "army" : "1"
+            
+        }
+    ]
+}
