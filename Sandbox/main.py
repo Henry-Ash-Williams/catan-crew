@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
-from rich.prompt import Prompt, IntPrompt
 from rich.console import Console
-from rich.rule import Rule
-from random import randint
-from os import system
-import sys
 from dataclasses import dataclass
+from time import gmtime, strftime
 
 from game import Game
 
@@ -27,8 +23,8 @@ class Colour:
 
 
 def print_logo(logo, console):
-    start_colour = Colour(226, 124, 29)
-    end_colour = Colour(255, 0, 0)
+    start_colour = Colour(73, 213, 92)
+    end_colour = Colour(35, 107, 174)
 
     lines = logo.split("\n")
     line_count = len(lines)
@@ -38,12 +34,16 @@ def print_logo(logo, console):
         beta = 1 - alpha
         this_line_colour = start_colour * alpha + end_colour * beta
 
-        console.print(current_line, style=str(this_line_colour), justify="center")
+        console.print(
+            current_line,
+            style=str(this_line_colour),
+            justify="center"
+        )
 
 
 CATAN_CREW = """
- ▄████▄   ▄▄▄     ▄▄▄█████▓ ▄▄▄       ███▄    █
-▒██▀ ▀█  ▒████▄   ▓  ██▒ ▓▒▒████▄     ██ ▀█   █
+   ▄████▄   ▄▄▄     ▄▄▄█████▓ ▄▄▄       ███▄    █
+  ▒██▀ ▀█  ▒████▄   ▓  ██▒ ▓▒▒████▄     ██ ▀█   █
   ▒▓█    ▄ ▒██  ▀█▄ ▒ ▓██░ ▒░▒██  ▀█▄  ▓██  ▀█ ██▒
   ▒▓▓▄ ▄██▒░██▄▄▄▄██░ ▓██▓ ░ ░██▄▄▄▄██ ▓██▒  ▐▌██▒
   ▒ ▓███▀ ░ ▓█   ▓██▒ ▒██▒ ░  ▓█   ▓██▒▒██░   ▓██░
@@ -77,12 +77,21 @@ CATAN_CREW = """
 def main():
     c = Console()
     print_logo(CATAN_CREW, console=c)
-    input("press any key to continue")
-    g = Game(getter=input, has_human_players=True)
+    input("")
+    game = Game()
+
+    game.add_player("0x11ED57")
+    game.add_player("0x5412AC")
+    game.add_player("0x091b01")
+    game.add_player("0xbb0a1b")
+
     try:
-        g.start()
+        game.start()
     except Exception:
         print("[b red]Exception in program, exiting...[/b red]")
+    finally:
+        now = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
+        game.save_state(f"pickled_data/game-{now}.pickle")
 
 
 if __name__ == "__main__":

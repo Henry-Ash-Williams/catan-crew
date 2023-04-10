@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from dataclasses import dataclass
 from enum import Enum
 from collections import Counter
 from random import randint
@@ -13,10 +12,12 @@ class ResourceKind(Enum):
     wool = 4
 
     def __str__(self):
-        return self.name.capitalize()
+        return self.name
 
     def __repr__(self):
         return str(self)
+
+    def to_json(self): return str(self)
 
 
 globals().update(ResourceKind.__members__)
@@ -32,19 +33,12 @@ class DevelopmentCardKind(Enum):
 
 globals().update(DevelopmentCardKind.__members__)
 
-class InsufficientDevelopmentCard(Exception): pass
 
 class DevelopmentCards(Counter):
-    def pop(self, kind: DevelopmentCardKind = None):
-        if kind!=None:
-            if self[kind]:
-                self[kind] -= 1
-                return DevelopmentCards([kind])
-            else:
-                raise InsufficientDevelopmentCards("pop from empty stack of development cards")
+    def pop(self):
         total = self.total()
         if total == 0:
-            raise InsufficientDevelopmentCards("pop from empty stack of development cards")
+            raise IndexError("pop from empty stack of development cards")
         choice = randint(0, total - 1)
         for resource_kind in self:
             if choice < self[resource_kind]:
@@ -64,7 +58,8 @@ class DevelopmentCards(Counter):
             )
 
 
-class InsufficientResources(Exception): pass
+class InsufficientResources(Exception):
+    pass
 
 
 class Resources(Counter):
@@ -120,10 +115,10 @@ class Resources(Counter):
 
 
 RESOURCE_REQUIREMENTS = {
-    "road": Resources({brick: 1, lumber: 1}),
-    "settlement": Resources({brick: 1, lumber: 1, wool: 1, grain: 1}),
-    "city": Resources({ore: 3, grain: 2}),
-    "development_card": Resources({ore: 1, wool: 1, grain: 1}),
+    "road": Resources({ResourceKind.brick: 1, ResourceKind.lumber: 1}),
+    "settlement": Resources({ResourceKind.brick: 1, ResourceKind.lumber: 1, ResourceKind.wool: 1, ResourceKind.grain: 1}),
+    "city": Resources({ResourceKind.ore: 3, ResourceKind.grain: 2}),
+    "development_card": Resources({ResourceKind.ore: 1, ResourceKind.wool: 1, ResourceKind.grain: 1}),
 }
 
 NO_RESOURCES = Resources()

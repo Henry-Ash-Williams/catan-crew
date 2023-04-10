@@ -34,10 +34,10 @@ class Bank:
         self.color = "Bank"
 
     def __str__(self):
-        return "Bank"
+        return f"Bank(resources={self.resources}, development_cards={self.development_cards})"
 
     def distribute(self, amount: int, resource_kind: ResourceKind) -> Resources:
-        r = Resources() if resource_kind == None else Resources(resource_kind)
+        r = Resources(resource_kind) if resource_kind is not None else Resources()
         try:
             self.resources -= r
             return r
@@ -52,6 +52,16 @@ class Bank:
 
     def return_resources(self, returned_resources: Resources):
         self.resources += returned_resources
+
+    def sell_development_card(self, player: Player):
+        if not player.can_buy_dev_card():
+            raise Exception("Player does not have resources to purchase dev card")
+        elif self.development_cards.total() <= 0:
+            raise Exception("Bank is out of development cards")
+        else:
+            player.resources -= RESOURCE_REQUIREMENTS["development_card"]
+            dev_card = self.development_cards.pop()
+            player.development_cards += dev_card
 
     def distribute_dev_card(self):
         """pops a development card from the development card stack and returns it"""
