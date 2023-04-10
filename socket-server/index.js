@@ -68,21 +68,21 @@ io.on('connection', socket => {
 //     })
 
 //    // GET request demo
-    socket.on('getNumber', (numberTest) => {
-        console.log(numberTest);
-        fetch('http://localhost:8000/getNumber', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(game_config)
-            }
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                io.emit(data);
-            });
-        })
+    // socket.on('getNumber', (numberTest) => {
+    //     console.log(numberTest);
+    //     fetch('http://localhost:8000/getNumber', {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'X-Game-Config': JSON.stringify(game_config)
+    //         }
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             console.log(data);
+    //             io.emit(data);
+    //         });
+    //     })
 
     socket.on("add_player", (playerInfo) => {
         fetch('http://localhost:8000/add_player', {
