@@ -15,9 +15,12 @@ export default function PlayerInfo(props: PlayerInfoProps){
 
     const draw = ((g:any)=>{
         g.clear();
-        g.beginFill(props.colour, 0.5);
-        g.drawRoundedRect(props.width * 0.1, 0, props.width * 0.75, props.height * 0.95, 10);
+        g.beginFill('beige', 0.7);
+        g.drawRoundedRect(5, 0, props.width * 3.6, props.height * 1.45, 10)
         g.endFill()
+        g.beginFill(props.colour, 0.7);
+        g.drawRoundedRect(props.width * 0.1, 0, props.width * 0.75, props.height * 0.95, 10);
+        g.endFill();
     })
     
     return(

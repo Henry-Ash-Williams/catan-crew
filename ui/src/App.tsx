@@ -29,7 +29,7 @@ function App() {
   useEffect(()=>{
     function handleResize(){
       setDimensions({
-        width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16)
+        width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
         height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
       })
     }
@@ -45,7 +45,7 @@ function App() {
     :
     <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
     <Stage width={dimensions.width} height={dimensions.height}>
-        Background
+        {/* Background */}
       {/* 
       */}
       {/* 
@@ -55,7 +55,7 @@ function App() {
       <BoardComponent size={3} width={dimensions.width} height={dimensions.height}/>
       {/* 
       */}
-        Cards
+        {/* Cards */}
       <Container>
         <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5}/>
         <Card resourceType='wool' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.16} amount={4}/>
