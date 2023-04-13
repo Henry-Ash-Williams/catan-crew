@@ -1,0 +1,2421 @@
+{
+    "size": 3,
+    "directions": [
+        1,
+        23,
+        22,
+        506,
+        484,
+        485
+    ],
+    "tiles": [
+        {
+            "type": "Resource",
+            "location": 0,
+            "number_token": 0,
+            "resource": "desert"
+        },
+        {
+            "type": "null",
+            "location": 1
+        },
+        {
+            "type": "Intersection",
+            "location": 2,
+            "owner": "red",
+            "isCity": true,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 3,
+            "direction": 3,
+            "owner": "red"
+        },
+        {
+            "type": "Intersection",
+            "location": 4,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 5
+        },
+        {
+            "type": "Resource",
+            "location": 6,
+            "number_token": 11,
+            "resource": "wool"
+        },
+        {
+            "type": "null",
+            "location": 7
+        },
+        {
+            "type": "Intersection",
+            "location": 8,
+            "owner": "green",
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "null",
+            "location": 9
+        },
+        {
+            "type": "null",
+            "location": 10
+        },
+        {
+            "type": "null",
+            "location": 11
+        },
+        {
+            "type": "null",
+            "location": 12
+        },
+        {
+            "type": "null",
+            "location": 13
+        },
+        {
+            "type": "null",
+            "location": 14
+        },
+        {
+            "type": "PathTile",
+            "location": 15,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 16
+        },
+        {
+            "type": "null",
+            "location": 17
+        },
+        {
+            "type": "PathTile",
+            "location": 18,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 19
+        },
+        {
+            "type": "null",
+            "location": 20
+        },
+        {
+            "type": "PathTile",
+            "location": 21,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 22
+        },
+        {
+            "type": "null",
+            "location": 23
+        },
+        {
+            "type": "PathTile",
+            "location": 24,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 25
+        },
+        {
+            "type": "null",
+            "location": 26
+        },
+        {
+            "type": "PathTile",
+            "location": 27,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 28
+        },
+        {
+            "type": "null",
+            "location": 29
+        },
+        {
+            "type": "PathTile",
+            "location": 30,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 31
+        },
+        {
+            "type": "null",
+            "location": 32
+        },
+        {
+            "type": "null",
+            "location": 33
+        },
+        {
+            "type": "null",
+            "location": 34
+        },
+        {
+            "type": "null",
+            "location": 35
+        },
+        {
+            "type": "Resource",
+            "location": 36,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 37
+        },
+        {
+            "type": "Intersection",
+            "location": 38,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 39,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 40,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 41
+        },
+        {
+            "type": "Resource",
+            "location": 42,
+            "number_token": 5,
+            "resource": "wool"
+        },
+        {
+            "type": "null",
+            "location": 43
+        },
+        {
+            "type": "Intersection",
+            "location": 44,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 45,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 46,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 47
+        },
+        {
+            "type": "Resource",
+            "location": 48,
+            "number_token": 6,
+            "resource": "ore"
+        },
+        {
+            "type": "null",
+            "location": 49
+        },
+        {
+            "type": "Intersection",
+            "location": 50,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 51,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 52,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 53
+        },
+        {
+            "type": "Resource",
+            "location": 54,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 55
+        },
+        {
+            "type": "null",
+            "location": 56
+        },
+        {
+            "type": "null",
+            "location": 57
+        },
+        {
+            "type": "null",
+            "location": 58
+        },
+        {
+            "type": "null",
+            "location": 59
+        },
+        {
+            "type": "PathTile",
+            "location": 60,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 61
+        },
+        {
+            "type": "null",
+            "location": 62
+        },
+        {
+            "type": "PathTile",
+            "location": 63,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 64
+        },
+        {
+            "type": "null",
+            "location": 65
+        },
+        {
+            "type": "PathTile",
+            "location": 66,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 67
+        },
+        {
+            "type": "null",
+            "location": 68
+        },
+        {
+            "type": "PathTile",
+            "location": 69,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 70
+        },
+        {
+            "type": "null",
+            "location": 71
+        },
+        {
+            "type": "PathTile",
+            "location": 72,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 73
+        },
+        {
+            "type": "null",
+            "location": 74
+        },
+        {
+            "type": "PathTile",
+            "location": 75,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 76
+        },
+        {
+            "type": "null",
+            "location": 77
+        },
+        {
+            "type": "null",
+            "location": 78
+        },
+        {
+            "type": "null",
+            "location": 79
+        },
+        {
+            "type": "null",
+            "location": 80
+        },
+        {
+            "type": "null",
+            "location": 81
+        },
+        {
+            "type": "Intersection",
+            "location": 82,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 83
+        },
+        {
+            "type": "Resource",
+            "location": 84,
+            "number_token": 6,
+            "resource": "wool"
+        },
+        {
+            "type": "null",
+            "location": 85
+        },
+        {
+            "type": "Intersection",
+            "location": 86,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 87,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 88,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 89
+        },
+        {
+            "type": "Resource",
+            "location": 90,
+            "number_token": 3,
+            "resource": "wool"
+        },
+        {
+            "type": "null",
+            "location": 91
+        },
+        {
+            "type": "Intersection",
+            "location": 92,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 93,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 94,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 95
+        },
+        {
+            "type": "Resource",
+            "location": 96,
+            "number_token": 12,
+            "resource": "lumber"
+        },
+        {
+            "type": "null",
+            "location": 97
+        },
+        {
+            "type": "Intersection",
+            "location": 98,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "null",
+            "location": 99
+        },
+        {
+            "type": "null",
+            "location": 100
+        },
+        {
+            "type": "null",
+            "location": 101
+        },
+        {
+            "type": "null",
+            "location": 102
+        },
+        {
+            "type": "null",
+            "location": 103
+        },
+        {
+            "type": "null",
+            "location": 104
+        },
+        {
+            "type": "PathTile",
+            "location": 105,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 106
+        },
+        {
+            "type": "null",
+            "location": 107
+        },
+        {
+            "type": "PathTile",
+            "location": 108,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 109
+        },
+        {
+            "type": "null",
+            "location": 110
+        },
+        {
+            "type": "PathTile",
+            "location": 111,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 112
+        },
+        {
+            "type": "null",
+            "location": 113
+        },
+        {
+            "type": "PathTile",
+            "location": 114,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 115
+        },
+        {
+            "type": "null",
+            "location": 116
+        },
+        {
+            "type": "PathTile",
+            "location": 117,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 118
+        },
+        {
+            "type": "null",
+            "location": 119
+        },
+        {
+            "type": "PathTile",
+            "location": 120,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 121
+        },
+        {
+            "type": "null",
+            "location": 122
+        },
+        {
+            "type": "null",
+            "location": 123
+        },
+        {
+            "type": "null",
+            "location": 124
+        },
+        {
+            "type": "null",
+            "location": 125
+        },
+        {
+            "type": "Resource",
+            "location": 126,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 127
+        },
+        {
+            "type": "Intersection",
+            "location": 128,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 129,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 130,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 131
+        },
+        {
+            "type": "Resource",
+            "location": 132,
+            "number_token": 4,
+            "resource": "lumber"
+        },
+        {
+            "type": "null",
+            "location": 133
+        },
+        {
+            "type": "Intersection",
+            "location": 134,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 135,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 136,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 137
+        },
+        {
+            "type": "Resource",
+            "location": 138,
+            "number_token": 8,
+            "resource": "brick"
+        },
+        {
+            "type": "null",
+            "location": 139
+        },
+        {
+            "type": "Intersection",
+            "location": 140,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 141,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 142,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 143
+        },
+        {
+            "type": "Resource",
+            "location": 144,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 145
+        },
+        {
+            "type": "null",
+            "location": 146
+        },
+        {
+            "type": "null",
+            "location": 147
+        },
+        {
+            "type": "null",
+            "location": 148
+        },
+        {
+            "type": "null",
+            "location": 149
+        },
+        {
+            "type": "null",
+            "location": 150
+        },
+        {
+            "type": "null",
+            "location": 151
+        },
+        {
+            "type": "null",
+            "location": 152
+        },
+        {
+            "type": "PathTile",
+            "location": 153,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 154
+        },
+        {
+            "type": "null",
+            "location": 155
+        },
+        {
+            "type": "PathTile",
+            "location": 156,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 157
+        },
+        {
+            "type": "null",
+            "location": 158
+        },
+        {
+            "type": "PathTile",
+            "location": 159,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 160
+        },
+        {
+            "type": "null",
+            "location": 161
+        },
+        {
+            "type": "PathTile",
+            "location": 162,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 163
+        },
+        {
+            "type": "null",
+            "location": 164
+        },
+        {
+            "type": "null",
+            "location": 165
+        },
+        {
+            "type": "null",
+            "location": 166
+        },
+        {
+            "type": "null",
+            "location": 167
+        },
+        {
+            "type": "null",
+            "location": 168
+        },
+        {
+            "type": "null",
+            "location": 169
+        },
+        {
+            "type": "null",
+            "location": 170
+        },
+        {
+            "type": "null",
+            "location": 171
+        },
+        {
+            "type": "null",
+            "location": 172
+        },
+        {
+            "type": "null",
+            "location": 173
+        },
+        {
+            "type": "Resource",
+            "location": 174,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 175
+        },
+        {
+            "type": "Intersection",
+            "location": 176,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 177,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 178,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 179
+        },
+        {
+            "type": "Resource",
+            "location": 180,
+            "number_token": 3,
+            "resource": "brick"
+        },
+        {
+            "type": "null",
+            "location": 181
+        },
+        {
+            "type": "Intersection",
+            "location": 182,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 183,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 184,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 185
+        },
+        {
+            "type": "Resource",
+            "location": 186,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 187
+        },
+        {
+            "type": "null",
+            "location": 188
+        },
+        {
+            "type": "null",
+            "location": 189
+        },
+        {
+            "type": "null",
+            "location": 190
+        },
+        {
+            "type": "null",
+            "location": 191
+        },
+        {
+            "type": "null",
+            "location": 192
+        },
+        {
+            "type": "null",
+            "location": 193
+        },
+        {
+            "type": "null",
+            "location": 194
+        },
+        {
+            "type": "null",
+            "location": 195
+        },
+        {
+            "type": "null",
+            "location": 196
+        },
+        {
+            "type": "null",
+            "location": 197
+        },
+        {
+            "type": "null",
+            "location": 198
+        },
+        {
+            "type": "null",
+            "location": 199
+        },
+        {
+            "type": "null",
+            "location": 200
+        },
+        {
+            "type": "PathTile",
+            "location": 201,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 202
+        },
+        {
+            "type": "null",
+            "location": 203
+        },
+        {
+            "type": "PathTile",
+            "location": 204,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 205
+        },
+        {
+            "type": "null",
+            "location": 206
+        },
+        {
+            "type": "null",
+            "location": 207
+        },
+        {
+            "type": "null",
+            "location": 208
+        },
+        {
+            "type": "null",
+            "location": 209
+        },
+        {
+            "type": "null",
+            "location": 210
+        },
+        {
+            "type": "null",
+            "location": 211
+        },
+        {
+            "type": "null",
+            "location": 212
+        },
+        {
+            "type": "null",
+            "location": 213
+        },
+        {
+            "type": "null",
+            "location": 214
+        },
+        {
+            "type": "null",
+            "location": 215
+        },
+        {
+            "type": "null",
+            "location": 216
+        },
+        {
+            "type": "null",
+            "location": 217
+        },
+        {
+            "type": "null",
+            "location": 218
+        },
+        {
+            "type": "null",
+            "location": 219
+        },
+        {
+            "type": "null",
+            "location": 220
+        },
+        {
+            "type": "null",
+            "location": 221
+        },
+        {
+            "type": "Resource",
+            "location": 222,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 223
+        },
+        {
+            "type": "Intersection",
+            "location": 224,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 225,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 226,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 227
+        },
+        {
+            "type": "Resource",
+            "location": 228,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 229
+        },
+        {
+            "type": "null",
+            "location": 230
+        },
+        {
+            "type": "null",
+            "location": 231
+        },
+        {
+            "type": "null",
+            "location": 232
+        },
+        {
+            "type": "null",
+            "location": 233
+        },
+        {
+            "type": "null",
+            "location": 234
+        },
+        {
+            "type": "null",
+            "location": 235
+        },
+        {
+            "type": "null",
+            "location": 236
+        },
+        {
+            "type": "Resource",
+            "location": 237,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 238
+        },
+        {
+            "type": "null",
+            "location": 239
+        },
+        {
+            "type": "null",
+            "location": 240
+        },
+        {
+            "type": "null",
+            "location": 241
+        },
+        {
+            "type": "null",
+            "location": 242
+        },
+        {
+            "type": "null",
+            "location": 243
+        },
+        {
+            "type": "null",
+            "location": 244
+        },
+        {
+            "type": "null",
+            "location": 245
+        },
+        {
+            "type": "null",
+            "location": 246
+        },
+        {
+            "type": "null",
+            "location": 247
+        },
+        {
+            "type": "null",
+            "location": 248
+        },
+        {
+            "type": "null",
+            "location": 249
+        },
+        {
+            "type": "null",
+            "location": 250
+        },
+        {
+            "type": "null",
+            "location": 251
+        },
+        {
+            "type": "null",
+            "location": 252
+        },
+        {
+            "type": "null",
+            "location": 253
+        },
+        {
+            "type": "null",
+            "location": 254
+        },
+        {
+            "type": "null",
+            "location": 255
+        },
+        {
+            "type": "null",
+            "location": 256
+        },
+        {
+            "type": "null",
+            "location": 257
+        },
+        {
+            "type": "null",
+            "location": 258
+        },
+        {
+            "type": "null",
+            "location": 259
+        },
+        {
+            "type": "null",
+            "location": 260
+        },
+        {
+            "type": "null",
+            "location": 261
+        },
+        {
+            "type": "null",
+            "location": 262
+        },
+        {
+            "type": "null",
+            "location": 263
+        },
+        {
+            "type": "null",
+            "location": 264
+        },
+        {
+            "type": "null",
+            "location": 265
+        },
+        {
+            "type": "null",
+            "location": 266
+        },
+        {
+            "type": "null",
+            "location": 267
+        },
+        {
+            "type": "null",
+            "location": 268
+        },
+        {
+            "type": "null",
+            "location": 269
+        },
+        {
+            "type": "Resource",
+            "location": 270,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 271
+        },
+        {
+            "type": "null",
+            "location": 272
+        },
+        {
+            "type": "null",
+            "location": 273
+        },
+        {
+            "type": "null",
+            "location": 274
+        },
+        {
+            "type": "null",
+            "location": 275
+        },
+        {
+            "type": "null",
+            "location": 276
+        },
+        {
+            "type": "null",
+            "location": 277
+        },
+        {
+            "type": "null",
+            "location": 278
+        },
+        {
+            "type": "Resource",
+            "location": 279,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 280
+        },
+        {
+            "type": "Intersection",
+            "location": 281,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 282,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 283,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 284
+        },
+        {
+            "type": "Resource",
+            "location": 285,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 286
+        },
+        {
+            "type": "null",
+            "location": 287
+        },
+        {
+            "type": "null",
+            "location": 288
+        },
+        {
+            "type": "null",
+            "location": 289
+        },
+        {
+            "type": "null",
+            "location": 290
+        },
+        {
+            "type": "null",
+            "location": 291
+        },
+        {
+            "type": "null",
+            "location": 292
+        },
+        {
+            "type": "null",
+            "location": 293
+        },
+        {
+            "type": "null",
+            "location": 294
+        },
+        {
+            "type": "null",
+            "location": 295
+        },
+        {
+            "type": "null",
+            "location": 296
+        },
+        {
+            "type": "null",
+            "location": 297
+        },
+        {
+            "type": "null",
+            "location": 298
+        },
+        {
+            "type": "null",
+            "location": 299
+        },
+        {
+            "type": "null",
+            "location": 300
+        },
+        {
+            "type": "null",
+            "location": 301
+        },
+        {
+            "type": "null",
+            "location": 302
+        },
+        {
+            "type": "PathTile",
+            "location": 303,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 304
+        },
+        {
+            "type": "null",
+            "location": 305
+        },
+        {
+            "type": "PathTile",
+            "location": 306,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 307
+        },
+        {
+            "type": "null",
+            "location": 308
+        },
+        {
+            "type": "null",
+            "location": 309
+        },
+        {
+            "type": "null",
+            "location": 310
+        },
+        {
+            "type": "null",
+            "location": 311
+        },
+        {
+            "type": "null",
+            "location": 312
+        },
+        {
+            "type": "null",
+            "location": 313
+        },
+        {
+            "type": "null",
+            "location": 314
+        },
+        {
+            "type": "null",
+            "location": 315
+        },
+        {
+            "type": "null",
+            "location": 316
+        },
+        {
+            "type": "null",
+            "location": 317
+        },
+        {
+            "type": "null",
+            "location": 318
+        },
+        {
+            "type": "null",
+            "location": 319
+        },
+        {
+            "type": "null",
+            "location": 320
+        },
+        {
+            "type": "Resource",
+            "location": 321,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 322
+        },
+        {
+            "type": "Intersection",
+            "location": 323,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 324,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 325,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 326
+        },
+        {
+            "type": "Resource",
+            "location": 327,
+            "number_token": 5,
+            "resource": "grain"
+        },
+        {
+            "type": "null",
+            "location": 328
+        },
+        {
+            "type": "Intersection",
+            "location": 329,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 330,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 331,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 332
+        },
+        {
+            "type": "Resource",
+            "location": 333,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 334
+        },
+        {
+            "type": "null",
+            "location": 335
+        },
+        {
+            "type": "null",
+            "location": 336
+        },
+        {
+            "type": "null",
+            "location": 337
+        },
+        {
+            "type": "null",
+            "location": 338
+        },
+        {
+            "type": "null",
+            "location": 339
+        },
+        {
+            "type": "null",
+            "location": 340
+        },
+        {
+            "type": "null",
+            "location": 341
+        },
+        {
+            "type": "null",
+            "location": 342
+        },
+        {
+            "type": "null",
+            "location": 343
+        },
+        {
+            "type": "null",
+            "location": 344
+        },
+        {
+            "type": "PathTile",
+            "location": 345,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 346
+        },
+        {
+            "type": "null",
+            "location": 347
+        },
+        {
+            "type": "PathTile",
+            "location": 348,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 349
+        },
+        {
+            "type": "null",
+            "location": 350
+        },
+        {
+            "type": "PathTile",
+            "location": 351,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 352
+        },
+        {
+            "type": "null",
+            "location": 353
+        },
+        {
+            "type": "PathTile",
+            "location": 354,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 355
+        },
+        {
+            "type": "null",
+            "location": 356
+        },
+        {
+            "type": "null",
+            "location": 357
+        },
+        {
+            "type": "null",
+            "location": 358
+        },
+        {
+            "type": "null",
+            "location": 359
+        },
+        {
+            "type": "null",
+            "location": 360
+        },
+        {
+            "type": "null",
+            "location": 361
+        },
+        {
+            "type": "null",
+            "location": 362
+        },
+        {
+            "type": "Resource",
+            "location": 363,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 364
+        },
+        {
+            "type": "Intersection",
+            "location": 365,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 366,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 367,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 368
+        },
+        {
+            "type": "Resource",
+            "location": 369,
+            "number_token": 4,
+            "resource": "brick"
+        },
+        {
+            "type": "null",
+            "location": 370
+        },
+        {
+            "type": "Intersection",
+            "location": 371,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 372,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 373,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 374
+        },
+        {
+            "type": "Resource",
+            "location": 375,
+            "number_token": 10,
+            "resource": "ore"
+        },
+        {
+            "type": "null",
+            "location": 376
+        },
+        {
+            "type": "Intersection",
+            "location": 377,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 378,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 379,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 380
+        },
+        {
+            "type": "Resource",
+            "location": 381,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 382
+        },
+        {
+            "type": "null",
+            "location": 383
+        },
+        {
+            "type": "null",
+            "location": 384
+        },
+        {
+            "type": "null",
+            "location": 385
+        },
+        {
+            "type": "null",
+            "location": 386
+        },
+        {
+            "type": "PathTile",
+            "location": 387,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 388
+        },
+        {
+            "type": "null",
+            "location": 389
+        },
+        {
+            "type": "PathTile",
+            "location": 390,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 391
+        },
+        {
+            "type": "null",
+            "location": 392
+        },
+        {
+            "type": "PathTile",
+            "location": 393,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 394
+        },
+        {
+            "type": "null",
+            "location": 395
+        },
+        {
+            "type": "PathTile",
+            "location": 396,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 397
+        },
+        {
+            "type": "null",
+            "location": 398
+        },
+        {
+            "type": "PathTile",
+            "location": 399,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 400
+        },
+        {
+            "type": "null",
+            "location": 401
+        },
+        {
+            "type": "PathTile",
+            "location": 402,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 403
+        },
+        {
+            "type": "null",
+            "location": 404
+        },
+        {
+            "type": "null",
+            "location": 405
+        },
+        {
+            "type": "null",
+            "location": 406
+        },
+        {
+            "type": "null",
+            "location": 407
+        },
+        {
+            "type": "null",
+            "location": 408
+        },
+        {
+            "type": "Intersection",
+            "location": 409,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 410
+        },
+        {
+            "type": "Resource",
+            "location": 411,
+            "number_token": 2,
+            "resource": "grain"
+        },
+        {
+            "type": "null",
+            "location": 412
+        },
+        {
+            "type": "Intersection",
+            "location": 413,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 414,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 415,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 416
+        },
+        {
+            "type": "Resource",
+            "location": 417,
+            "number_token": 10,
+            "resource": "ore"
+        },
+        {
+            "type": "null",
+            "location": 418
+        },
+        {
+            "type": "Intersection",
+            "location": 419,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 420,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 421,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 422
+        },
+        {
+            "type": "Resource",
+            "location": 423,
+            "number_token": 9,
+            "resource": "grain"
+        },
+        {
+            "type": "null",
+            "location": 424
+        },
+        {
+            "type": "Intersection",
+            "location": 425,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "null",
+            "location": 426
+        },
+        {
+            "type": "null",
+            "location": 427
+        },
+        {
+            "type": "null",
+            "location": 428
+        },
+        {
+            "type": "null",
+            "location": 429
+        },
+        {
+            "type": "null",
+            "location": 430
+        },
+        {
+            "type": "null",
+            "location": 431
+        },
+        {
+            "type": "PathTile",
+            "location": 432,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 433
+        },
+        {
+            "type": "null",
+            "location": 434
+        },
+        {
+            "type": "PathTile",
+            "location": 435,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 436
+        },
+        {
+            "type": "null",
+            "location": 437
+        },
+        {
+            "type": "PathTile",
+            "location": 438,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 439
+        },
+        {
+            "type": "null",
+            "location": 440
+        },
+        {
+            "type": "PathTile",
+            "location": 441,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 442
+        },
+        {
+            "type": "null",
+            "location": 443
+        },
+        {
+            "type": "PathTile",
+            "location": 444,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 445
+        },
+        {
+            "type": "null",
+            "location": 446
+        },
+        {
+            "type": "PathTile",
+            "location": 447,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 448
+        },
+        {
+            "type": "null",
+            "location": 449
+        },
+        {
+            "type": "null",
+            "location": 450
+        },
+        {
+            "type": "null",
+            "location": 451
+        },
+        {
+            "type": "null",
+            "location": 452
+        },
+        {
+            "type": "Resource",
+            "location": 453,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 454
+        },
+        {
+            "type": "Intersection",
+            "location": 455,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 456,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 457,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 458
+        },
+        {
+            "type": "Resource",
+            "location": 459,
+            "number_token": 8,
+            "resource": "lumber"
+        },
+        {
+            "type": "null",
+            "location": 460
+        },
+        {
+            "type": "Intersection",
+            "location": 461,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 462,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 463,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 464
+        },
+        {
+            "type": "Resource",
+            "location": 465,
+            "number_token": 9,
+            "resource": "lumber"
+        },
+        {
+            "type": "null",
+            "location": 466
+        },
+        {
+            "type": "Intersection",
+            "location": 467,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 468,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 469,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 470
+        },
+        {
+            "type": "Resource",
+            "location": 471,
+            "number_token": 0,
+            "resource": "sea"
+        },
+        {
+            "type": "null",
+            "location": 472
+        },
+        {
+            "type": "null",
+            "location": 473
+        },
+        {
+            "type": "null",
+            "location": 474
+        },
+        {
+            "type": "null",
+            "location": 475
+        },
+        {
+            "type": "null",
+            "location": 476
+        },
+        {
+            "type": "PathTile",
+            "location": 477,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 478
+        },
+        {
+            "type": "null",
+            "location": 479
+        },
+        {
+            "type": "PathTile",
+            "location": 480,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 481
+        },
+        {
+            "type": "null",
+            "location": 482
+        },
+        {
+            "type": "PathTile",
+            "location": 483,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 484
+        },
+        {
+            "type": "null",
+            "location": 485
+        },
+        {
+            "type": "PathTile",
+            "location": 486,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 487
+        },
+        {
+            "type": "null",
+            "location": 488
+        },
+        {
+            "type": "PathTile",
+            "location": 489,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 490
+        },
+        {
+            "type": "null",
+            "location": 491
+        },
+        {
+            "type": "PathTile",
+            "location": 492,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 493
+        },
+        {
+            "type": "null",
+            "location": 494
+        },
+        {
+            "type": "null",
+            "location": 495
+        },
+        {
+            "type": "null",
+            "location": 496
+        },
+        {
+            "type": "null",
+            "location": 497
+        },
+        {
+            "type": "null",
+            "location": 498
+        },
+        {
+            "type": "Intersection",
+            "location": 499,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 500
+        },
+        {
+            "type": "Resource",
+            "location": 501,
+            "number_token": 11,
+            "resource": "grain"
+        },
+        {
+            "type": "null",
+            "location": 502
+        },
+        {
+            "type": "Intersection",
+            "location": 503,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "PathTile",
+            "location": 504,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 505,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "null",
+            "location": 506
+        }
+    ]
+}

@@ -1,5 +1,5 @@
 import { Container } from "@pixi/react";
-import board from  "./new_board.json";
+import board from  "./end_board.json";
 import { IntersectionComponent } from "./Intersection";
 import { PathComponent } from "./Path";
 import { ResourceTileComponent } from "./Resource";
@@ -18,7 +18,7 @@ interface Tile {
     harbor?: boolean //not implemented
     resource?: string | undefined
     number_token?: number | undefined 
-    owner?: number | undefined
+    owner?: string | undefined
     isCity?: boolean | undefined
     direction?: number | undefined
 }
@@ -42,7 +42,7 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
         resource?: string | undefined
         harbor?: boolean | null
         number_token?: number | undefined
-        owner?: number | undefined
+        owner?: string | undefined
         isCity?: boolean | undefined
         direction?: number | undefined}>).map(tile => {
         return{
@@ -56,16 +56,17 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
             direction: tile.direction ? tile.direction : undefined
         }
         });
+    console.log(tiles.length)
 
     let x = props.width/2; // centre of board ( current position when initialising)
-    let y = props.height/2;
+    let y = -50 + props.height/2;
     let ctx = 0; // position on board when initialising 
     let east = board.directions[0];
     let northEast = board.directions[1];
     let northWest = board.directions[2];
     let radius = 50;
     let radiusToFace = Math.sqrt(radius**2 - (radius/2)**2);
-    let n = 1 + 3 * props.size * (props.size + 1); // number of tiles
+    let n = tiles.length; // number of tiles
     let tile_map = new Map();
     let tileDatas: Map<number, TileData> = new Map();
 
@@ -124,6 +125,7 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
         };
     }
 
+    console.log(tileDatas)
     tileDatas.forEach(function(value, key) {
         if (value.tile.type == "Resource") {
             for (let i = 0; i < 6; i++) {
@@ -146,6 +148,8 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
                 y={value.y}
                 size={radius}
                 direction={value.tile.direction? value.tile.direction : undefined}
+                owner={value.tile.owner}
+                isCity={value.tile.isCity}
                 />)
         } else if(value.tile.type == "PathTile") {
             tile_map.set(key, <PathComponent
@@ -154,7 +158,9 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
                 y={value.y}
                 size={radius}
                 direction={value.tile.direction}
+                text={key.toString()}
                 onClick={handleClick}
+                owner={value.tile.owner}
                 />)
         } else if(value.tile.type == "Resource") {
             tile_map.set(key, <ResourceTileComponent
