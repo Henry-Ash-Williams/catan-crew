@@ -91,6 +91,7 @@ class GPlayerInfo:
             if player.color.lower() == self.player_colour.default.lower()
         ][0]
 
+
 class TradeInfo(PlayerInfo):
     proposed_by: str
     offered_to: list
@@ -108,7 +109,10 @@ def hello_word():
 @app.post("/add_player")
 def create_player(player: PlayerInfo):
     game = player.get_game(games)
+    if len(game.players) > 4:
+        raise Exception("Cannot have a game with more than 4 players")
     game.add_player(player.player_colour)
+
 
     return {"player": json.dumps(game.players[-1], cls=PlayerEncoder)}
 
@@ -119,7 +123,7 @@ def start_game(game_config: GameConfig):
         game_config.board_size,
     )
     gid = g.get_game_id()
-    board_state = json.dumps(g.board, cls=BoardEncoder)
+    board_state = json.loads(json.dumps(g.board, cls=BoardEncoder))
 
     for player_colour in game_config.color_of_player:
         g.add_player(player_colour.lower())
@@ -238,11 +242,14 @@ def discard_resource_card(info: ResourceInfo):
 
 @app.post("/place_robber")
 def place_robber(info: TileInfo):
-    # game = info.get_game(games)
-    # player = info.get_player(games)
-
-    # no game.place_robber method ¯\_(ツ)_/¯
-    return {"status": "TODO", "locations": []}
+    game = info.get_game(games)
+    if info.tile_id in game.board.land_locations:
+        if info.tile_id != game.board.robber_location:
+            return {"status": "OK"}
+        else:
+            return {"status": "Error: Robber has to be moved to a new location"}
+    else:
+        return {"status": "Error: Given location is not valid"}
 
 
 @app.post("/buy_dev_card")
@@ -328,15 +335,21 @@ def finalize_trade(info: PlayerInfo = Depends()):
     game = info.get_game(games)
     trade = game.trades[-1]
 
-    if len( trade.accepters ) == 1 and trade.accepters[-1] == "bank":
+    # Find players that match the given player color
+    trade_partner = [player for player in game.players if player.color==info.player_colour]
+    if len(trade_partner)==0:
+        return {"status": f"Error: could not find player with color f{info.player_colour}"}
 
-        pass
-    elif len(trade.accepters) == 2:
-        # handle trade with only one accepter
-        pass
-    else:
-        # handle trade with more than one accepter
-        pass
+    # If someone matches the given color, that's the chosen trade partner
+    trade_partner = trade_partner[0]
+
+    # Take away resources from givers
+    outgoing = game.current_player.distribute_resources(trade.resources_offered)
+    incoming = trade_partner.distribute_resources(trade.resources_requested)
+
+    # Give resources recipients
+    trade_partner.resources += outgoing
+    game.current_player.resources += incoming
 
 @app.get("/ai/next-move")
 def get_ai_players_next_move(info: GPlayerInfo = Depends()):
@@ -348,3 +361,8 @@ def get_ai_players_next_move(info: GPlayerInfo = Depends()):
 
     action_labels = game.get_available_actions(player)
     return player.prompt_action(action_labels)
+
+@app.get("/leaderboard")
+def leaderboard(info: GPlayerInfo = Depends()):
+    game = info.get_game(games)
+    return game.display_game_state()

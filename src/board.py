@@ -515,7 +515,8 @@ class Board:
 
         board.land_intersections = {intersection for intersection in board.intersections if \
                                     any(isinstance(tile,LandTile) for tile in intersection.neighboring_tiles())}
-        board.available_path_locations = {path.location for path in board.paths if len(set(path.neighboring_intersections())&board.land_intersections)==2}
+        board.land_paths = {path for path in board.paths if len(set(path.neighboring_intersections())&board.land_intersections)==2}
+        board.available_path_locations = {path.location for path in board.land_paths}
         board.robber_location = random.choice(list(board.desert_locations))
 
         #print(json.dumps(board,cls=BoardEncoder,indent=4))
@@ -703,34 +704,10 @@ class Board:
         board.tiles[location] = SeaTile(board, location)
         return board.tiles[location]
 
-    def to_json(self):
-        board = self
-        """
-        json = {
-            "size": self.size,
-            "directions": self.directions,
-            "tiles": []
-        }
-
-        for tile in self.tiles + self.paths + self.intersections:
-            if isinstance(tile, DesertTile):
-                json["tiles"].append({
-                    "type": "DesertTile",
-                    "location": tile.location,
-                    "number_token": tile.number_token
-                })
-            elif isinstance(tile, Path):
-                json["tiles"].append({
-                    "type": "PathTile",
-                    "location": tile.location,
-                    "direction": tile.direction
-                })
-            elif isinstance(tile, Intersection):
-                json["tiles"].append()
-        """
-        tiles = board.tiles + board.paths + board.intersections
+    def to_json(board):
+        tiles = board.tiles + list(board.land_paths) + list(board.land_intersections)
         tiles = [t.to_json() for t in tiles]
-        tiles2 = [None]*board.old_system_cell_count
+        tiles2 = [None] * board.old_system_cell_count
         for t in tiles: tiles2[t['location']] = t
         for i in range(len(tiles2)):
             if tiles2[i] is None: tiles2[i] = {'type': 'null', 'location': i}

@@ -99,6 +99,7 @@ class Game:
 
     def dice_roll(self):
         self.dice = random.randint(1, 6) + random.randint(1, 6)
+        #print(f"Dice rolled. Result: {self.dice}")
         return self.dice
 
     def print_current_player(self):
@@ -110,7 +111,7 @@ class Game:
         c.print(r)
 
     def display_game_state(self):
-        clear()
+        # clear()
         player_data = [
             (
                 player.color,
@@ -123,25 +124,25 @@ class Game:
             for player in self.players
         ]
         # player_data.append(player_data)
-        t = Table(title="Player worth")
-        t.add_column("Player")
-        t.add_column("Victory Points")
-        t.add_column("Road Length")
-        t.add_column("Army Size")
-        t.add_column("Resource Cards")
-        t.add_column("Development Cards")
+        # t = Table(title="Player worth")
+        # t.add_column("Player")
+        # t.add_column("Victory Points")
+        # t.add_column("Road Length")
+        # t.add_column("Army Size")
+        # t.add_column("Resource Cards")
+        # t.add_column("Development Cards")
 
-        for player in player_data:
-            t.add_row(
-                str(player[0]),
-                str(player[1]),
-                str(player[2]),
-                str(player[3]),
-                str(player[4]),
-                str(player[5]),
-                style=player[0],
-            )
-        return t
+        # for player in player_data:
+            # t.add_row(
+                # str(player[0]),
+                # str(player[1]),
+                # str(player[2]),
+                # str(player[3]),
+                # str(player[4]),
+                # str(player[5]),
+                # style=player[0],
+            # )
+        return player_data
 
     def set_turn(self, player):
         self.current_player = player
@@ -190,8 +191,6 @@ class Game:
             self.do_turn()
             table = self.display_game_state()
             c.print(table, justify="center")
-            input()
-            # input("Breakpoint")
             c.print(
                 Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center"
             )

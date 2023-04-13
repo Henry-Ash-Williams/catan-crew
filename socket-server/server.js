@@ -1,24 +1,21 @@
-// const express = require('express');
-// const cors = require('cors');
-// const app = express();
-
-// app.use(cors());
-
-// app.get('/api/number', (req, res) => {
-//   const number = Math.floor(Math.random() * 100);
-//   res.json({ "number": number }); // this line passes the number to the client as JSON
-// });
-
-// app.listen(3001, () => {
-//   console.log('Server listening on port 3001');
-// });
-
-
 import express from "express"; // not {} because it's not a named export
 import { createServer } from "http";
 import  cors  from "cors";
 import { Server } from "socket.io";
 import fetch from "node-fetch";
+
+// dictionary to store <player color, socket id>
+// Now assuming that 1st: red, 2nd: blue, 3rd: green, 4th: yellow (may change)
+const player_color_to_socket_id = {
+    "red": "",
+    "blue": "",
+    "green": "",
+    "yellow": ""
+}
+
+const color = ["red", "blue", "green", "yellow"];
+const count_person = 0;
+
 
 const app = express();
 const server = createServer(app);
@@ -84,6 +81,14 @@ io.on('connection', socket => {
     //         });
     //     })
 
+    socket.on("join_room", () => {
+        // map player color to socket id
+        player_color_to_socket_id[color[count_person]] = socket.id;
+        count_person += 1;
+        io.emit("join_room", player_color_to_socket_id);
+    })
+
+
     socket.on("add_player", (playerInfo) => {
         fetch('http://localhost:8000/add_player', {
         method: 'POST',
@@ -99,7 +104,17 @@ io.on('connection', socket => {
         });
     })
 
-    socket.on("start_game", (game_config) => {
+    socket.on("start_game", () => {
+        // todo need to make the JSON for game_config
+        // not from client, but generate from socket server
+        game_config = {
+            "num_of_human_player": count_person, 
+            "num_of_ai_player": 4 - count_person, 
+            "color_of_player": ["red", "blue", "green", "yellow"], 
+            "board_size": 3
+        }
+
+
         fetch('http://localhost:8000/start_game', {
             method: 'POST',
             headers: {
@@ -427,6 +442,8 @@ io.on('connection', socket => {
             io.emit(data);
         });
     })
+    
+    // Leaderboard - todo
 
 
   socket.on('disconnect', () => {

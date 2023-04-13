@@ -2,7 +2,7 @@ src/__pycache__/
 
 src/pickled_data/game-*
 
-src/start-api
+start-api
 
 .idea
 
