@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from copy import deepcopy
+from enum import Enum
 import json
 
 from fastapi import FastAPI, Depends, Query
@@ -11,7 +12,8 @@ from rich import print
 from game import Game
 from board import BoardEncoder
 from player import Player, PlayerEncoder
-from resources import Resources
+from resources import Resources, ResourceKind
+from trade import Trade
 
 ###########
 # check out these three please:
@@ -46,6 +48,7 @@ class PlayerInfo(BaseModel):
         ][0]
 
 
+
 class GameConfig(BaseModel):
     num_of_human_player: int
     num_of_ai_player: int
@@ -53,7 +56,8 @@ class GameConfig(BaseModel):
     board_size: int = 3
 
 
-class ResourceInfo(PlayerInfo):
+class ResourceInfo(BaseModel):
+    player_info: PlayerInfo
     resources: Resources
 
 
@@ -87,9 +91,24 @@ class GPlayerInfo:
         ][0]
 
 
+class AiMovementKind(Enum):
+    BUILD_SETTLEMENT
+    BUILD_ROAD
+
+
+
+class TradeInfo(PlayerInfo):
+    proposed_by: str
+    offered_to: list
+    offering: dict
+    wants: dict
+    accepted_by: list
+
+
+
 @app.get("/")
 def hello_word():
-    return {"hello": "world"}
+    return {"sanity": "verified"}
 
 
 @app.post("/add_player")
@@ -279,3 +298,59 @@ def get_victory_points(info: GPlayerInfo = Depends()):
 def get_total_victory_points(info: GPlayerInfo = Depends()):
     player = info.get_player(games)
     return { "victory_points": player.calculate_total_victory_points() }
+
+def convert_dict_to_resources(resources: dict) -> Resources:
+    """
+    Validate a dictionary, and convert it to a Resources object
+    """
+    if len(resources.keys()) > 5:
+        raise TypeError(
+            "Cannot create Resource object from a dictionary with more than 5 entries"
+        )
+
+    return Resources(resources)
+
+
+
+@app.post("/trade/start")
+def start_trade(info: TradeInfo = Depends()):
+    game = info.get_game(games)
+    player = info.get_player(games)
+    trade = Trade(
+        player,
+        Resources(info.offering),
+        Resources(info.wants),
+        info.offered_to,
+    )
+    game.add_trade(trade)
+
+@app.post("/trade/accept")
+def accept_trade(info: PlayerInfo = Depends()):
+    """
+    Accept the most recent trade
+    """
+
+    game = info.get_game(games)
+    player = info.get_player(games)
+    trade = game.trades[-1]
+
+    trade.accepters.append(player)
+
+
+@app.post("/trade/finalize")
+def finalize_trade(info: PlayerInfo = Depends()):
+    # TODO
+    game = info.get_game(games)
+    trade = game.trades[-1]
+
+    if len( trade.accepters ) == 1 and trade.accepters[-1] == "bank":
+        # handle bank trade
+        pass
+    elif len(trade.accepters) == 2:
+        # handle trade with only one accepter
+        pass
+    else:
+        # handle trade with more than one accepter
+        pass
+
+@app.get("/ai")

@@ -23,6 +23,7 @@ from resources import (
     monopoly,
 )
 from clear import clear
+from trade import Trade
 
 
 ROAD_LENGTH_THRESHOLD = 5
@@ -65,6 +66,7 @@ class Game:
 
         self.turn_count = 0
         self.dev_card_played = False
+        self.trades = []
 
     def add_player(self, colour: str):
         temp_player = HumanPlayer(colour)
@@ -282,8 +284,13 @@ class Game:
 
             available_actions[choice][1]()
 
+
+    def add_trade(self, trade: Trade):
+        self.trades.append(trade)
+
     def start_trade(self):
-        trade = self.current_player.prompt_trade_details()
+        # trade = self.current_player.prompt_trade_details()
+        trade = Trade(self.current_player, )
 
         while True:
             if self.current_player in trade.proposees:
