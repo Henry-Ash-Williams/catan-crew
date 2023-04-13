@@ -53,8 +53,6 @@ function App() {
         Board
       */}
       <BoardComponent size={3} width={dimensions.width} height={dimensions.height}/>
-      {/* 
-      */}
         {/* Cards */}
       <Container>
         <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5}/>
@@ -74,6 +72,8 @@ function App() {
       {/* 
         Action bar
       */}
+      <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={dimensions.width*0.735} y={dimensions.height*0.86}/>
+
       <ActionsBar width={dimensions.width} height={dimensions.height}/>
 
       {/* <UiComponent></UiComponent> */}
