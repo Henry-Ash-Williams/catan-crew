@@ -1,0 +1,33 @@
+#menu{
+    display: flex;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('../../public/assets/menu/panel_brown.png');
+    background-size: 600px;
+    background-repeat: no-repeat;
+    background-position: center;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
+}
+
+.btns{
+    cursor: pointer;
+    border: none;
+    border-radius: 15px;
+    background-image: url('../../public/assets/menu/buttonLong_beige.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin: 3%;
+    height: 90px;
+    width: 350px;
+    font-size: 2.5rem;
+}
+
+.mainMenu{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
