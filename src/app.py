@@ -335,15 +335,21 @@ def finalize_trade(info: PlayerInfo = Depends()):
     game = info.get_game(games)
     trade = game.trades[-1]
 
-    if len( trade.accepters ) == 1 and trade.accepters[-1] == "bank":
+    # Find players that match the given player color
+    trade_partner = [player for player in game.players if player.color==info.player_colour]
+    if len(trade_partner)==0:
+        return {"status": f"Error: could not find player with color f{info.player_colour}"}
 
-        pass
-    elif len(trade.accepters) == 2:
-        # handle trade with only one accepter
-        pass
-    else:
-        # handle trade with more than one accepter
-        pass
+    # If someone matches the given color, that's the chosen trade partner
+    trade_partner = trade_partner[0]
+
+    # Take away resources from givers
+    outgoing = game.current_player.distribute_resources(trade.resources_offered)
+    incoming = trade_partner.distribute_resources(trade.resources_requested)
+
+    # Give resources recipients
+    trade_partner.resources += outgoing
+    game.current_player.resources += incoming
 
 @app.get("/ai/next-move")
 def get_ai_players_next_move(info: GPlayerInfo = Depends()):
