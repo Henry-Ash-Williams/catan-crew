@@ -724,7 +724,7 @@ class Board:
         return board.tiles[location]
 
     def to_json(self):
-        board = self
+        """board = self
         json = {
             "size": self.size,
             "directions": self.directions,
@@ -745,10 +745,10 @@ class Board:
                     "direction": tile.direction
                 })
             elif isinstance(tile, Intersection):
-                json["tiles"].append()
+                json["tiles"].append()"""
 
-        return {'size': board.size, 'directions': board.directions, 'tiles': board.tiles, \
-                'paths':board.paths, 'intersections': board.intersections}
+        return {'size': self.size, 'directions': self.directions, 'tiles': self.tiles, \
+                'paths': self.paths, 'intersections': self.intersections}
 
 class BoardEncoder(json.JSONEncoder):
     def default(self, obj):
