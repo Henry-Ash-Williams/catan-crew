@@ -91,6 +91,7 @@ class GPlayerInfo:
             if player.color.lower() == self.player_colour.default.lower()
         ][0]
 
+
 class TradeInfo(PlayerInfo):
     proposed_by: str
     offered_to: list
@@ -108,7 +109,10 @@ def hello_word():
 @app.post("/add_player")
 def create_player(player: PlayerInfo):
     game = player.get_game(games)
+    if len(game.players) > 4:
+        raise Exception("Cannot have a game with more than 4 players")
     game.add_player(player.player_colour)
+
 
     return {"player": json.dumps(game.players[-1], cls=PlayerEncoder)}
 
@@ -119,7 +123,7 @@ def start_game(game_config: GameConfig):
         game_config.board_size,
     )
     gid = g.get_game_id()
-    board_state = json.dumps(g.board, cls=BoardEncoder)
+    board_state = json.loads(json.dumps(g.board, cls=BoardEncoder))
 
     for player_colour in game_config.color_of_player:
         g.add_player(player_colour.lower())
@@ -348,3 +352,8 @@ def get_ai_players_next_move(info: GPlayerInfo = Depends()):
 
     action_labels = game.get_available_actions(player)
     return player.prompt_action(action_labels)
+
+@app.get("/leaderboard")
+def leaderboard(info: GPlayerInfo = Depends()):
+    game = info.get_game(games)
+    return game.display_game_state()

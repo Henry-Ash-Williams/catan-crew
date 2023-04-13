@@ -427,6 +427,8 @@ io.on('connection', socket => {
             io.emit(data);
         });
     })
+    
+    // Leaderboard - todo
 
 
   socket.on('disconnect', () => {

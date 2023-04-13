@@ -110,7 +110,7 @@ class Game:
         c.print(r)
 
     def display_game_state(self):
-        clear()
+        # clear()
         player_data = [
             (
                 player.color,
@@ -123,25 +123,25 @@ class Game:
             for player in self.players
         ]
         # player_data.append(player_data)
-        t = Table(title="Player worth")
-        t.add_column("Player")
-        t.add_column("Victory Points")
-        t.add_column("Road Length")
-        t.add_column("Army Size")
-        t.add_column("Resource Cards")
-        t.add_column("Development Cards")
+        # t = Table(title="Player worth")
+        # t.add_column("Player")
+        # t.add_column("Victory Points")
+        # t.add_column("Road Length")
+        # t.add_column("Army Size")
+        # t.add_column("Resource Cards")
+        # t.add_column("Development Cards")
 
-        for player in player_data:
-            t.add_row(
-                str(player[0]),
-                str(player[1]),
-                str(player[2]),
-                str(player[3]),
-                str(player[4]),
-                str(player[5]),
-                style=player[0],
-            )
-        return t
+        # for player in player_data:
+            # t.add_row(
+                # str(player[0]),
+                # str(player[1]),
+                # str(player[2]),
+                # str(player[3]),
+                # str(player[4]),
+                # str(player[5]),
+                # style=player[0],
+            # )
+        return player_data
 
     def set_turn(self, player):
         self.current_player = player
