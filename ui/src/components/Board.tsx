@@ -143,7 +143,7 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
     tileDatas.forEach(function(value, key) {
         if(value.tile.type == "Intersection") {
             tile_map.set(key, <IntersectionComponent
-                key={key}
+                key={key.toString()}
                 x={value.x}
                 y={value.y}
                 size={radius}

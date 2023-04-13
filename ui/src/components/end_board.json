@@ -22,7 +22,7 @@
         {
             "type": "Intersection",
             "location": 2,
-            "owner": "yellow",
+            "owner": null,
             "isCity": false,
             "direction": 2
         },
@@ -30,7 +30,7 @@
             "type": "PathTile",
             "location": 3,
             "direction": 3,
-            "owner": "yellow"
+            "owner": null
         },
         {
             "type": "Intersection",
@@ -46,8 +46,8 @@
         {
             "type": "Resource",
             "location": 6,
-            "number_token": 9,
-            "resource": "ore"
+            "number_token": 3,
+            "resource": "wool"
         },
         {
             "type": "null",
@@ -56,8 +56,8 @@
         {
             "type": "Intersection",
             "location": 8,
-            "owner": "green",
-            "isCity": true,
+            "owner": null,
+            "isCity": false,
             "direction": 2
         },
         {
@@ -88,7 +88,7 @@
             "type": "PathTile",
             "location": 15,
             "direction": 1,
-            "owner": null
+            "owner": "blue"
         },
         {
             "type": "null",
@@ -102,7 +102,7 @@
             "type": "PathTile",
             "location": 18,
             "direction": 2,
-            "owner": null
+            "owner": "red"
         },
         {
             "type": "null",
@@ -116,7 +116,7 @@
             "type": "PathTile",
             "location": 21,
             "direction": 1,
-            "owner": "yellow"
+            "owner": null
         },
         {
             "type": "null",
@@ -130,7 +130,7 @@
             "type": "PathTile",
             "location": 24,
             "direction": 2,
-            "owner": "yellow"
+            "owner": null
         },
         {
             "type": "null",
@@ -144,7 +144,7 @@
             "type": "PathTile",
             "location": 27,
             "direction": 1,
-            "owner": "yellow"
+            "owner": null
         },
         {
             "type": "null",
@@ -158,7 +158,7 @@
             "type": "PathTile",
             "location": 30,
             "direction": 2,
-            "owner": "green"
+            "owner": null
         },
         {
             "type": "null",
@@ -193,15 +193,15 @@
         {
             "type": "Intersection",
             "location": 38,
-            "owner": "green",
-            "isCity": true,
+            "owner": null,
+            "isCity": false,
             "direction": 2
         },
         {
             "type": "PathTile",
             "location": 39,
             "direction": 3,
-            "owner": "red"
+            "owner": "blue"
         },
         {
             "type": "Intersection",
@@ -217,7 +217,7 @@
         {
             "type": "Resource",
             "location": 42,
-            "number_token": 2,
+            "number_token": 4,
             "resource": "lumber"
         },
         {
@@ -227,15 +227,15 @@
         {
             "type": "Intersection",
             "location": 44,
-            "owner": "yellow",
-            "isCity": true,
+            "owner": null,
+            "isCity": false,
             "direction": 2
         },
         {
             "type": "PathTile",
             "location": 45,
             "direction": 3,
-            "owner": "yellow"
+            "owner": null
         },
         {
             "type": "Intersection",
@@ -251,8 +251,8 @@
         {
             "type": "Resource",
             "location": 48,
-            "number_token": 8,
-            "resource": "brick"
+            "number_token": 9,
+            "resource": "ore"
         },
         {
             "type": "null",
@@ -261,15 +261,15 @@
         {
             "type": "Intersection",
             "location": 50,
-            "owner": "blue",
-            "isCity": true,
+            "owner": null,
+            "isCity": false,
             "direction": 2
         },
         {
             "type": "PathTile",
             "location": 51,
             "direction": 3,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "Intersection",
@@ -312,7 +312,7 @@
             "type": "PathTile",
             "location": 60,
             "direction": 2,
-            "owner": "green"
+            "owner": null
         },
         {
             "type": "null",
@@ -326,7 +326,7 @@
             "type": "PathTile",
             "location": 63,
             "direction": 1,
-            "owner": "red"
+            "owner": null
         },
         {
             "type": "null",
@@ -340,7 +340,7 @@
             "type": "PathTile",
             "location": 66,
             "direction": 2,
-            "owner": "yellow"
+            "owner": null
         },
         {
             "type": "null",
@@ -354,7 +354,7 @@
             "type": "PathTile",
             "location": 69,
             "direction": 1,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "null",
@@ -382,7 +382,7 @@
             "type": "PathTile",
             "location": 75,
             "direction": 1,
-            "owner": "blue"
+            "owner": "red"
         },
         {
             "type": "null",
@@ -422,8 +422,8 @@
         {
             "type": "Resource",
             "location": 84,
-            "number_token": 4,
-            "resource": "wool"
+            "number_token": 12,
+            "resource": "grain"
         },
         {
             "type": "null",
@@ -440,7 +440,7 @@
             "type": "PathTile",
             "location": 87,
             "direction": 3,
-            "owner": "red"
+            "owner": null
         },
         {
             "type": "Intersection",
@@ -457,7 +457,7 @@
             "type": "Resource",
             "location": 90,
             "number_token": 11,
-            "resource": "ore"
+            "resource": "grain"
         },
         {
             "type": "null",
@@ -474,7 +474,7 @@
             "type": "PathTile",
             "location": 93,
             "direction": 3,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "Intersection",
@@ -490,7 +490,7 @@
         {
             "type": "Resource",
             "location": 96,
-            "number_token": 4,
+            "number_token": 6,
             "resource": "lumber"
         },
         {
@@ -500,8 +500,8 @@
         {
             "type": "Intersection",
             "location": 98,
-            "owner": null,
-            "isCity": false,
+            "owner": "red",
+            "isCity": true,
             "direction": 2
         },
         {
@@ -532,7 +532,7 @@
             "type": "PathTile",
             "location": 105,
             "direction": 1,
-            "owner": "green"
+            "owner": null
         },
         {
             "type": "null",
@@ -546,7 +546,7 @@
             "type": "PathTile",
             "location": 108,
             "direction": 2,
-            "owner": "red"
+            "owner": null
         },
         {
             "type": "null",
@@ -560,7 +560,7 @@
             "type": "PathTile",
             "location": 111,
             "direction": 1,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "null",
@@ -574,7 +574,7 @@
             "type": "PathTile",
             "location": 114,
             "direction": 2,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "null",
@@ -602,7 +602,7 @@
             "type": "PathTile",
             "location": 120,
             "direction": 2,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "null",
@@ -645,13 +645,13 @@
             "type": "PathTile",
             "location": 129,
             "direction": 3,
-            "owner": "red"
+            "owner": null
         },
         {
             "type": "Intersection",
             "location": 130,
-            "owner": "red",
-            "isCity": true,
+            "owner": null,
+            "isCity": false,
             "direction": 1
         },
         {
@@ -662,7 +662,7 @@
             "type": "Resource",
             "location": 132,
             "number_token": 10,
-            "resource": "brick"
+            "resource": "wool"
         },
         {
             "type": "null",
@@ -671,21 +671,21 @@
         {
             "type": "Intersection",
             "location": 134,
-            "owner": null,
-            "isCity": false,
+            "owner": "black",
+            "isCity": true,
             "direction": 2
         },
         {
             "type": "PathTile",
             "location": 135,
             "direction": 3,
-            "owner": "blue"
+            "owner": "black"
         },
         {
             "type": "Intersection",
             "location": 136,
-            "owner": "blue",
-            "isCity": true,
+            "owner": null,
+            "isCity": false,
             "direction": 1
         },
         {
@@ -695,8 +695,8 @@
         {
             "type": "Resource",
             "location": 138,
-            "number_token": 12,
-            "resource": "grain"
+            "number_token": 8,
+            "resource": "ore"
         },
         {
             "type": "null",
@@ -713,12 +713,12 @@
             "type": "PathTile",
             "location": 141,
             "direction": 3,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "Intersection",
             "location": 142,
-            "owner": "blue",
+            "owner": null,
             "isCity": false,
             "direction": 1
         },
@@ -782,7 +782,7 @@
             "type": "PathTile",
             "location": 156,
             "direction": 2,
-            "owner": "blue"
+            "owner": "black"
         },
         {
             "type": "null",
@@ -796,7 +796,7 @@
             "type": "PathTile",
             "location": 159,
             "direction": 1,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "null",
@@ -810,7 +810,7 @@
             "type": "PathTile",
             "location": 162,
             "direction": 2,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "null",
@@ -893,8 +893,8 @@
         {
             "type": "Resource",
             "location": 180,
-            "number_token": 6,
-            "resource": "brick"
+            "number_token": 11,
+            "resource": "wool"
         },
         {
             "type": "null",
@@ -911,13 +911,13 @@
             "type": "PathTile",
             "location": 183,
             "direction": 3,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "Intersection",
             "location": 184,
-            "owner": "red",
-            "isCity": true,
+            "owner": null,
+            "isCity": false,
             "direction": 1
         },
         {
@@ -990,7 +990,7 @@
             "type": "PathTile",
             "location": 201,
             "direction": 1,
-            "owner": null
+            "owner": "black"
         },
         {
             "type": "null",
@@ -1095,7 +1095,7 @@
             "type": "PathTile",
             "location": 225,
             "direction": 3,
-            "owner": "blue"
+            "owner": null
         },
         {
             "type": "Intersection",
@@ -1339,12 +1339,12 @@
             "type": "PathTile",
             "location": 282,
             "direction": 3,
-            "owner": "red"
+            "owner": "black"
         },
         {
             "type": "Intersection",
             "location": 283,
-            "owner": "blue",
+            "owner": "green",
             "isCity": true,
             "direction": 1
         },
@@ -1430,7 +1430,7 @@
             "type": "PathTile",
             "location": 303,
             "direction": 2,
-            "owner": "red"
+            "owner": "black"
         },
         {
             "type": "null",
@@ -1523,12 +1523,12 @@
             "type": "PathTile",
             "location": 324,
             "direction": 3,
-            "owner": "red"
+            "owner": "black"
         },
         {
             "type": "Intersection",
             "location": 325,
-            "owner": "red",
+            "owner": "black",
             "isCity": true,
             "direction": 1
         },
@@ -1539,8 +1539,8 @@
         {
             "type": "Resource",
             "location": 327,
-            "number_token": 10,
-            "resource": "lumber"
+            "number_token": 8,
+            "resource": "brick"
         },
         {
             "type": "null",
@@ -1557,13 +1557,13 @@
             "type": "PathTile",
             "location": 330,
             "direction": 3,
-            "owner": null
+            "owner": "green"
         },
         {
             "type": "Intersection",
             "location": 331,
-            "owner": null,
-            "isCity": false,
+            "owner": "green",
+            "isCity": true,
             "direction": 1
         },
         {
@@ -1624,7 +1624,7 @@
             "type": "PathTile",
             "location": 345,
             "direction": 2,
-            "owner": "red"
+            "owner": null
         },
         {
             "type": "null",
@@ -1638,7 +1638,7 @@
             "type": "PathTile",
             "location": 348,
             "direction": 1,
-            "owner": "red"
+            "owner": "black"
         },
         {
             "type": "null",
@@ -1652,7 +1652,7 @@
             "type": "PathTile",
             "location": 351,
             "direction": 2,
-            "owner": null
+            "owner": "green"
         },
         {
             "type": "null",
@@ -1666,7 +1666,7 @@
             "type": "PathTile",
             "location": 354,
             "direction": 1,
-            "owner": "yellow"
+            "owner": "green"
         },
         {
             "type": "null",
@@ -1721,12 +1721,12 @@
             "type": "PathTile",
             "location": 366,
             "direction": 3,
-            "owner": null
+            "owner": "green"
         },
         {
             "type": "Intersection",
             "location": 367,
-            "owner": "blue",
+            "owner": "black",
             "isCity": true,
             "direction": 1
         },
@@ -1737,8 +1737,8 @@
         {
             "type": "Resource",
             "location": 369,
-            "number_token": 3,
-            "resource": "grain"
+            "number_token": 10,
+            "resource": "ore"
         },
         {
             "type": "null",
@@ -1755,12 +1755,12 @@
             "type": "PathTile",
             "location": 372,
             "direction": 3,
-            "owner": "red"
+            "owner": "green"
         },
         {
             "type": "Intersection",
             "location": 373,
-            "owner": "red",
+            "owner": "green",
             "isCity": true,
             "direction": 1
         },
@@ -1771,8 +1771,8 @@
         {
             "type": "Resource",
             "location": 375,
-            "number_token": 9,
-            "resource": "lumber"
+            "number_token": 5,
+            "resource": "wool"
         },
         {
             "type": "null",
@@ -1789,13 +1789,13 @@
             "type": "PathTile",
             "location": 378,
             "direction": 3,
-            "owner": "yellow"
+            "owner": "green"
         },
         {
             "type": "Intersection",
             "location": 379,
-            "owner": null,
-            "isCity": false,
+            "owner": "black",
+            "isCity": true,
             "direction": 1
         },
         {
@@ -1832,7 +1832,7 @@
             "type": "PathTile",
             "location": 387,
             "direction": 2,
-            "owner": null
+            "owner": "green"
         },
         {
             "type": "null",
@@ -1846,7 +1846,7 @@
             "type": "PathTile",
             "location": 390,
             "direction": 1,
-            "owner": "red"
+            "owner": "green"
         },
         {
             "type": "null",
@@ -1860,7 +1860,7 @@
             "type": "PathTile",
             "location": 393,
             "direction": 2,
-            "owner": "red"
+            "owner": "green"
         },
         {
             "type": "null",
@@ -1874,7 +1874,7 @@
             "type": "PathTile",
             "location": 396,
             "direction": 1,
-            "owner": "yellow"
+            "owner": null
         },
         {
             "type": "null",
@@ -1888,7 +1888,7 @@
             "type": "PathTile",
             "location": 399,
             "direction": 2,
-            "owner": "yellow"
+            "owner": "green"
         },
         {
             "type": "null",
@@ -1902,7 +1902,7 @@
             "type": "PathTile",
             "location": 402,
             "direction": 1,
-            "owner": "green"
+            "owner": "black"
         },
         {
             "type": "null",
@@ -1931,8 +1931,8 @@
         {
             "type": "Intersection",
             "location": 409,
-            "owner": null,
-            "isCity": false,
+            "owner": "green",
+            "isCity": true,
             "direction": 1
         },
         {
@@ -1942,8 +1942,8 @@
         {
             "type": "Resource",
             "location": 411,
-            "number_token": 5,
-            "resource": "wool"
+            "number_token": 9,
+            "resource": "brick"
         },
         {
             "type": "null",
@@ -1960,12 +1960,12 @@
             "type": "PathTile",
             "location": 414,
             "direction": 3,
-            "owner": null
+            "owner": "green"
         },
         {
             "type": "Intersection",
             "location": 415,
-            "owner": "red",
+            "owner": "green",
             "isCity": true,
             "direction": 1
         },
@@ -1976,7 +1976,7 @@
         {
             "type": "Resource",
             "location": 417,
-            "number_token": 5,
+            "number_token": 4,
             "resource": "grain"
         },
         {
@@ -1994,12 +1994,12 @@
             "type": "PathTile",
             "location": 420,
             "direction": 3,
-            "owner": "yellow"
+            "owner": "green"
         },
         {
             "type": "Intersection",
             "location": 421,
-            "owner": "yellow",
+            "owner": null,
             "isCity": false,
             "direction": 1
         },
@@ -2010,8 +2010,8 @@
         {
             "type": "Resource",
             "location": 423,
-            "number_token": 11,
-            "resource": "grain"
+            "number_token": 5,
+            "resource": "brick"
         },
         {
             "type": "null",
@@ -2066,7 +2066,7 @@
             "type": "PathTile",
             "location": 435,
             "direction": 2,
-            "owner": null
+            "owner": "red"
         },
         {
             "type": "null",
@@ -2080,7 +2080,7 @@
             "type": "PathTile",
             "location": 438,
             "direction": 1,
-            "owner": "red"
+            "owner": "green"
         },
         {
             "type": "null",
@@ -2094,7 +2094,7 @@
             "type": "PathTile",
             "location": 441,
             "direction": 2,
-            "owner": "yellow"
+            "owner": null
         },
         {
             "type": "null",
@@ -2122,7 +2122,7 @@
             "type": "PathTile",
             "location": 447,
             "direction": 2,
-            "owner": "green"
+            "owner": null
         },
         {
             "type": "null",
@@ -2181,8 +2181,8 @@
         {
             "type": "Resource",
             "location": 459,
-            "number_token": 6,
-            "resource": "ore"
+            "number_token": 3,
+            "resource": "lumber"
         },
         {
             "type": "null",
@@ -2199,7 +2199,7 @@
             "type": "PathTile",
             "location": 462,
             "direction": 3,
-            "owner": "red"
+            "owner": null
         },
         {
             "type": "Intersection",
@@ -2215,8 +2215,8 @@
         {
             "type": "Resource",
             "location": 465,
-            "number_token": 8,
-            "resource": "wool"
+            "number_token": 2,
+            "resource": "lumber"
         },
         {
             "type": "null",
@@ -2225,7 +2225,7 @@
         {
             "type": "Intersection",
             "location": 467,
-            "owner": null,
+            "owner": "green",
             "isCity": false,
             "direction": 2
         },
@@ -2233,7 +2233,7 @@
             "type": "PathTile",
             "location": 468,
             "direction": 3,
-            "owner": "green"
+            "owner": null
         },
         {
             "type": "Intersection",
@@ -2290,7 +2290,7 @@
             "type": "PathTile",
             "location": 480,
             "direction": 1,
-            "owner": null
+            "owner": "red"
         },
         {
             "type": "null",
@@ -2304,7 +2304,7 @@
             "type": "PathTile",
             "location": 483,
             "direction": 2,
-            "owner": "yellow"
+            "owner": "red"
         },
         {
             "type": "null",
@@ -2318,7 +2318,7 @@
             "type": "PathTile",
             "location": 486,
             "direction": 1,
-            "owner": "yellow"
+            "owner": null
         },
         {
             "type": "null",
@@ -2332,7 +2332,7 @@
             "type": "PathTile",
             "location": 489,
             "direction": 2,
-            "owner": "yellow"
+            "owner": "green"
         },
         {
             "type": "null",
@@ -2346,7 +2346,7 @@
             "type": "PathTile",
             "location": 492,
             "direction": 1,
-            "owner": "green"
+            "owner": null
         },
         {
             "type": "null",
@@ -2375,8 +2375,8 @@
         {
             "type": "Intersection",
             "location": 499,
-            "owner": null,
-            "isCity": false,
+            "owner": "blue",
+            "isCity": true,
             "direction": 1
         },
         {
@@ -2386,8 +2386,8 @@
         {
             "type": "Resource",
             "location": 501,
-            "number_token": 3,
-            "resource": "wool"
+            "number_token": 6,
+            "resource": "grain"
         },
         {
             "type": "null",
@@ -2396,15 +2396,15 @@
         {
             "type": "Intersection",
             "location": 503,
-            "owner": null,
-            "isCity": false,
+            "owner": "red",
+            "isCity": true,
             "direction": 2
         },
         {
             "type": "PathTile",
             "location": 504,
             "direction": 3,
-            "owner": null
+            "owner": "red"
         },
         {
             "type": "Intersection",

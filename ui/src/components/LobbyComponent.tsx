@@ -1,6 +1,6 @@
 
 
-function LobbyComponent(props: LobbyComponentProps){
+function LobbyComponent(){
     return(
         <div>
             
