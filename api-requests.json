@@ -1,0 +1,227 @@
+{
+	"info": {
+		"_postman_id": "7d3d2ee2-270f-436e-950f-3424fc446eb1",
+		"name": "New Collection Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26348275"
+	},
+	"item": [
+		{
+			"name": "Available Actions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8000/available_actions?game_id=8c1e7632-791c-4260-9480-f4c22351b23e&player_colour=red",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"available_actions"
+					],
+					"query": [
+						{
+							"key": "game_id",
+							"value": "8c1e7632-791c-4260-9480-f4c22351b23e"
+						},
+						{
+							"key": "player_colour",
+							"value": "red"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"num_of_human_player\": 4, \"num_of_ai_player\": 0, \"color_of_player\": [\"red\", \"green\", \"blue\", \"purple\"], \"board_size\": 3}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/start_game",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"start_game"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dump games",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8000/dump_games",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"dump_games"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Player resources",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:8000/player_resources",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"player_resources"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Build settlement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"game_id\": \"7ec2c729-3352-4f6b-8c80-ee8302ca9a7c\", \"player_colour\": \"red\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/build/settlement?&hexagon_id=36",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"build",
+						"settlement"
+					],
+					"query": [
+						{
+							"key": null,
+							"value": null
+						},
+						{
+							"key": "hexagon_id",
+							"value": "36"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Discard resource cards",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"game_id\": \"28386895-5f05-4dc0-9567-d6aa409bb83f\",\n    \"player_colour\": \"red\",\n    \"resources\": {\n        \"0\": 2, \"1\": 2, \"2\": 1, \"3\": 0, \"4\": 0\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/discard_resource_card",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"discard_resource_card"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Board state",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:8000/board_state?game_id=48db9b16-944a-423a-8e23-060a5f5c9f8a&player_colour=red",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"board_state"
+					],
+					"query": [
+						{
+							"key": "game_id",
+							"value": "48db9b16-944a-423a-8e23-060a5f5c9f8a"
+						},
+						{
+							"key": "player_colour",
+							"value": "red"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
