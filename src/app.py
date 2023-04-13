@@ -242,11 +242,14 @@ def discard_resource_card(info: ResourceInfo):
 
 @app.post("/place_robber")
 def place_robber(info: TileInfo):
-    # game = info.get_game(games)
-    # player = info.get_player(games)
-
-    # no game.place_robber method ¯\_(ツ)_/¯
-    return {"status": "TODO", "locations": []}
+    game = info.get_game(games)
+    if info.tile_id in game.board.land_locations:
+        if info.tile_id != game.board.robber_location:
+            return {"status": "OK"}
+        else:
+            return {"status": "Error: Robber has to be moved to a new location"}
+    else:
+        return {"status": "Error: Given location is not valid"}
 
 
 @app.post("/buy_dev_card")
