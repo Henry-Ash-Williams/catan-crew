@@ -33,11 +33,8 @@ def join(ll):
     return [i for k in ll for i in k]
 
 
-class PlayerException(Exception):  pass
-
-
-
-
+class PlayerException(Exception):
+    pass
 
 
 class Player:
@@ -75,6 +72,9 @@ class Player:
         }
 
         player.proposed_trades = []
+
+    def __str__(player):
+        return player.color.capitalize()
 
     def __repr__(player):
         return player.color.capitalize()
