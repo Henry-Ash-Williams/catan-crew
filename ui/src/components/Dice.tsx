@@ -9,6 +9,7 @@ interface DiceComponentProps {
   setNumbersToDisplay: (numbers: [number, number]) => void;
   x: number;
   y: number;
+  fontSize: number;
 }
 
 function DiceComponent(props: DiceComponentProps) {
@@ -34,20 +35,26 @@ function DiceComponent(props: DiceComponentProps) {
   };
 
   return (
-    <Container x={props.x} y={props.y}>
+    <Container x={props.x * 1.004} y={props.y}>
       <Sprite
-        x={20}
+        width={props.x * 0.06}
+        height={props.y * 0.09}
+        x={props.x * 0.01}
         y={0}
         image={`/assets/dice/dieWhite${props.numbersToDisplay[0]}.png`}  
       />
       <Sprite
-        x={100}
+        width={props.x * 0.06}
+        height={props.y * 0.09}
+        x={props.x * 0.09}
         y={0}
         image={`/assets/dice/dieWhite${props.numbersToDisplay[1]}.png`}
       />
       <Sprite
+        width={props.x * 0.16}
+        height={props.y * 0.055}
         x={0}
-        y={70}
+        y={props.y * 0.1}
         image={'/assets/menu/buttonLong_beige.png'}
         alpha={diceOpacity}
         interactive={props.canRoll}
@@ -57,13 +64,13 @@ function DiceComponent(props: DiceComponentProps) {
         text={"Roll dice"}
         alpha={diceOpacity}
         anchor={0.5}
-        x={100}
-        y={95}
+        x={props.x * 0.08}
+        y={props.y * 0.127}
         style={
             new TextStyle({
             align: 'center',
             fontFamily: '"Source Sans Pro", Helvetica, sans-serif',
-            fontSize: 30,
+            fontSize: props.fontSize * 0.25,
             fontWeight: '200',
             fill: '#ffffff', // gradient
             stroke: '#01d27e',

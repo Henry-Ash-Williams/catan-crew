@@ -56,16 +56,16 @@ function App() {
       <BoardComponent size={3} width={dimensions.width} height={dimensions.height}/>
         {/* Cards */}
       <Container>
-        <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5}/>
-        <Card resourceType='wool' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.16} amount={4}/>
-        <Card resourceType='lumber' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.32} amount={6}/>
-        <Card resourceType='grain' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.48} amount={3}/>
-        <Card resourceType='brick' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.64} amount={2}/>
+        <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5} fontSize={dimensions.height / 9}/>
+        <Card resourceType='wool' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.16} amount={4} fontSize={dimensions.height / 9}/>
+        <Card resourceType='lumber' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.32} amount={6} fontSize={dimensions.height / 9}/>
+        <Card resourceType='grain' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.48} amount={3} fontSize={dimensions.height / 9}/>
+        <Card resourceType='brick' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.64} amount={2} fontSize={dimensions.height / 9}/>
       </Container>
       {/* 
         Leaderboard
       */}
-      <LeaderBoard width={dimensions.width} height={dimensions.height}/>
+      <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9}/>
       {/* 
         Player
       */}
@@ -73,9 +73,9 @@ function App() {
       {/* 
         Action bar
       */}
-      <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={dimensions.width*0.735} y={dimensions.height*0.86}/>
+      <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 
-      <ActionsBar width={dimensions.width} height={dimensions.height}/>
+      <ActionsBar width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9}/>
 
       {/* <UiComponent></UiComponent> */}
 
