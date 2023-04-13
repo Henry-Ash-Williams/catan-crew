@@ -66,7 +66,8 @@ class Game:
 
         self.turn_count = 0
         self.dev_card_played = False
-        self.trades = []
+
+
 
     def add_player(self, colour: str):
         temp_player = HumanPlayer(colour)
@@ -215,6 +216,48 @@ class Game:
                     resources_robbed = other_player.get_valid_resources_to_give_up()
                     other_player.resources -= resources_robbed
                     self.bank.return_resources(resources_robbed)
+    def get_available_actions(self, player):
+        player.get_player_state()
+
+        available_actions = []
+
+        if player.has_resources():
+            available_actions.append(("Propose a trade", self.start_trade))
+
+        if player.can_build_road():
+            available_actions.append(("Build a road", self.build_road))
+
+        if player.can_build_settlement():
+            available_actions.append(("Build a settlement", self.build_settlement))
+
+        if player.can_upgrade_settlement():
+            available_actions.append(
+                ("Upgrade a settlement", self.upgrade_settlement)
+            )
+
+        if player.can_buy_dev_card():
+            available_actions.append(
+                ("Buy a development card", self.sell_development_card)
+            )
+
+        if (not self.dev_card_played) and player.has_knight_card():
+            available_actions.append(("Play Knight card", self.play_knight))
+
+        if (not self.dev_card_played) and player.can_play_road_building():
+            available_actions.append(
+                ("Play Road Building card", self.play_road_building)
+            )
+
+        if (not self.dev_card_played) and player.has_year_of_plenty_card():
+            available_actions.append(
+                ("Play Year of Plenty card", self.play_year_of_plenty)
+            )
+
+        if (not self.dev_card_played) and player.has_monopoly_card():
+            available_actions.append(("Play Monopoly card", self.play_monopoly))
+
+        available_actions.append(("End turn", self.end_turn))
+        return available_actions
 
     def do_turn(self):
         self.dev_card_played = False
@@ -236,47 +279,7 @@ class Game:
 
         while self.turn_ongoing:
             print()
-
-            player.get_player_state()
-
-            available_actions = []
-
-            if player.has_resources():
-                available_actions.append(("Propose a trade", self.start_trade))
-
-            if player.can_build_road():
-                available_actions.append(("Build a road", self.build_road))
-
-            if player.can_build_settlement():
-                available_actions.append(("Build a settlement", self.build_settlement))
-
-            if player.can_upgrade_settlement():
-                available_actions.append(
-                    ("Upgrade a settlement", self.upgrade_settlement)
-                )
-
-            if player.can_buy_dev_card():
-                available_actions.append(
-                    ("Buy a development card", self.sell_development_card)
-                )
-
-            if (not self.dev_card_played) and player.has_knight_card():
-                available_actions.append(("Play Knight card", self.play_knight))
-
-            if (not self.dev_card_played) and player.can_play_road_building():
-                available_actions.append(
-                    ("Play Road Building card", self.play_road_building)
-                )
-
-            if (not self.dev_card_played) and player.has_year_of_plenty_card():
-                available_actions.append(
-                    ("Play Year of Plenty card", self.play_year_of_plenty)
-                )
-
-            if (not self.dev_card_played) and player.has_monopoly_card():
-                available_actions.append(("Play Monopoly card", self.play_monopoly))
-
-            available_actions.append(("End turn", self.end_turn))
+            available_actions = self.get_available_actions(player)
 
             action_labels = [label for label, method in available_actions]
 
@@ -284,13 +287,13 @@ class Game:
 
             available_actions[choice][1]()
 
-
     def add_trade(self, trade: Trade):
+        # use this method when interacting via API
         self.trades.append(trade)
 
     def start_trade(self):
-        # trade = self.current_player.prompt_trade_details()
-        trade = Trade(self.current_player, )
+        # use this method when interacting via terminal
+        trade = self.current_player.prompt_trade_details()
 
         while True:
             if self.current_player in trade.proposees:

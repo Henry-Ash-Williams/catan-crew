@@ -12,6 +12,7 @@ from rich import print
 from game import Game
 from board import BoardEncoder
 from player import Player, PlayerEncoder
+from autonomous_player import AutonomousPlayer
 from resources import Resources, ResourceKind
 from trade import Trade
 
@@ -89,13 +90,6 @@ class GPlayerInfo:
             for idx, player in enumerate(self.get_game(games).players)
             if player.color.lower() == self.player_colour.default.lower()
         ][0]
-
-
-class AiMovementKind(Enum):
-    BUILD_SETTLEMENT
-    BUILD_ROAD
-
-
 
 class TradeInfo(PlayerInfo):
     proposed_by: str
@@ -181,37 +175,7 @@ def available_actions(player_info: GPlayerInfo = Depends()):
     game = player_info.get_game(games)
     player = player_info.get_player(games)
 
-    actions = []
-
-    if player.has_resources():
-        actions.append("trade")
-
-    if player.can_build_road():
-        actions.append("build_road")
-
-    if player.can_build_settlement():
-        actions.append("build_settlement")
-
-    if player.can_upgrade_settlement():
-        actions.append("upgrade_settlement")
-
-    if player.can_buy_dev_card():
-        actions.append("buy_dev_card")
-
-    if (not game.dev_card_played) and player.has_knight_card():
-        actions.append("play_knight")
-
-    if (not game.dev_card_played) and player.can_play_road_building():
-        actions.append("play_road_building")
-
-    if (not game.dev_card_played) and player.has_year_of_plenty_card():
-        actions.append("play_year_of_plenty")
-
-    if (not game.dev_card_played) and player.has_monopoly_card():
-        actions.append("play_monopoly")
-
-    actions.append("end_turn")
-    return actions
+    return [label for label, _ in game.get_available_actions(player)]
 
 
 @app.get("/valid_location/{infrastructures}")
@@ -308,6 +272,27 @@ def convert_dict_to_resources(resources: dict) -> Resources:
             "Cannot create Resource object from a dictionary with more than 5 entries"
         )
 
+    if "lumber" in resources.keys():
+        resources[ResourceKind.lumber] = resources["lumber"]
+        del resources["lumber"]
+    if "brick" in resources.keys():
+        resources[ResourceKind.brick] = resources["brick"]
+        del resources["brick"]
+    if "ore" in resources.keys():
+        resources[ResourceKind.ore] = resources["ore"]
+        del resources["ore"]
+    if "grain" in resources.keys():
+        resources[ResourceKind.grain] = resources["grain"]
+        del resources["grain"]
+    if "wool" in resources.keys():
+        resources[ResourceKind.wool] = resources["wool"]
+        del resources["wool"]
+
+    # remove all entries from dictionary where keys aren't
+    # instances of ResourceKind object
+    for key,value in resources.keys():
+        if not isinstance(key,ResourceKind):
+            del resources[key]
     return Resources(resources)
 
 
@@ -344,7 +329,7 @@ def finalize_trade(info: PlayerInfo = Depends()):
     trade = game.trades[-1]
 
     if len( trade.accepters ) == 1 and trade.accepters[-1] == "bank":
-        # handle bank trade
+
         pass
     elif len(trade.accepters) == 2:
         # handle trade with only one accepter
@@ -353,4 +338,13 @@ def finalize_trade(info: PlayerInfo = Depends()):
         # handle trade with more than one accepter
         pass
 
-@app.get("/ai")
+@app.get("/ai/next-move")
+def get_ai_players_next_move(info: GPlayerInfo = Depends()):
+    game = info.get_game(games)
+    player = info.get_player(games)
+
+    if not isinstance(player, AutonomousPlayer):
+        raise Exception("Cannot get next move of human player")
+
+    action_labels = game.get_available_actions(player)
+    return player.prompt_action(action_labels)
