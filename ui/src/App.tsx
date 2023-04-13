@@ -48,8 +48,9 @@ function App() {
         {/* Background */}
       {/* 
       */}
-      {/* 
       <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} ></Sprite>
+
+      {/* 
         Board
       */}
       <BoardComponent size={3} width={dimensions.width} height={dimensions.height}/>
