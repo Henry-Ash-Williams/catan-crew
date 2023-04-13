@@ -104,8 +104,8 @@ class ResourceTile(LandTile):
         return f'ResourceTile(loc={tile.location}, res={tile.resource})'
 
     def to_json(tile):
-        return {'type':'ResourceTile', 'location': tile.location, \
-                'resource': tile.resource, 'number_token':tile.number_token}
+        return {'type':'Resource', 'location': tile.board.old_system_tile_loc[tile.location], \
+                'number_token': tile.number_token, 'resource': tile.resource}
 
 class DesertTile(LandTile):
 
@@ -119,7 +119,8 @@ class DesertTile(LandTile):
         return f'DesertTile(loc={tile.location})'
 
     def to_json(tile):
-        return {'type':'DesertTile', 'location': tile.location}
+        return {'type':'Resource', 'location': tile.board.old_system_tile_loc[tile.location], \
+                'number_token': 0, 'resource': 'desert'}
 
 class SeaTile(Tile):
 
@@ -147,7 +148,9 @@ class SeaTile(Tile):
         return f'SeaTile(loc={tile.location})'
 
     def to_json(tile):
-        return {'type': 'SeaTile', 'location': tile.location, 'harbor': tile.harbor}
+        #return {'type': 'SeaTile', 'location': tile.board.old_system_tile_loc[tile.location], 'harbor': tile.harbor}
+        return {'type':'Resource', 'location': tile.board.old_system_tile_loc[tile.location], \
+                'number_token': 0, 'resource': 'sea'}
 
 class Path:
     def __init__(path, board, location):
@@ -209,9 +212,10 @@ class Path:
         return f'Path{path.location}(endpoints={[i.location for i in path.neighboring_intersections()]})'
 
     def to_json(path):
-        return {'location': path.location, 'endpoints': [intersection.location \
-                                                         for intersection in path.neighboring_intersections()], \
-                'road': path.road}
+        #return {'location': path.board.old_system_path_loc[path.location], 'endpoints': [intersection.location \
+        #for intersection in path.neighboring_intersections()], 'road': path.road}
+        return {'type': 'PathTile', 'location': path.board.old_system_path_loc[path.location], \
+                'direction': path.type+1, 'owner': path.road.owner if path.road else None}
 
 class Road:
     def __init__(road, owner):
@@ -355,7 +359,10 @@ class Intersection:
         return f'Intersection(location={intersection.location})'
 
     def to_json(intersection):
-        return {'location':intersection.location, 'settlement':intersection.settlement}
+        return {'type': 'Intersection', 'location': intersection.board.old_system_intersection_loc[intersection.location], \
+                'owner': intersection.settlement.owner if intersection.settlement else None, \
+                'isCity': intersection.settlement.distribution_rate==1 if intersection.settlement else False, \
+                'direction': 2-intersection.type}
 
 
 class Settlement:
@@ -512,6 +519,29 @@ class Board:
         board.robber_location = random.choice(list(board.desert_locations))
 
         #print(json.dumps(board,cls=BoardEncoder,indent=4))
+
+        # Translation of locations to old system
+        board.old_system_cell_count = m = 36 * (size**2) + 54 * size + 21
+        board.old_system_directions = od = [pow(6 * size + 5, i, m) for i in range(6)]
+        old_system_corner = ( (od[2]+od[3])*2*size + (od[3]+od[4])*2*size )%m
+        new_system_corner = ( d[3]*size + d[4]*size )%n
+        old_system_tile_loc = [0]*len(board.tiles)
+        old_system_path_loc = [0]*len(board.paths)
+        old_system_intersection_loc = [0]*len(board.intersections)
+        for i in range(size*2+1):
+            for j in range(size*2+1):
+                if not(size<=i+j<=size*3): continue
+                new_loc = (new_system_corner + i*d[0]+j*d[1]) % n
+                old_loc = (old_system_corner + i*(od[0]+od[5])*2 + j*(od[1]+od[0])*2) % m
+                old_system_tile_loc[new_loc] = old_loc
+                old_system_intersection_loc[new_loc*2] = (old_loc+od[4]*2)%m
+                old_system_intersection_loc[new_loc*2+1] = (old_loc+od[1]*2)%m
+                old_system_path_loc[new_loc*3] = (old_loc + (od[0]+od[5]))%m
+                old_system_path_loc[new_loc*3 + 1] = (old_loc + (od[4]+od[3]))%m
+                old_system_path_loc[new_loc*3 + 2] = (old_loc + (od[2]+od[1]))%m
+        board.old_system_tile_loc = old_system_tile_loc
+        board.old_system_path_loc = old_system_path_loc
+        board.old_system_intersection_loc = old_system_intersection_loc
 
     def random_resource_kinds():
         """
@@ -674,7 +704,8 @@ class Board:
         return board.tiles[location]
 
     def to_json(self):
-        """board = self
+        board = self
+        """
         json = {
             "size": self.size,
             "directions": self.directions,
@@ -695,10 +726,16 @@ class Board:
                     "direction": tile.direction
                 })
             elif isinstance(tile, Intersection):
-                json["tiles"].append()"""
-
-        return {'size': self.size, 'directions': self.directions, 'tiles': self.tiles, \
-                'paths': self.paths, 'intersections': self.intersections}
+                json["tiles"].append()
+        """
+        tiles = board.tiles + board.paths + board.intersections
+        tiles = [t.to_json() for t in tiles]
+        tiles2 = [None]*board.old_system_cell_count
+        for t in tiles: tiles2[t['location']] = t
+        for i in range(len(tiles2)):
+            if tiles2[i] is None: tiles2[i] = {'type': 'null', 'location': i}
+        return {'size': board.size, 'directions': board.old_system_directions, \
+                'tiles': tiles2}
 
 class BoardEncoder(json.JSONEncoder):
     def default(self, obj):
