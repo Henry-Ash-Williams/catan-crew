@@ -1,0 +1,205 @@
+{
+    "size": 3,
+    "directions": [
+        1,
+        11,
+        10,
+        -1,
+        -11,
+        -10
+    ],
+    "tiles": [
+        {
+            "type": "Resource",
+            "location": 0,
+            "number_token": 10,
+            "resource": "desert"
+        },
+        {
+            "type": "null",
+            "location": 1
+        },
+        {
+            "type": "Intersection",
+            "location": 2,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "PathTile",
+            "location": 3,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "PathTile",
+            "location": 4,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 5
+        },
+        {
+            "type": "null",
+            "location": 6
+        },
+        {
+            "type": "PathTile",
+            "location": 7,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 8
+        },
+        {
+            "type": "PathTile",
+            "location": 9,
+            "owner": null,
+            "direction": 2
+        },
+        {
+            "type": "null",
+            "location": 10
+        },
+        {
+            "type": "null",
+            "location": 11
+        },
+        {
+            "type": "PathTile",
+            "location": 12,
+            "owner": null,
+            "direction": 3
+        },
+        {
+            "type": "null",
+            "location": 13
+        },
+        {
+            "type": "null",
+            "location": 14
+        },
+        {
+            "type": "Intersection",
+            "location": 15,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "PathTile",
+            "location": 16,
+            "owner": null,
+            "direction": 1
+        },
+        {
+            "type": "Intersection",
+            "location": 17,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "null",
+            "location": 18
+        },
+        {
+            "type": "null",
+            "location": 19
+        },
+        {
+            "type": "Intersection",
+            "location": 20,
+            "owner": null,
+            "isCity": false,
+            "direction": 1
+        },
+        {
+            "type": "PathTile",
+            "location": 21,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 22,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "null",
+            "location": 23
+        },
+        {
+            "type": "null",
+            "location": 24
+        },
+        {
+            "type": "PathTile",
+            "location": 25,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 26
+        },
+        {
+            "type": "null",
+            "location": 27
+        },
+        {
+            "type": "PathTile",
+            "location": 28,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 29
+        },
+        {
+            "type": "PathTile",
+            "location": 30,
+            "direction": 3,
+            "owner": null
+        },
+        {
+            "type": "null",
+            "location": 31
+        },
+        {
+            "type": "null",
+            "location": 32
+        },
+        {
+            "type": "PathTile",
+            "location": 33,
+            "direction": 2,
+            "owner": null
+        },
+        {
+            "type": "PathTile",
+            "location": 34,
+            "direction": 1,
+            "owner": null
+        },
+        {
+            "type": "Intersection",
+            "location": 35,
+            "owner": null,
+            "isCity": false,
+            "direction": 2
+        },
+        {
+            "type": "null",
+            "location": 36
+        }
+    ]
+}
