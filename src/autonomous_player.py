@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from player import Player
-from resource import Resources, ResourceKind
+from resources import Resources, ResourceKind
 from trade import Trade
 from board import Settlement, Tile
 
