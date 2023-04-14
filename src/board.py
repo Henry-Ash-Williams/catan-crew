@@ -359,10 +359,11 @@ class Intersection:
         return f'Intersection(location={intersection.location})'
 
     def to_json(intersection):
+        present_path = [(i in intersection.board.land_paths) for i in intersection.neighboring_paths()] + [False]
         return {'type': 'Intersection', 'location': intersection.board.old_system_intersection_loc[intersection.location], \
                 'owner': intersection.settlement.owner.color if intersection.settlement else None, \
                 'isCity': intersection.settlement.distribution_rate==2 if intersection.settlement else False, \
-                'direction': 2-intersection.type}
+                'direction': intersection.type*4 + present_path.index(False) + 1}
 
 
 class Settlement:

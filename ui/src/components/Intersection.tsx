@@ -14,10 +14,23 @@ interface IntersectionComponentProps {
 function IntersectionComponent(props: IntersectionComponentProps) {
     let tile: React.ReactElement[] = [<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/tile/grass_N.png"}/>]
     if(props.direction == 1) {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/interesection1_N.png"} tint={props.owner} />)
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/interesection2_1.png"} tint={props.owner} />)
     } else if (props.direction == 2) {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/interesection2_2.png"} tint={props.owner}/>)
+    }else if (props.direction == 3) {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/interesection2_3.png"} tint={props.owner}/>)
+    }else if (props.direction == 4) {
         tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/interesection2_N.png"} tint={props.owner}/>)
+    }else if (props.direction == 5) {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/interesection1_2.png"} tint={props.owner}/>)
+    }else if (props.direction == 6) {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/interesection1_3.png"} tint={props.owner}/>)
+    }else if (props.direction == 7) {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/interesection1_1.png"} tint={props.owner}/>)
+    }else if (props.direction == 8) {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/interesection1_N.png"} tint={props.owner}/>)
     }
+
      if (props.isCity) {
         tile.pop();
         tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/intersection/city/city_N.png"} tint={props.owner}/>)
