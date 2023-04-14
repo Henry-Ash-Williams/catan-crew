@@ -58,71 +58,41 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
         });
     console.log(tiles.length)
 
-    let x = props.width/2; // centre of board ( current position when initialising)
-    let y = -50 + props.height/2;
-    let ctx = 0; // position on board when initialising 
+    // x and y values for center tile
+    let x0 = props.width/2;
+    let y0 = -50 + props.height/2;
+
     let east = board.directions[0];
     let northEast = board.directions[1];
-    let northWest = board.directions[2];
+
     let radius = 50;
-    let radiusToFace = Math.sqrt(radius**2 - (radius/2)**2);
+    let radiusToFace = (radius * Math.sqrt(3) / 2)*1.05; // Better way to calculate radiusToFace
+
     let n = tiles.length; // number of tiles
+
     let tile_map = new Map();
     let tileDatas: Map<number, TileData> = new Map();
 
-    // set first tile and move southeast
-    tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
-    x += (radiusToFace);
-    ctx += east; 
-    
-    
-    for(let i = 1; i <= props.size; i++) {
-        console.log(`RUN: ${i}/${props.size}`);
-        for(let j = 0; j < i-1; j++){ // south
-            console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | South East`);
+    // q will be the number of layers of tiles around the center tile
+    // setting q to 1 will wrap the center tile in only one layer
+    let q = props.size-3;
+
+    // j is the index for the row of tiles whose locations are being calculated
+    // j =  q corresponds to the topmost row of tiles
+    // j = -q corresponds to the bottom-most
+    for(let j = q; j >= -q; j--){
+        // i will be the index for the horizontal axis
+        // the lower i is the more the tile is to the left and vice versa
+        for(let i = -q; i <= q; i++){
+            // some combinations of (i,j) will fall outside the hexagon, ignore these
+            if (!(-q<=i+j && i+j<=q)){continue;}
+            // calculate the x and y coordinates and the ctx for the current tile
+            let x = x0 + i*radiusToFace + j*(radiusToFace/2);
+            let y = y0 - j*(radius/2.6);  // This used to be radius/2.4 , but I think 2.6 works better
+            let ctx = (i*east + j*northEast + n) % n;
+            // add them to tileDatas
             tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
-            ctx = (n + ctx - northWest) % n;
-            x += radiusToFace/2;
-            y += radius/2.4;
         }
-        for(let j = 0; j < i; j++){ // southwest
-            console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | South West`);
-            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
-            ctx = (n + ctx - northEast) % n; 
-            x -= radiusToFace/2;
-            y += radius/2.4;
-
-        };
-        for(let j = 0; j < i; j++){ // west
-            console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | West`);
-            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
-            ctx = (n + ctx - east) % n;
-            x -= (radiusToFace);
-
-        };
-        for(let j = 0; j < i; j++){ // northwest
-            console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | North West`);
-            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
-            ctx = (n + ctx + northWest) % n;
-            x -= radiusToFace/2;
-            y -= radius/2.4;
- 
-        };
-        for(let j = 0; j < i; j++){ // northeast
-            console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | North East`);
-            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
-            ctx = (n + ctx + northEast) % n;
-            x += radiusToFace/2;
-            y -= radius/2.4;
- 
-        };
-        for(let j = 0; j < i+1; j++){ // east
-            console.log(`CTX: ${ctx} | X: ${x} Y: ${y} | East`);
-            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
-            ctx = (n + ctx + east) % n;
-            x += radiusToFace;
-
-        };
     }
 
     console.log(tileDatas)
@@ -130,6 +100,8 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
         if (value.tile.type == "Resource") {
             for (let i = 0; i < 6; i++) {
                 console.log((n + key + board.directions[i]) % n)
+                // if the index for the child node can't be found in tileDatas, skip it
+                if(!tileDatas.has((n + key + board.directions[i]) % n)){continue;}
                 var temp = tileDatas.get((n + key + board.directions[i]) % n)!
                 console.log(temp)
                 temp.tile.type = "ChildResource"
@@ -138,8 +110,7 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
         }
     })
 
-    tileDatas = sortMap(tileDatas)
-    let knight = {x, y}
+    let knight = {x: x0, y: y0}
     tileDatas.forEach(function(value, key) {
         if(value.tile.type == "Intersection") {
             tile_map.set(key, <IntersectionComponent
