@@ -228,6 +228,7 @@ class Player:
         paths = (
             set(adjacent_to_settlement) | set(adjacent_to_city) | set(adjacent_to_road)
         )
+        paths &= player.game.board.land_paths
         path_locations = {path.location for path in paths}
         return list(path_locations & player.game.board.available_path_locations)
 

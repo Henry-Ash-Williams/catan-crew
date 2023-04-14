@@ -215,7 +215,7 @@ class Path:
         #return {'location': path.board.old_system_path_loc[path.location], 'endpoints': [intersection.location \
         #for intersection in path.neighboring_intersections()], 'road': path.road}
         return {'type': 'PathTile', 'location': path.board.old_system_path_loc[path.location], \
-                'direction': path.type+1, 'owner': path.road.owner if path.road else None}
+                'direction': path.type+1, 'owner': path.road.owner.color if path.road else None}
 
 class Road:
     def __init__(road, owner):
@@ -255,7 +255,7 @@ class Road:
         return f'Road{road.path.location}(owner={road.owner}, endpoints={[i.location for i in road.path.neighboring_intersections()]})'
 
     def to_json(road):
-        return {'owner': road.owner}
+        return {'owner': road.owner.color}
 
 
 
@@ -360,8 +360,8 @@ class Intersection:
 
     def to_json(intersection):
         return {'type': 'Intersection', 'location': intersection.board.old_system_intersection_loc[intersection.location], \
-                'owner': intersection.settlement.owner if intersection.settlement else None, \
-                'isCity': intersection.settlement.distribution_rate==1 if intersection.settlement else False, \
+                'owner': intersection.settlement.owner.color if intersection.settlement else None, \
+                'isCity': intersection.settlement.distribution_rate==2 if intersection.settlement else False, \
                 'direction': 2-intersection.type}
 
 
@@ -415,7 +415,7 @@ class Settlement:
             (f', location={settlement.intersection.location})' \
                  if settlement.intersection else ')')
 
-    def to_json(settlement): return {'owner': settlement.owner, 'distribution_rate': settlement.distribution_rate}
+    def to_json(settlement): return {'owner': settlement.owner.color, 'distribution_rate': settlement.distribution_rate}
 
 
 class City(Settlement):
