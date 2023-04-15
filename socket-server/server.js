@@ -85,6 +85,7 @@ io.on('connection', socket => {
         // map player color to socket id
         player_color_to_socket_id[color[count_person]] = socket.id;
         count_person += 1;
+        console.log(player_color_to_socket_id)
         io.emit("join_room", player_color_to_socket_id);
     })
 

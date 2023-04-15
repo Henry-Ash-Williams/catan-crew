@@ -14,7 +14,6 @@ import { BoardComponent } from './components/Board';
 import { LobbyComponent } from './components/Lobby';
 
 function App() {
-  
   const [menuActive, setMenuActive] = useState<boolean>(true)
   
   const [players, setPlayers] = useState<string[]>([])
@@ -26,11 +25,14 @@ function App() {
     setSocket(newSocket)
     socket?.emit("join_room")
     setHasJoined(true);
+    
   }
 
   useEffect(() => {
+    // just a listener
     socket?.on("join_room", data => {
       setPlayers(players + data)
+      console.log("PLAYERS:", players)
     })
 
     return () => {
@@ -77,7 +79,7 @@ function App() {
       <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} tint={0x00FFFF}></Sprite>
 
       {/* Board */}
-      <BoardComponent size={15676} width={dimensions.width} height={dimensions.height}/>
+      <BoardComponent size={15} width={dimensions.width} height={dimensions.height}/>
         {/* Cards */}
       <Container>
         <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5} fontSize={dimensions.height / 9}/>
