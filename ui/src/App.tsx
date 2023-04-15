@@ -1,19 +1,48 @@
 import './styles/App.css';
-import { BoardComponent } from './components/Board';
+
+import { io, Socket } from 'socket.io-client';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Container, Graphics, Sprite, Stage, useApp, useTick, InteractionEvents } from '@pixi/react';
 import { Texture } from 'pixi.js';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import Menu from './components/Menu';
 import Card from './components/Card';
 import LeaderBoard from './components/LeaderBoard';
 import ActionsBar from './components/ActionsBar';
 import { DiceComponent } from './components/Dice';
+import { BoardComponent } from './components/Board';
+import { LobbyComponent } from './components/Lobby';
 
 function App() {
-
+  
   const [menuActive, setMenuActive] = useState<boolean>(true)
+  
+  const [players, setPlayers] = useState<string[]>([])
+  const [hasJoined, setHasJoined] = useState(false);
+  const [socket, setSocket] = useState<Socket | null>(null)
+  
+  const handleJoinGame = () => {
+    const newSocket = io('http://localhost:3001');
+    setSocket(newSocket)
+    socket?.emit("join_room")
+    setHasJoined(true);
+  }
+
+  useEffect(() => {
+    socket?.on("join_room", data => {
+      setPlayers(players + data)
+    })
+
+    return () => {
+      socket?.off("join_room")
+    }
+  })
+  
+  const handleStartGame = () => {
+      console.log('Starting the game...')
+    }
   const cardContainer = useRef(null);
-  const [canRoll, setCanRoll] = useState(true);
+  const [canRoll, setCanRoll] = useState(false);
   const [numbersToDisplay, setNumbersToDisplay] = useState<[number, number]>([6, 6]);
   const [dimensions, setDimensions] = useState({
     height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
@@ -34,17 +63,21 @@ function App() {
    }
   })
 
+  
+
   return (
     <>
-    {menuActive ? <Menu onShow={() => setMenuActive(!menuActive)}/>
-    : 
-    // <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
+
+    {!hasJoined ? 
+      <Menu onShow={handleJoinGame}/>
+    : <LobbyComponent players={players} onStartGame={handleStartGame}/>}
+    <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
     <Stage width={dimensions.width} height={dimensions.height}>
         {/* Background */}
       <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} tint={0x00FFFF}></Sprite>
 
       {/* Board */}
-      <BoardComponent size={13} width={dimensions.width} height={dimensions.height}/>
+      <BoardComponent size={15676} width={dimensions.width} height={dimensions.height}/>
         {/* Cards */}
       <Container>
         <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5} fontSize={dimensions.height / 9}/>
@@ -61,8 +94,9 @@ function App() {
       <ActionsBar width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9}/>
 
     </Stage>
+    </div>
     
-}
+
     </>
   );
 }
