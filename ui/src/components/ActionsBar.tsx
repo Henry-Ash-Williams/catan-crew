@@ -43,6 +43,7 @@ export default function ActionsBar(props: ActionBarProps){
 
     const draw = (g:any) => {
         g.clear();
+        g.lineStyle(2, 'brown', 2);
         g.beginFill('beige', 0.8);
         g.drawRoundedRect(props.width * 0.342, 0, props.width * 0.391, props.height * 1/4, 8)
         g.endFill();
@@ -54,14 +55,14 @@ export default function ActionsBar(props: ActionBarProps){
     return(
         <Container y={props.height * 0.845}>
             <Graphics draw={draw}/>
-            <Container>
+            <Container y={props.height * 0.003} x={0}>
                 <Card resourceType='hidden' width={props.width} height={props.height} y={0} amount={2} fontSize={props.fontSize}/>
                 <Card resourceType='monopoly' width={props.width} height={props.height} x={props.width * 0.07} y={0} amount={0} fontSize={props.fontSize}/>
                 <Card resourceType='plenty' width={props.width} height={props.height} x={props.width * 0.138} y={0} amount={1} fontSize={props.fontSize}/>
                 <Card resourceType='road' width={props.width} height={props.height} x={props.width * 0.206} y={0} amount={1} fontSize={props.fontSize}/>
-                <Card resourceType='road' width={props.width} height={props.height} x={props.width * 0.274} y={0} amount={1} fontSize={props.fontSize}/>
+                <Card resourceType='army' width={props.width} height={props.height} x={props.width * 0.274} y={0} amount={1} fontSize={props.fontSize}/>
             </Container>
-            <Container x={props.width * 0.265}>
+            <Container x={props.width * 0.265} y={props.height * 0.01}>
                 <Container x={props.width * 0.08} y={props.height * 0.015}>
                     <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildRoad} interactive={true}/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.08} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/road.png'}/>

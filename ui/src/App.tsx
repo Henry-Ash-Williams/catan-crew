@@ -12,6 +12,7 @@ import ActionsBar from './components/ActionsBar';
 import { DiceComponent } from './components/Dice';
 import { BoardComponent } from './components/Board';
 import { LobbyComponent } from './components/Lobby';
+import Bank from './components/Bank';
 
 function App() {
   const [menuActive, setMenuActive] = useState<boolean>(true)
@@ -70,9 +71,9 @@ function App() {
   return (
     <>
 
-    {!hasJoined ? 
+    {/* {!hasJoined ? 
       <Menu onShow={handleJoinGame}/>
-    : <LobbyComponent players={players} onStartGame={handleStartGame}/>}
+    : <LobbyComponent players={players} onStartGame={handleStartGame}/>} */}
     <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
     <Stage width={dimensions.width} height={dimensions.height}>
         {/* Background */}
@@ -94,6 +95,8 @@ function App() {
       <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 
       <ActionsBar width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9}/>
+
+      <Bank height={dimensions.height} width={dimensions.width}/>
 
     </Stage>
     </div>
