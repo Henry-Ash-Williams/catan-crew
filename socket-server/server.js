@@ -14,7 +14,7 @@ const player_color_to_socket_id = {
 }
 
 const color = ["red", "blue", "green", "yellow"];
-const count_person = 0;
+let count_person = 0;
 
 
 const app = express();
