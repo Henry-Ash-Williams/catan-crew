@@ -81,12 +81,14 @@ io.on('connection', socket => {
     //         });
     //     })
 
+
+    // fixme - set at max 4 players, now is accepting the fith
     socket.on("join_room", () => {
         // map player color to socket id
         player_color_to_socket_id[color[count_person]] = socket.id;
         count_person += 1;
+        io.emit("join_room", JSON.stringify(player_color_to_socket_id));
         console.log(player_color_to_socket_id)
-        io.emit("join_room", player_color_to_socket_id);
     })
 
 
