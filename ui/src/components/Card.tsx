@@ -7,7 +7,7 @@ interface CardProps {
     resourceType: string;
     width : number;
     height: number;
-    y: number;
+    y?: number;
     x?: number;
     fontSize: number;
 }
@@ -22,7 +22,8 @@ export default function Card(props: CardProps){
     'plenty': ["../assets/action-board-dev/plenty.png", 'green'],
     'hidden': ["../assets/action-board-dev/hidden.png", 'lightblue'],
     'monopoly': ["../assets/action-board-dev/monopoly.png", 'purple'],
-    'road': ["../assets/action-board-dev/road.png", 'grey']
+    'road': ["../assets/action-board-dev/road.png", 'grey'],
+    'army': ["../assets/leaderboard-icons/sword.png", 'red']
     }
 
     return(
