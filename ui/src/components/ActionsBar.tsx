@@ -7,6 +7,7 @@ interface ActionBarProps{
     width: number;
     height: number;
     fontSize: number;
+    methods: any;
 }
 
 export default function ActionsBar(props: ActionBarProps){
@@ -24,7 +25,7 @@ export default function ActionsBar(props: ActionBarProps){
         
     }
     const trade = ()=>{
-        
+        props.methods[0][0](!props.methods[0][1])
     }
     const endTurn = ()=>{
         
@@ -44,7 +45,7 @@ export default function ActionsBar(props: ActionBarProps){
     const draw = (g:any) => {
         g.clear();
         g.lineStyle(2, 'brown', 2);
-        g.beginFill('beige', 0.8);
+        g.beginFill('beige', 1);
         g.drawRoundedRect(props.width * 0.342, 0, props.width * 0.391, props.height * 1/4, 8)
         g.endFill();
         g.beginFill('yellow', 0.8);

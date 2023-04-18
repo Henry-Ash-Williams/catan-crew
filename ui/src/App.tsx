@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Container, Graphics, Sprite, Stage, useApp, useTick, InteractionEvents } from '@pixi/react';
 import { Texture } from 'pixi.js';
 
+import Trade from './components/Trade';
 import Menu from './components/Menu';
 import Card from './components/Card';
 import LeaderBoard from './components/LeaderBoard';
@@ -16,10 +17,10 @@ import Bank from './components/Bank';
 
 function App() {
   const [menuActive, setMenuActive] = useState<boolean>(true)
-  
   const [players, setPlayers] = useState<string[]>([])
   const [hasJoined, setHasJoined] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null)
+  const [trade, setTrade] = useState(false);
   
   const handleJoinGame = () => {
     const newSocket = io('http://localhost:3001');
@@ -71,16 +72,16 @@ function App() {
   return (
     <>
 
-    {/* {!hasJoined ? 
+    {!hasJoined ? 
       <Menu onShow={handleJoinGame}/>
-    : <LobbyComponent players={players} onStartGame={handleStartGame}/>} */}
+    : <LobbyComponent players={players} onStartGame={handleStartGame}/>}
     <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
     <Stage width={dimensions.width} height={dimensions.height}>
         {/* Background */}
       <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} tint={0x00FFFF}></Sprite>
 
       {/* Board */}
-      <BoardComponent size={15} width={dimensions.width} height={dimensions.height}/>
+      {/* <BoardComponent size={15} width={dimensions.width} height={dimensions.height}/> */}
         {/* Cards */}
       <Container>
         <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5} fontSize={dimensions.height / 9}/>
@@ -94,9 +95,11 @@ function App() {
 
       <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 
-      <ActionsBar width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9}/>
+      <ActionsBar width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} methods={[[setTrade, trade]]}/>
 
-      <Bank height={dimensions.height} width={dimensions.width}/>
+      <Bank height={dimensions.height} width={dimensions.width} fontSize={dimensions.height / 9}/>
+
+      <Trade height={dimensions.height} width={dimensions.width} visible={trade} fontSize={dimensions.height / 9}/>
 
     </Stage>
     </div>

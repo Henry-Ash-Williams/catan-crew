@@ -20,19 +20,19 @@ export default function PlayerInfo(props: PlayerInfoProps){
     const draw = ((g:any)=>{
         g.clear();
         g.lineStyle(2, 'brown', 2);
-        g.beginFill('beige', 0.7);
+        g.beginFill('beige', 1);
         g.drawRoundedRect(0, -3, props.width * 3.6, props.height * 1.5, 10)
         g.endFill();
         g.lineStyle(0);
-        g.beginFill(props.colour, 0.7);
-        g.drawRoundedRect(props.width * 0.1, 0, props.width * 0.75, props.height * 0.95, 10);
+        g.beginFill(props.colour, 1);
+        g.drawRoundedRect(props.width * 0.23, props.height * 0.6, props.width * 0.48, props.height * 0.25, 0);
         g.endFill();
     })
     
     return(
         <Container y={props.y} x={0}>
             <Graphics draw={draw}/>
-            <Sprite image={'/assets/leaderboard-icons/player.png'} tint={0xFFAFFF} width={props.width} height={props.height}/>
+            <Sprite image={'/assets/leaderboard-icons/player.png'} width={props.width} height={props.height}/>
             <Container>
                 <Sprite image={'/assets/leaderboard-icons/victory-points.png'} width={props.width * 0.5} height={props.height * 0.5} x={props.width * 0.1} y={props.height * 0.95}/>
                 <Text style={new TextStyle({fontSize: props.fontSize})} text={props.score.toString()} x={props.width * 0.55} y={props.height * 0.9} />           
