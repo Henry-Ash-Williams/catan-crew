@@ -110,7 +110,7 @@ io.on('connection', socket => {
     socket.on("start_game", () => {
         // todo need to make the JSON for game_config
         // not from client, but generate from socket server
-        game_config = {
+        const game_config = {
             "num_of_human_player": count_person, 
             "num_of_ai_player": 4 - count_person, 
             "color_of_player": ["red", "blue", "green", "yellow"], 

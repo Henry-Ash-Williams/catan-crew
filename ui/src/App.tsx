@@ -24,32 +24,47 @@ const socket = io('http://localhost:3001');
 
 function App() {
   const [menuActive, setMenuActive] = useState<boolean>(true)
-  
-  const [players, setPlayers] = useState<Players>(JSON.parse('{"red":"","blue":"","green":"","yellow":""}'))
+  const [players, setPlayers] = useState<Players>(JSON.parse('{"red":"AI","blue":"AI","green":"AI","yellow":"AI"}'))
   const [hasJoined, setHasJoined] = useState(false);
-  // const [socket, setSocket] = useState<Socket | null>(null)
+  const [socketID, setSocketID] = useState<string>("")
+  const [gameStarted, setGameStarted] = useState<boolean>(false)
+  const [boardState, setBoardState] = useState<any>(null)
   
   const handleJoinGame = () => {
     socket.emit("join_room")
+    
     setHasJoined(true);
   }
 
   useEffect(() => {
     // just a listener
     socket.on("join_room", data => {
-      setPlayers(data)
-      console.log("PLAYERS:")
-  
+      setPlayers(data) // currently connected players socket IDs and associated colours
+      setSocketID(socket.id) // This client's socket ID
     })
 
     return () => {
-      socket?.off("join_room")
+      socket.off("join_room")
     }
   })
   
   const handleStartGame = () => {
       console.log('Starting the game...')
+      socket.emit("start_game")
     }
+  
+  useEffect(() => {
+    socket.on("start_game", data => {
+      setBoardState(data.board_state)
+      setGameStarted(true)
+      console.log(data)
+    })
+
+    return () => {
+      socket.off("start_game")
+    }
+  })
+
   const cardContainer = useRef(null);
   const [canRoll, setCanRoll] = useState(false);
   const [numbersToDisplay, setNumbersToDisplay] = useState<[number, number]>([6, 6]);
@@ -80,11 +95,35 @@ function App() {
     {!hasJoined ? 
       <Menu onShow={handleJoinGame}/>
     : <LobbyComponent players={players} onStartGame={handleStartGame}/>}
-    <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
-
-    </div>
+        
     
+    {!gameStarted ? <></>:
+      <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
+        <Stage width={dimensions.width} height={dimensions.height}>
+            {/* Background */}
+          <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} tint={0x00FFFF}></Sprite>
 
+          {/* Board */}
+          <BoardComponent size={15} width={dimensions.width} height={dimensions.height}/>
+            {/* Cards */}
+          <Container>
+            <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5} fontSize={dimensions.height / 9}/>
+            <Card resourceType='wool' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.16} amount={4} fontSize={dimensions.height / 9}/>
+            <Card resourceType='lumber' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.32} amount={6} fontSize={dimensions.height / 9}/>
+            <Card resourceType='grain' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.48} amount={3} fontSize={dimensions.height / 9}/>
+            <Card resourceType='brick' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.64} amount={2} fontSize={dimensions.height / 9}/>
+          </Container>
+
+          <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9}/>
+
+          <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
+
+          <ActionsBar width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9}/>
+
+        </Stage>
+      </div>
+      
+    }
     </>
   );
 }
