@@ -1,5 +1,5 @@
 import { Container } from "@pixi/react";
-import board from  "./end_board.json";
+// import board from  "./end_board.json";
 import { IntersectionComponent } from "./Intersection";
 import { PathComponent } from "./Path";
 import { ResourceTileComponent } from "./Resource";
@@ -9,7 +9,9 @@ import { useState } from "react";
 interface BoardComponentProps {
     height: number,
     width: number,
-    size: number
+    size: number,
+    boardState: string,
+    setBoardState: (boardState: string) => void,
 }
 
 interface Tile {
@@ -36,6 +38,10 @@ interface Coordinates {
 
 
 function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordinates) => void) {
+    console.log(typeof(props.boardState))
+    console.log("BOARD STATE:\n" + props.boardState + "\n")
+    const board = JSON.parse(props.boardState)
+    
     let tiles: Tile[] = (board.tiles as Array<
         { type: string
         location: number
@@ -185,6 +191,7 @@ function getCoordinatesFromKey(key: number, components: JSX.Element[]): {x: numb
 
 function BoardComponent(props: BoardComponentProps){
     const initBoard = () => {
+        console.log(props.boardState)
         let boardInit = initTiles(props, handleResourceClick)
         return boardInit
     }

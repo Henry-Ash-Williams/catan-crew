@@ -128,7 +128,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("start_game", data);
         });
     })
 

@@ -30,13 +30,13 @@ function App() {
   const [hasJoined, setHasJoined] = useState(false);
   const [socketID, setSocketID] = useState<string>("")
   const [gameStarted, setGameStarted] = useState<boolean>(false)
-  const [boardState, setBoardState] = useState<any>(null)
+  const [boardState, setBoardState] = useState<string>("")
   const [trade, setTrade] = useState(false);
   
   const handleJoinGame = () => {
     socket.emit("join_room")
     
-    setHasJoined(true);
+    setHasJoined(!hasJoined);
   }
 
   useEffect(() => {
@@ -54,13 +54,14 @@ function App() {
   const handleStartGame = () => {
       console.log('Starting the game...')
       socket.emit("start_game")
+      // setGameStarted(true)
     }
   
   useEffect(() => {
     socket.on("start_game", data => {
       setBoardState(data.board_state)
-      setGameStarted(true)
-      console.log(data)
+      setGameStarted(!gameStarted)
+      // console.log(data)
     })
 
     return () => {
@@ -97,17 +98,14 @@ function App() {
 
     {!hasJoined ? 
       <Menu onShow={handleJoinGame}/>
-    : <LobbyComponent players={players} onStartGame={handleStartGame}/>}
-        
-    
-    {!gameStarted ? <></>:
+    : !gameStarted ?  <LobbyComponent players={players} onStartGame={handleStartGame}/> :
       <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
         <Stage width={dimensions.width} height={dimensions.height}>
             {/* Background */}
           <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} tint={0x00FFFF}></Sprite>
 
           {/* Board */}
-          {/* <BoardComponent size={15} width={dimensions.width} height={dimensions.height}/> */}
+          <BoardComponent boardState={boardState} setBoardState={setBoardState} size={15} width={dimensions.width} height={dimensions.height}/>
             {/* Cards */}
           <Container>
             <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={5} fontSize={dimensions.height / 9}/>
