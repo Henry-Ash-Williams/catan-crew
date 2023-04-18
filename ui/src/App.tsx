@@ -26,7 +26,7 @@ const socket = io('http://localhost:3001');
 
 function App() {
   const [menuActive, setMenuActive] = useState<boolean>(true)
-  const [players, setPlayers] = useState<Players>(JSON.parse('{"red":"AI","blue":"AI","green":"AI","yellow":"AI"}'))
+  const [players, setPlayers] = useState<string>('{"red":"AI","blue":"AI","green":"AI","yellow":"AI"}')
   const [hasJoined, setHasJoined] = useState(false);
   const [socketID, setSocketID] = useState<string>("")
   const [gameStarted, setGameStarted] = useState<boolean>(false)

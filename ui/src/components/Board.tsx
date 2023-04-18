@@ -10,8 +10,14 @@ interface BoardComponentProps {
     height: number,
     width: number,
     size: number,
-    boardState: string,
+    boardState: Object
     setBoardState: (boardState: string) => void,
+}
+
+export interface Board {
+    board_size: number
+    directions: number[]
+    tiles: Tile[]
 }
 
 interface Tile {
@@ -40,7 +46,9 @@ interface Coordinates {
 function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordinates) => void) {
     console.log(typeof(props.boardState))
     console.log("BOARD STATE:\n" + props.boardState + "\n")
-    const board = JSON.parse(props.boardState)
+    const board = props.boardState as Board
+    console.log("SERIALISED:\n" + board)
+    console.log(typeof(board))
     
     let tiles: Tile[] = (board.tiles as Array<
         { type: string
@@ -101,15 +109,15 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
         }
     }
 
-    console.log(tileDatas)
+    // console.log(tileDatas)
     tileDatas.forEach(function(value, key) {
         if (value.tile.type == "Resource") {
             for (let i = 0; i < 6; i++) {
-                console.log((n + key + board.directions[i]) % n)
+                // console.log((n + key + board.directions[i]) % n)
                 // if the index for the child node can't be found in tileDatas, skip it
                 if(!tileDatas.has((n + key + board.directions[i]) % n)){continue;}
                 var temp = tileDatas.get((n + key + board.directions[i]) % n)!
-                console.log(temp)
+                // console.log(temp)
                 temp.tile.type = "ChildResource"
                 temp.tile.resource = value.tile.resource
             }
