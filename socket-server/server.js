@@ -103,7 +103,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("add_player", data);
         });
     })
 
@@ -153,7 +153,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("rool_dice", data);
         });
     })
 
@@ -168,7 +168,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("end_turn", data);
         });
     })
 
@@ -183,7 +183,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("board_state", data);
         });
     })
 
@@ -198,7 +198,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("updated_player_resource", data);
         });
     })
 
@@ -213,7 +213,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("player_resources", data);
         });
     })
 
@@ -228,7 +228,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("available_actions", data);
         });
     })
     
@@ -245,7 +245,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("valid_location/roads", data);
         });
     })
     
@@ -260,7 +260,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("valid_location/cities", data);
         });
     })
 
@@ -275,7 +275,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("valid_location/settlements", data);
         });
     })
 
@@ -291,7 +291,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("build/roads", data);
         });
     })
     
@@ -306,7 +306,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("build/cities", data);
         });
     })
 
@@ -321,7 +321,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("build/settlements", data);
         });
     })
     
@@ -337,7 +337,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("valid_robber_locations", data);
         });
     })
 
@@ -352,7 +352,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("num_discard_resource_card", data);
         });
     })
 
@@ -367,7 +367,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("discard_resource_card", data);
         });
     })
 
@@ -382,7 +382,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("place_robber", data);
         });
     })
 
@@ -397,7 +397,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("buy_dev_card", data);
         });
     })
 
@@ -412,7 +412,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("visible_victory_points",data);
         });
     })
 
@@ -427,7 +427,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("visible_victory_points", data);
         });
     })
 
@@ -442,7 +442,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("victory_points", data);
         });
     })
     
