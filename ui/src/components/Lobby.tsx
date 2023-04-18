@@ -8,15 +8,14 @@ interface Players {
 }
 
 interface LobbyComponentProps {
-    players: string;
+    players: Players
+    socketID: string
+    idToPlayer: Map<string, string>
     onStartGame: () => void;
 }
 
 function LobbyComponent(props: LobbyComponentProps){
     const [isGameReady, setIsGameReady] = useState<boolean>(true);
-    let players = JSON.parse(props.players) 
-
-
     const handleStartGame = () => {
         if (isGameReady) {
             props.onStartGame();
@@ -25,11 +24,12 @@ function LobbyComponent(props: LobbyComponentProps){
     return(
         <div>
             <h2>Lobby</h2>
+            <h5>u r {props.idToPlayer.get(props.socketID)}</h5>
             <ul>
-                <li>RED: {players.red}</li>
-                <li>BLUE: {players.blue}</li>
-                <li>GREEN: {players.green}</li>
-                <li>YELLOW: {players.yellow}</li>
+                <li>RED: {props.players.red}</li>
+                <li>BLUE: {props.players.blue}</li>
+                <li>GREEN: {props.players.green}</li>
+                <li>YELLOW: {props.players.yellow}</li>
             </ul>
     
             <button
