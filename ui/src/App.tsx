@@ -52,7 +52,8 @@ function App() {
   })
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
- 
+  let gameID = ""
+  // Type can be "roads", "cities", "settlements"
   const getClickableTiles = (gameID: string, player: string, type: string) => {
     const json = {
       game_id: gameID,
@@ -149,7 +150,7 @@ function App() {
    return () => {
     window.removeEventListener('resize', handleResize)
    }
-  })
+  },[])
 
   
 
