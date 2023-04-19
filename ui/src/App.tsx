@@ -53,6 +53,7 @@ function App() {
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
   let gameID = ""
   // Type can be "roads", "cities", "settlements"
+  
   const getClickableTiles = (type: string) => {
     const json = {
       game_id: game_idR.current,
@@ -60,10 +61,51 @@ function App() {
     }
     console.log("JSON:\n" + json.game_id + "\n" + json.player_colour)
     
-    socket.emit("valid_location/" + type,JSON.stringify(json))
+    socket.emit("valid_location/" + type, json)
+  }
+
+  const getCurrentPlayer = () => {
+    const json = {
+      game_id: game_idR.current,
+    }
+    socket.emit("current_player", json)
+  }
+
+  const getAvailableActions = () => {
+    const json = {
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
+    }
+    socket.emit("available_actions", json)
+  }
+
+  const endTurn = () => {
+    const json = {
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
+    }
+    socket.emit("end_turn", json)
   }
 
   useEffect(() => {
+    socket.on("end_turn", data => {
+      console.log("END TURN:\n" + data)
+      // todo: add logic to check end turn is valid
+      // todo: on confirmation, make all actions unavailable
+      getCurrentPlayer()
+    })
+
+    socket.on("current_player", data => {
+      console.log("CURRENT PLAYER:\n" + data)
+      if(data === idToPlayer.get(socketID)){
+        getAvailableActions()
+      }
+    })
+
+    socket.on("available_actions", data => {
+      console.log("AVAILABLE ACTIONS:\n" + data)
+    })
+    
     socket.on("valid_location/roads", data => {
       console.log("CLICKABLE TILES:\n" + data.toString())
       setClickableTiles(data)
@@ -105,11 +147,13 @@ function App() {
       // console.log(boardState)
       // console.log(data.game_id)
       // console.log(gameID);
-      getClickableTiles("settlements")
-
+      // getClickableTiles("settlements")
+      getCurrentPlayer()
     })
 
     return () => {
+      socket.off("current_player");
+      socket.off("available_actions")
       socket.off("valid_location/roads");
       socket.off("valid_location/cities");
       socket.off("valid_location/settlements");
