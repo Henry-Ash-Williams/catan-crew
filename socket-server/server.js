@@ -145,12 +145,12 @@ io.on('connection', socket => {
     })
 
     // todo - need to change it to get request format
-    socket.on("roll_dice", (game_config) => {
-        fetch('http://localhost:8000/roll_dice', {
+    socket.on("roll_dice", (req) => {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/roll_dice?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(game_config)
             }
         })
         .then(response => response.json())
@@ -163,11 +163,11 @@ io.on('connection', socket => {
 
 
     socket.on("end_turn", (player_info) => {
-        fetch('http://localhost:8000/end_turn', {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/end_turn?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
             }
         })
         .then(response => response.json())
@@ -194,11 +194,11 @@ io.on('connection', socket => {
     })
 
     socket.on("board_state", (player_info) => {
-        fetch('http://localhost:8000/board_state', {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/board_state?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
             }
         })
         .then(response => response.json())
@@ -209,11 +209,11 @@ io.on('connection', socket => {
     })
 
     socket.on("updated_player_resource", (player_info) => {
-        fetch('http://localhost:8000/updated_player_resource', {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/updated_player_resource?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
             }
         })
         .then(response => response.json())
@@ -224,11 +224,11 @@ io.on('connection', socket => {
     })
 
     socket.on("player_resources", (player_info) => {
-        fetch('http://localhost:8000/player_resources', {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/player_resources?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
             }
         })
         .then(response => response.json())
@@ -244,7 +244,6 @@ io.on('connection', socket => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
             }
         })
         .then(response => response.json())
@@ -257,11 +256,11 @@ io.on('connection', socket => {
 
     // {infrastucture} as roads, settlements, cities
     socket.on("valid_location/roads", (req) => {
-        fetch('http://localhost:8000/valid_location/roads', {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/valid_location/roads?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(req)
             }
         })
         .then(response => response.json())
@@ -272,11 +271,11 @@ io.on('connection', socket => {
     })
     
     socket.on("valid_location/cities", (req) => {
-        fetch('http://localhost:8000/valid_location/cities', {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/valid_location/cities?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(req)
             }
         })
         .then(response => response.json())
@@ -303,11 +302,11 @@ io.on('connection', socket => {
 
     // {infrastucture} as roads, settlements, cities for build 
     socket.on("build/roads", (req) => {
-        fetch('http://localhost:8000/build/roads', {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/build/roads?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(req)
             }
         })
         .then(response => response.json())
@@ -318,11 +317,11 @@ io.on('connection', socket => {
     })
     
     socket.on("build/cities", (req) => {
-        fetch('http://localhost:8000/build/cities', {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/build/cities?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(req)
             }
         })
         .then(response => response.json())
@@ -333,11 +332,11 @@ io.on('connection', socket => {
     })
 
     socket.on("build/settlements", (req) => {
-        fetch('http://localhost:8000/build/settlements', {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/build/settlements?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(req)
             }
         })
         .then(response => response.json())
@@ -349,11 +348,11 @@ io.on('connection', socket => {
     
 
     socket.on("valid_robber_locations", (player_info) => {
-        fetch('http://localhost:8000/valid_robber_locations', {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/valid_robber_locations?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
             }
         })
         .then(response => response.json())
@@ -364,11 +363,11 @@ io.on('connection', socket => {
     })
 
     socket.on("num_discard_resource_card", (player_info) => {
-        fetch('http://localhost:8000/discard_resource_card', {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/num_discard_resource_card?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
             }
         })
         .then(response => response.json())
@@ -424,11 +423,11 @@ io.on('connection', socket => {
     })
 
     socket.on("visible_victory_points", (player_info) => {
-        fetch('http://localhost:8000/visible_victory_points', {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/visible_victory_points?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
             }
         })
         .then(response => response.json())
@@ -438,27 +437,12 @@ io.on('connection', socket => {
         });
     })
 
-    socket.on("visible_victory_points", (player_info) => {
-        fetch('http://localhost:8000/visible_victory_points', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            io.emit("visible_victory_points", data);
-        });
-    })
-
     socket.on("victory_points", (player_info) => {
-        fetch('http://localhost:8000/victory_points', {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/victory_points?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(player_info)
             }
         })
         .then(response => response.json())
@@ -467,6 +451,8 @@ io.on('connection', socket => {
             io.emit("victory_points", data);
         });
     })
+
+
     
     socket.on("leaderboard", (req) => {
         const queryParams = new URLSearchParams(req).toString();
