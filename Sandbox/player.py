@@ -262,8 +262,6 @@ class Player:
 
     def can_buy_dev_card(player):
         """Returns True if player can afford a development card."""
-        if player.game.bank.development_cards.total() <= 0:
-            return False
         return player.resources >= RESOURCE_REQUIREMENTS["development_card"]
 
     def has_knight_card(player):
