@@ -34,11 +34,9 @@ const socket = io('http://localhost:3001');
 
 function App() {
   const game_idR = useRef('');
-  const board_stateR = useRef('')
   const [menuActive, setMenuActive] = useState<boolean>(true)
   const [hasJoined, setHasJoined] = useState(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false)
-  const [gameID, setGameID] = useState("GAME ID")
   const [players, setPlayers] = useState<Players>({"red":"AI","blue":"AI","green":"AI","yellow":"AI"})
   const [socketID, setSocketID] = useState<string>("")
   const [idToPlayer, setIdToPlayer] = useState<Map<string, string>>(new Map<string, string>())
@@ -51,6 +49,7 @@ function App() {
     width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16)
   })
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
+  const [dev]
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
  
   const getClickableTiles = (gameID: string, player: string, type: string) => {
@@ -100,11 +99,6 @@ function App() {
       game_idR.current = data.game_id;
       setBoardState(data.board_state)
       setGameStarted(!gameStarted);
-      console.log(game_idR.current)
-      console.log(boardState)
-      // console.log(data.game_id)
-      // console.log(gameID);
-
     })
 
     return () => {

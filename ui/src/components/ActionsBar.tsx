@@ -1,6 +1,6 @@
 import { Container, Graphics, Sprite, Text } from "@pixi/react";
 import {TextStyle} from "pixi.js"
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import Card from "./Card";
 
 interface ActionBarProps{
@@ -12,9 +12,14 @@ interface ActionBarProps{
 
 export default function ActionsBar(props: ActionBarProps){
 
-    
     //Functions for api calls and changing state
-
+    const [devAmounts, setDevAmounts] = useState({
+        'hidden' : 0,
+        'monopoly' : 0,
+        'plenty' : 0,
+        'road' : 0,
+        'knight' : 0,
+    })
     const buildRoad = ()=>{
         console.log("built")
     }
@@ -33,14 +38,6 @@ export default function ActionsBar(props: ActionBarProps){
     const buyDevCards = ()=>{
         
     }
-    // const actions = [
-    //     [buildRoad, '/assets/action-board/road.png'],
-    //     [buildSettlement, '/assets/action-board/house.png'], 
-    //     [buildCity, '/assets/action-board/town.png'],
-    //     [trade, '/assets/action-board/trade.png'],
-    //     [buyDevCards, '/assets/action-board/dev.png'],
-    //     [endTurn, '/assets/action-board/end.png']
-    // ]
 
     const draw = (g:any) => {
         g.clear();
@@ -57,11 +54,11 @@ export default function ActionsBar(props: ActionBarProps){
         <Container y={props.height * 0.845}>
             <Graphics draw={draw}/>
             <Container y={props.height * 0.003} x={0}>
-                <Card resourceType='hidden' width={props.width} height={props.height} y={0} amount={2} fontSize={props.fontSize}/>
-                <Card resourceType='monopoly' width={props.width} height={props.height} x={props.width * 0.07} y={0} amount={0} fontSize={props.fontSize}/>
-                <Card resourceType='plenty' width={props.width} height={props.height} x={props.width * 0.138} y={0} amount={1} fontSize={props.fontSize}/>
-                <Card resourceType='road' width={props.width} height={props.height} x={props.width * 0.206} y={0} amount={1} fontSize={props.fontSize}/>
-                <Card resourceType='army' width={props.width} height={props.height} x={props.width * 0.274} y={0} amount={1} fontSize={props.fontSize}/>
+                <Card resourceType='hidden' width={props.width} height={props.height} y={0} amount={devAmounts['hidden']} fontSize={props.fontSize}/>
+                <Card resourceType='monopoly' width={props.width} height={props.height} x={props.width * 0.07} y={0} amount={devAmounts['monopoly']} fontSize={props.fontSize}/>
+                <Card resourceType='plenty' width={props.width} height={props.height} x={props.width * 0.138} y={0} amount={devAmounts['plenty']} fontSize={props.fontSize}/>
+                <Card resourceType='road' width={props.width} height={props.height} x={props.width * 0.206} y={0} amount={devAmounts['road']} fontSize={props.fontSize}/>
+                <Card resourceType='knight' width={props.width} height={props.height} x={props.width * 0.274} y={0} amount={devAmounts['knight']} fontSize={props.fontSize}/>
             </Container>
             <Container x={props.width * 0.265} y={props.height * 0.01}>
                 <Container x={props.width * 0.08} y={props.height * 0.015}>
