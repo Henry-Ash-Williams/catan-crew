@@ -204,6 +204,15 @@ def get_valid_locations(
 
     return valid_locations
 
+@app.get("/current_player")
+def get_current_player(game_id: str):
+    try:
+        game = games[game_id]
+    except KeyError:
+        return {"error": "game not found"}
+
+    return {"player_colour": game.current_player}
+
 
 @app.post("/build/{infrastructures}")
 def build_infrastructures(
