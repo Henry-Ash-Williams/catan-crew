@@ -268,11 +268,11 @@ io.on('connection', socket => {
     })
 
     socket.on("valid_location/settlements", (req) => {
-        fetch('http://localhost:8000/valid_location/settlements', {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/valid_location/settlements?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(req)
             }
         })
         .then(response => response.json())
