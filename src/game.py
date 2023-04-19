@@ -114,7 +114,8 @@ class Game:
         player_data = [
             (
                 player.color,
-                str(player.calculate_visible_victory_points()),
+                player.calculate_visible_victory_points(),
+                player.calculate_total_victory_points(),
                 player.road_length,
                 player.knights_played,
                 player.resources.total(),
