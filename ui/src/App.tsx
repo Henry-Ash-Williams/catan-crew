@@ -40,7 +40,6 @@ function App() {
   const [players, setPlayers] = useState<Players>({"red":"AI","blue":"AI","green":"AI","yellow":"AI"})
   const [socketID, setSocketID] = useState<string>("")
   const [idToPlayer, setIdToPlayer] = useState<Map<string, string>>(new Map<string, string>())
-  const [boardState, setBoardState] = useState<string>("")
   const [trade, setTrade] = useState(false);
   const [canRoll, setCanRoll] = useState(false);
   const [numbersToDisplay, setNumbersToDisplay] = useState<[number, number]>([6, 6]);
@@ -51,6 +50,8 @@ function App() {
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
   const [devcards, setDevCards] = useState()
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
+  const [leaderBoardState, setLeaderBoardState] = useState<any>()
+  const [boardState, setBoardState] = useState<string>("")
   // Type can be "roads", "cities", "settlements"
   
   const getClickableTiles = (type: string) => {
@@ -142,12 +143,21 @@ function App() {
       game_idR.current = data.game_id;
       setBoardState(data.board_state)
       setGameStarted(!gameStarted);
+      socket.emit('leaderboard', {
+        game_id: game_idR.current,
+        player_colour: idToPlayer.get(socketID)
+      })
       // console.log(game_idR.current)
       // console.log(boardState)
       // console.log(data.game_id)
       // console.log(gameID);
       // getClickableTiles("settlements")
       getCurrentPlayer()
+    })
+
+    socket.on('leaderboard', data => {
+      console.log("LEADERBOARD",data[0])
+      setLeaderBoardState(data[0])
     })
 
     return () => {
@@ -157,7 +167,8 @@ function App() {
       socket.off("valid_location/cities");
       socket.off("valid_location/settlements");
       socket.off("player_resources");
-      socket.off('start_game')
+      socket.off('start_game');
+      socket.off('leaderboard')
     }
   })
 
@@ -219,7 +230,7 @@ function App() {
             <Card resourceType='brick' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.64} amount={resources.brick} fontSize={dimensions.height / 9}/>
           </Container>
 
-          <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9}/>
+          <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} state={leaderBoardState}/>
 
           <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 
