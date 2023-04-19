@@ -52,7 +52,6 @@ function App() {
   const [devcards, setDevCards] = useState()
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
   // Type can be "roads", "cities", "settlements"
-  
   const getClickableTiles = (type: string) => {
     const json = {
       game_id: game_idR.current,
@@ -64,6 +63,7 @@ function App() {
   }
 
   const getCurrentPlayer = () => {
+    console.log("GETTING CURRENT PLAYER")
     const json = {
       game_id: game_idR.current,
     }
