@@ -104,7 +104,8 @@ class TradeInfo(PlayerInfo):
 @app.get("/")
 def check_sanity():
     """Make sure the API is running"""
-    return {"sanity": "verified"}
+    import sys
+    return {"sanity": "verified", "version": sys.version}
 
 @app.post("/start_game")
 def start_game(game_config: GameConfig):
