@@ -23,7 +23,7 @@ export default function Card(props: CardProps){
     'hidden': ["../assets/action-board-dev/hidden.png", 'lightblue'],
     'monopoly': ["../assets/action-board-dev/monopoly.png", 'purple'],
     'road': ["../assets/action-board-dev/road.png", 'grey'],
-    'army': ["../assets/leaderboard-icons/sword.png", 'red']
+    'knight': ["../assets/leaderboard-icons/sword.png", 'red']
     }
 
     return(

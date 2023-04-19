@@ -166,6 +166,10 @@ def get_player_resources(player_info: GPlayerInfo = Depends()):
     player = player_info.get_player(games)
     return player.resources
 
+@app.get("/player_dev_cards")
+def get_player_dev_cards(player_info: GPlayerInfo = Depends()):
+    player = player_info.get_player(games)
+    return player.development_cards
 
 @app.get("/available_actions")
 def available_actions(player_info: GPlayerInfo = Depends()):

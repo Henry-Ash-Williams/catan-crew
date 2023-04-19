@@ -93,13 +93,16 @@ io.on('connection', socket => {
 
 
     socket.on("add_player", (playerInfo) => {
+        console.log(playerInfo)
         fetch('http://localhost:8000/add_player', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
+        
         body: JSON.stringify(playerInfo)
         })
+        
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -153,9 +156,11 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("rool_dice", data);
+            io.emit("roll_dice", data);
         });
     })
+
+
 
     socket.on("end_turn", (player_info) => {
         fetch('http://localhost:8000/end_turn', {
@@ -169,6 +174,22 @@ io.on('connection', socket => {
         .then(data => {
             console.log(data);
             io.emit("end_turn", data);
+        });
+    })
+
+    // todo - current player
+    socket.on("current_player", (req) => {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/current_player?' + queryParams, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            io.emit("current_player", data);
         });
     })
 
