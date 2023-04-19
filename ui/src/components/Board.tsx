@@ -45,9 +45,9 @@ interface Coordinates {
 
 function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordinates) => void) {
     console.log(typeof(props.boardState))
-    console.log("BOARD STATE:\n" + props.boardState + "\n")
+    console.log("BOARD STATE:\n", props.boardState + "\n")
     const board = props.boardState as Board
-    console.log("SERIALISED:\n" + board)
+    console.log("SERIALISED:\n", board)
     console.log(typeof(board))
     
     let tiles: Tile[] = (board.tiles as Array<

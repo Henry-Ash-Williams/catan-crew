@@ -11,6 +11,7 @@ from rich import print
 from bank import Bank
 from player import Player
 from human_player import HumanPlayer
+from autonomous_player import AutonomousPlayer
 from board import Board
 from resources import (
     Resources,
@@ -29,7 +30,7 @@ from trade import Trade
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
-STARTING_RESOURCES = Resources()
+STARTING_RESOURCES = Resources(10, 10, 10, 10, 10)
 VP_TO_WIN = 10
 
 inp = fileinput.input()
@@ -71,6 +72,16 @@ class Game:
 
     def add_player(self, colour: str):
         temp_player = HumanPlayer(colour)
+        temp_player.number = len(self.players) + 1
+        temp_player.game = self
+        temp_player.resources = STARTING_RESOURCES.copy()
+        self.players.append(temp_player)
+
+        if self.current_player is None:
+            self.current_player = self.players[-1]
+            
+    def add_autonomous_player(self, colour: str):
+        temp_player = AutonomousPlayer(colour)
         temp_player.number = len(self.players) + 1
         temp_player.game = self
         temp_player.resources = STARTING_RESOURCES.copy()
@@ -155,8 +166,32 @@ class Game:
             self.current_player = self.players[0]
         else:
             raise GameException("Cannot have a game with no players")
-        self.set_up_board()
+        #self.set_up_board()
+        self.debugging_set_up_board()
         self.game_loop()
+        
+    def debugging_set_up_board(self):
+    
+        """Temporary method for setting up the board automatically, for debugging"""
+    
+        # Iterate over all players twice
+        for player in self.players*2:
+        
+            # Make it this player's turn
+            self.set_turn(player)
+        
+            # Build a settlement at a random valid location for that player
+            valid_settlement_locations = self.board.valid_settlement_locations(player, needs_to_be_reachable=False)
+            choice = random.choice(valid_settlement_locations)
+            player.builds_settlement(choice, for_free = True)
+            
+            # Build a road at a random valid location for that player
+            valid_road_locations = player.reachable_paths()
+            choice = random.choice(valid_road_locations)
+            player.builds_road(choice, for_free = True)
+            
+        # Set the next player to be red
+        self.set_turn(self.players[0])
 
     def set_up_board(self):
         for player in self.players:

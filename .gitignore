@@ -1,5 +1,7 @@
 src/__pycache__/
 
+src/backend/*
+
 src/pickled_data/game-*
 
 src/flycheck_*.py
