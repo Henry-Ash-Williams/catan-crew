@@ -53,6 +53,7 @@ function App() {
   const [leaderBoardState, setLeaderBoardState] = useState<any>()
   const [boardState, setBoardState] = useState<string>("")
   // Type can be "roads", "cities", "settlements"
+  
   const getClickableTiles = (type: string) => {
     const json = {
       game_id: game_idR.current,
@@ -61,6 +62,14 @@ function App() {
     console.log("JSON:\n" + json.game_id + "\n" + json.player_colour)
     
     socket.emit("valid_location/" + type, json)
+  }
+
+  const getBoardState = () => {
+    const json = {
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
+    }
+    socket.emit("board_state", json)
   }
 
   const getCurrentPlayer = () => {
@@ -93,6 +102,10 @@ function App() {
       // todo: add logic to check end turn is valid
       // todo: on confirmation, make all actions unavailable
       getCurrentPlayer()
+    })
+
+    socket.on("board_state", data => {
+      console.log("BOARD STATE:\n", data)
     })
 
     socket.on("current_player", data => {
@@ -158,17 +171,21 @@ function App() {
     socket.on('leaderboard', data => {
       console.log("LEADERBOARD",data[0])
       setLeaderBoardState(data[0])
+      getAvailableActions()
     })
 
     return () => {
-      socket.off("current_player");
-      socket.off("available_actions")
-      socket.off("valid_location/roads");
-      socket.off("valid_location/cities");
-      socket.off("valid_location/settlements");
-      socket.off("player_resources");
       socket.off('start_game');
-      socket.off('leaderboard')
+      socket.off('leaderboard');
+      socket.off('join_room');
+      socket.off('player_resources');
+      socket.off('valid_location/roads');
+      socket.off('valid_location/cities');
+      socket.off('valid_location/settlements');
+      socket.off('available_actions');
+      socket.off('current_player');
+      socket.off('board_state');
+      socket.off('end_turn');
     }
   })
 
