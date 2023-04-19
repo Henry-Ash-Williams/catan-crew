@@ -2,6 +2,8 @@ src/__pycache__/
 
 src/pickled_data/game-*
 
+src/flycheck_*.py
+
 start-api
 
 .idea
