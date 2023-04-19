@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from Board import *
-from Player import *
-from Game import *
+from board import Board, Settlement
+from player import Player
+from game import Game
+from resources import ResourceKind
 import unittest, pickle, random, sys
 
 

@@ -1,60 +1,58 @@
 #!/usr/bin/env python3
 
-from Resources import *
-from Bank import *
+from resources import Resources, ResourceKind
+from bank import *
 
 import unittest
 
 
 class BankTester(unittest.TestCase):
     def test_bank_distribution(self):
-        bank = Bank()
 
-        brick = bank.distribute(3, ResourceKind.brick)
+        brick = self.bank.distribute(3, ResourceKind.brick)
 
-        # Ensure that the bank distributes the correct number of resources
-        # and that the total resource tracker is updated accordingly
-        self.assertEqual(brick, Resources(brick=3))
-        self.assertEqual(bank.available_resources, Resources(16, 19, 19, 19, 19))
+        self.assertEqual(brick, Resources({ResourceKind.brick:3}))
+        self.assertEqual(self.bank.resources, Resources({ResourceKind.brick:16, ResourceKind.lumber:19, ResourceKind.ore:19, ResourceKind.grain:19, ResourceKind.wool:19}))
 
-        lumber = bank.distribute(4, ResourceKind.lumber)
-        self.assertEqual(lumber, Resources(lumber=4))
-        self.assertEqual(bank.available_resources, Resources(16, 15, 19, 19, 19))
+        lumber = self.bank.distribute(4, ResourceKind.lumber)
+        self.assertEqual(lumber, Resources({ ResourceKind.lumber:4 }))
+        self.assertEqual(self.bank.resources, Resources({ResourceKind.brick:16, ResourceKind.lumber:15, ResourceKind.ore:19, ResourceKind.grain:19, ResourceKind.wool:19}))
 
-        ore = bank.distribute(1, ResourceKind.ore)
-        self.assertEqual(ore, Resources(ore=1))
-        self.assertEqual(bank.available_resources, Resources(16, 15, 18, 19, 19))
+        ore = self.bank.distribute(1, ResourceKind.ore)
+        self.assertEqual(ore, Resources({ ResourceKind.ore:1 }))
+        self.assertEqual(self.bank.resources, Resources({ResourceKind.brick:16, ResourceKind.lumber:15, ResourceKind.ore:18, ResourceKind.grain:19, ResourceKind.wool:19}))
 
-        grain = bank.distribute(2, ResourceKind.grain)
-        self.assertEqual(grain, Resources(grain=2))
-        self.assertEqual(bank.available_resources, Resources(16, 15, 18, 17, 19))
+        grain = self.bank.distribute(2, ResourceKind.grain)
+        self.assertEqual(grain, Resources({ ResourceKind.grain:2 }))
+        self.assertEqual(self.bank.resources, Resources({ResourceKind.brick:16, ResourceKind.lumber:15, ResourceKind.ore:18, ResourceKind.grain:17, ResourceKind.wool:19}))
 
-        wool = bank.distribute(3, ResourceKind.wool)
-        self.assertEqual(wool, Resources(wool=3))
-        self.assertEqual(bank.available_resources, Resources(16, 15, 18, 17, 16))
+        wool = self.bank.distribute(3, ResourceKind.wool)
+        self.assertEqual(wool, Resources({ ResourceKind.wool:3 }))
+        self.assertEqual(self.bank.resources, Resources({ResourceKind.brick:16, ResourceKind.lumber:15, ResourceKind.ore:18, ResourceKind.grain:17, ResourceKind.wool:16}))
 
     def test_bank_return(self):
-        bank = Bank(0)
+        self.bank = Bank()
+        self.bank.resources = Resources()
 
-        bank.return_to_bank(RESOURCE_REQUIREMENTS["settlement"])
+        self.bank.return_resources(RESOURCE_REQUIREMENTS["settlement"])
         self.assertEqual(
-            bank.available_resources, Resources(brick=1, lumber=1, wool=1, grain=1)
+            self.bank.resources, Resources({ ResourceKind.brick:1, ResourceKind.lumber:1, ResourceKind.wool:1, ResourceKind.grain:1 })
         )
 
-        bank.return_to_bank(RESOURCE_REQUIREMENTS["settlement"])
+        self.bank.return_resources(RESOURCE_REQUIREMENTS["settlement"])
         self.assertEqual(
-            bank.available_resources, Resources(brick=2, lumber=2, wool=2, grain=2)
+            self.bank.resources, Resources({ ResourceKind.brick:2, ResourceKind.lumber:2, ResourceKind.wool:2, ResourceKind.grain:2 })
         )
 
-        bank.return_to_bank(RESOURCE_REQUIREMENTS["road"])
+        self.bank.return_resources(RESOURCE_REQUIREMENTS["road"])
         self.assertEqual(
-            bank.available_resources, Resources(brick=3, lumber=3, wool=2, grain=2)
+            self.bank.resources, Resources({ ResourceKind.brick:3, ResourceKind.lumber:3, ResourceKind.wool:2, ResourceKind.grain:2 })
         )
 
-        bank.return_to_bank(Resources(ore=4))
+        self.bank.return_resources(Resources({ ResourceKind.ore:4 }))
         self.assertEqual(
-            bank.available_resources,
-            Resources(brick=3, lumber=3, wool=2, grain=2, ore=4),
+            self.bank.resources,
+            Resources({ ResourceKind.brick:3, ResourceKind.lumber:3, ResourceKind.wool:2, ResourceKind.grain:2, ResourceKind.ore:4 }),
         )
 
 

@@ -37,7 +37,7 @@ class Bank:
         return "Bank"
 
     def distribute(self, amount: int, resource_kind: ResourceKind) -> Resources:
-        r = Resources() if resource_kind == None else Resources(resource_kind)
+        r = Resources({resource_kind: amount}) if resource_kind is not None else Resources()
         try:
             self.resources -= r
             return r
