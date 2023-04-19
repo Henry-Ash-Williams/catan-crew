@@ -29,7 +29,7 @@ from trade import Trade
 ROAD_LENGTH_THRESHOLD = 5
 ARMY_SIZE_THRESHOLD = 3
 ROBBING_THRESHOLD = 7
-STARTING_RESOURCES = Resources()
+STARTING_RESOURCES = Resources(10, 10, 10, 10, 10)
 VP_TO_WIN = 10
 
 inp = fileinput.input()
@@ -155,7 +155,7 @@ class Game:
             self.current_player = self.players[0]
         else:
             raise GameException("Cannot have a game with no players")
-        self.set_up_board()
+        #self.set_up_board()
         self.game_loop()
 
     def set_up_board(self):

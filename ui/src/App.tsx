@@ -88,40 +88,40 @@ function App() {
 
   useEffect(() => {
     socket.on("end_turn", data => {
-      console.log("END TURN:\n" + data)
+      console.log("END TURN:\n", data)
       // todo: add logic to check end turn is valid
       // todo: on confirmation, make all actions unavailable
       getCurrentPlayer()
     })
 
     socket.on("current_player", data => {
-      console.log("CURRENT PLAYER:\n" + data)
-      if(data === idToPlayer.get(socketID)){
+      console.log("CURRENT PLAYER:\n", data)
+      if(data.player_colour == idToPlayer.get(socketID)){
         getAvailableActions()
       }
     })
 
     socket.on("available_actions", data => {
-      console.log("AVAILABLE ACTIONS:\n" + data)
+      console.log("AVAILABLE ACTIONS:\n", data)
     })
     
     socket.on("valid_location/roads", data => {
-      console.log("CLICKABLE TILES:\n" + data.toString())
+      console.log("CLICKABLE TILES:\n", data.toString())
       setClickableTiles(data)
     })
 
     socket.on("valid_location/cities", data => {
-      console.log("CLICKABLE TILES:\n" + data)
+      console.log("CLICKABLE TILES:\n", data)
       setClickableTiles(data)
     })
 
     socket.on("valid_location/settlements", data => {
-      console.log("CLICKABLE TILES:\n" + data)
+      console.log("CLICKABLE TILES:\n", data)
       setClickableTiles(data)
     })
 
     socket.on("player_resources", data => {
-      console.log("PLAYER RESOURCES:\n" + data)
+      console.log("PLAYER RESOURCES:\n", data)
       setResources(data)
     })
 

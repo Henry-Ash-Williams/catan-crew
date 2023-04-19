@@ -239,7 +239,8 @@ io.on('connection', socket => {
     })
 
     socket.on("available_actions", (player_info) => {
-        fetch('http://localhost:8000/available_actions', {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/available_actions?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
