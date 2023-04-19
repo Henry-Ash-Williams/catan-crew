@@ -99,6 +99,7 @@ class Game:
 
     def dice_roll(self):
         self.dice = random.randint(1, 6) + random.randint(1, 6)
+        #print(f"Dice rolled. Result: {self.dice}")
         return self.dice
 
     def print_current_player(self):
@@ -191,8 +192,6 @@ class Game:
             self.do_turn()
             table = self.display_game_state()
             c.print(table, justify="center")
-            input()
-            # input("Breakpoint")
             c.print(
                 Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center"
             )

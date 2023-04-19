@@ -1,24 +1,21 @@
-// const express = require('express');
-// const cors = require('cors');
-// const app = express();
-
-// app.use(cors());
-
-// app.get('/api/number', (req, res) => {
-//   const number = Math.floor(Math.random() * 100);
-//   res.json({ "number": number }); // this line passes the number to the client as JSON
-// });
-
-// app.listen(3001, () => {
-//   console.log('Server listening on port 3001');
-// });
-
-
 import express from "express"; // not {} because it's not a named export
 import { createServer } from "http";
 import  cors  from "cors";
 import { Server } from "socket.io";
 import fetch from "node-fetch";
+
+// dictionary to store <player color, socket id>
+// Now assuming that 1st: red, 2nd: blue, 3rd: green, 4th: yellow (may change)
+const player_color_to_socket_id = {
+    "red": "",
+    "blue": "",
+    "green": "",
+    "yellow": ""
+}
+
+const color = ["red", "blue", "green", "yellow"];
+let count_person = 0;
+
 
 const app = express();
 const server = createServer(app);
@@ -84,6 +81,17 @@ io.on('connection', socket => {
     //         });
     //     })
 
+
+    // fixme - set at max 4 players, now is accepting the fith
+    socket.on("join_room", () => {
+        // map player color to socket id
+        player_color_to_socket_id[color[count_person]] = socket.id;
+        count_person += 1;
+        io.emit("join_room", JSON.stringify(player_color_to_socket_id));
+        console.log(player_color_to_socket_id)
+    })
+
+
     socket.on("add_player", (playerInfo) => {
         fetch('http://localhost:8000/add_player', {
         method: 'POST',
@@ -95,11 +103,21 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("add_player", data);
         });
     })
 
-    socket.on("start_game", (game_config) => {
+    socket.on("start_game", () => {
+        // todo need to make the JSON for game_config
+        // not from client, but generate from socket server
+        const game_config = {
+            "num_of_human_player": count_person, 
+            "num_of_ai_player": 4 - count_person, 
+            "color_of_player": ["red", "blue", "green", "yellow"], 
+            "board_size": 3
+        }
+
+
         fetch('http://localhost:8000/start_game', {
             method: 'POST',
             headers: {
@@ -110,7 +128,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("start_game", data);
         });
     })
 
@@ -135,7 +153,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("rool_dice", data);
         });
     })
 
@@ -150,7 +168,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("end_turn", data);
         });
     })
 
@@ -165,7 +183,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("board_state", data);
         });
     })
 
@@ -180,7 +198,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("updated_player_resource", data);
         });
     })
 
@@ -195,7 +213,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("player_resources", data);
         });
     })
 
@@ -210,7 +228,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("available_actions", data);
         });
     })
     
@@ -227,7 +245,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("valid_location/roads", data);
         });
     })
     
@@ -242,22 +260,22 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("valid_location/cities", data);
         });
     })
 
     socket.on("valid_location/settlements", (req) => {
-        fetch('http://localhost:8000/valid_location/settlements', {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/valid_location/settlements?' + queryParams, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Game-Config': JSON.stringify(req)
             }
         })
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("valid_location/settlements", data);
         });
     })
 
@@ -273,7 +291,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("build/roads", data);
         });
     })
     
@@ -288,7 +306,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("build/cities", data);
         });
     })
 
@@ -303,7 +321,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("build/settlements", data);
         });
     })
     
@@ -319,7 +337,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("valid_robber_locations", data);
         });
     })
 
@@ -334,7 +352,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("num_discard_resource_card", data);
         });
     })
 
@@ -349,7 +367,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("discard_resource_card", data);
         });
     })
 
@@ -364,7 +382,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("place_robber", data);
         });
     })
 
@@ -379,7 +397,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("buy_dev_card", data);
         });
     })
 
@@ -394,7 +412,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("visible_victory_points",data);
         });
     })
 
@@ -409,7 +427,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("visible_victory_points", data);
         });
     })
 
@@ -424,7 +442,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit(data);
+            io.emit("victory_points", data);
         });
     })
     

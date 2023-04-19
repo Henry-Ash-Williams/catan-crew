@@ -52,7 +52,7 @@ class Player:
         player.built_roads = []
 
         # TODO: calculate actual road length
-        player.road_length = random.randint(5, 10)
+        player.road_length = 0
         player.knights_played = 0
 
         player.resources = Resources()
@@ -179,6 +179,7 @@ class Player:
         player.game.add_road(location, road)
         road.location = location
         player.built_roads.append(road)
+        player.road_length += 1
 
     # def play_knight(player, location):
     #    player.development_cards["knight"] -= 1
@@ -227,6 +228,7 @@ class Player:
         paths = (
             set(adjacent_to_settlement) | set(adjacent_to_city) | set(adjacent_to_road)
         )
+        paths &= player.game.board.land_paths
         path_locations = {path.location for path in paths}
         return list(path_locations & player.game.board.available_path_locations)
 

@@ -215,7 +215,7 @@ class Path:
         #return {'location': path.board.old_system_path_loc[path.location], 'endpoints': [intersection.location \
         #for intersection in path.neighboring_intersections()], 'road': path.road}
         return {'type': 'PathTile', 'location': path.board.old_system_path_loc[path.location], \
-                'direction': path.type+1, 'owner': path.road.owner if path.road else None}
+                'direction': path.type+1, 'owner': path.road.owner.color if path.road else None}
 
 class Road:
     def __init__(road, owner):
@@ -255,7 +255,7 @@ class Road:
         return f'Road{road.path.location}(owner={road.owner}, endpoints={[i.location for i in road.path.neighboring_intersections()]})'
 
     def to_json(road):
-        return {'owner': road.owner}
+        return {'owner': road.owner.color}
 
 
 
@@ -359,10 +359,11 @@ class Intersection:
         return f'Intersection(location={intersection.location})'
 
     def to_json(intersection):
+        present_path = [(i in intersection.board.land_paths) for i in intersection.neighboring_paths()] + [False]
         return {'type': 'Intersection', 'location': intersection.board.old_system_intersection_loc[intersection.location], \
-                'owner': intersection.settlement.owner if intersection.settlement else None, \
-                'isCity': intersection.settlement.distribution_rate==1 if intersection.settlement else False, \
-                'direction': 2-intersection.type}
+                'owner': intersection.settlement.owner.color if intersection.settlement else None, \
+                'isCity': intersection.settlement.distribution_rate==2 if intersection.settlement else False, \
+                'direction': intersection.type*4 + present_path.index(False) + 1}
 
 
 class Settlement:
@@ -415,7 +416,7 @@ class Settlement:
             (f', location={settlement.intersection.location})' \
                  if settlement.intersection else ')')
 
-    def to_json(settlement): return {'owner': settlement.owner, 'distribution_rate': settlement.distribution_rate}
+    def to_json(settlement): return {'owner': settlement.owner.color, 'distribution_rate': settlement.distribution_rate}
 
 
 class City(Settlement):
@@ -515,7 +516,8 @@ class Board:
 
         board.land_intersections = {intersection for intersection in board.intersections if \
                                     any(isinstance(tile,LandTile) for tile in intersection.neighboring_tiles())}
-        board.available_path_locations = {path.location for path in board.paths if len(set(path.neighboring_intersections())&board.land_intersections)==2}
+        board.land_paths = {path for path in board.paths if len(set(path.neighboring_intersections())&board.land_intersections)==2}
+        board.available_path_locations = {path.location for path in board.land_paths}
         board.robber_location = random.choice(list(board.desert_locations))
 
         #print(json.dumps(board,cls=BoardEncoder,indent=4))
@@ -703,34 +705,10 @@ class Board:
         board.tiles[location] = SeaTile(board, location)
         return board.tiles[location]
 
-    def to_json(self):
-        board = self
-        """
-        json = {
-            "size": self.size,
-            "directions": self.directions,
-            "tiles": []
-        }
-
-        for tile in self.tiles + self.paths + self.intersections:
-            if isinstance(tile, DesertTile):
-                json["tiles"].append({
-                    "type": "DesertTile",
-                    "location": tile.location,
-                    "number_token": tile.number_token
-                })
-            elif isinstance(tile, Path):
-                json["tiles"].append({
-                    "type": "PathTile",
-                    "location": tile.location,
-                    "direction": tile.direction
-                })
-            elif isinstance(tile, Intersection):
-                json["tiles"].append()
-        """
-        tiles = board.tiles + board.paths + board.intersections
+    def to_json(board):
+        tiles = board.tiles + list(board.land_paths) + list(board.land_intersections)
         tiles = [t.to_json() for t in tiles]
-        tiles2 = [None]*board.old_system_cell_count
+        tiles2 = [None] * board.old_system_cell_count
         for t in tiles: tiles2[t['location']] = t
         for i in range(len(tiles2)):
             if tiles2[i] is None: tiles2[i] = {'type': 'null', 'location': i}
