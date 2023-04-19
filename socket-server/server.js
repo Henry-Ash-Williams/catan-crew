@@ -93,13 +93,16 @@ io.on('connection', socket => {
 
 
     socket.on("add_player", (playerInfo) => {
+        console.log(playerInfo)
         fetch('http://localhost:8000/add_player', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
+        
         body: JSON.stringify(playerInfo)
         })
+        
         .then(response => response.json())
         .then(data => {
             console.log(data);

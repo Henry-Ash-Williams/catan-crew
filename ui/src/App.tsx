@@ -34,11 +34,10 @@ const socket = io('http://localhost:3001');
 
 function App() {
   const game_idR = useRef('');
-  const board_stateR = useRef('')
   const [menuActive, setMenuActive] = useState<boolean>(true)
   const [hasJoined, setHasJoined] = useState(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false)
-  const [gameID, setGameID] = useState("GAME ID")
+  // const [gameID, setGameID] = useState("GAME ID")
   const [players, setPlayers] = useState<Players>({"red":"AI","blue":"AI","green":"AI","yellow":"AI"})
   const [socketID, setSocketID] = useState<string>("")
   const [idToPlayer, setIdToPlayer] = useState<Map<string, string>>(new Map<string, string>())
@@ -54,18 +53,19 @@ function App() {
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
   let gameID = ""
   // Type can be "roads", "cities", "settlements"
-  const getClickableTiles = (gameID: string, player: string, type: string) => {
+  const getClickableTiles = (type: string) => {
     const json = {
-      game_id: gameID,
-      player_colour: idToPlayer.get(player)
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
     }
     console.log("JSON:\n" + json.game_id + "\n" + json.player_colour)
-    socket.emit("valid_location/" + type, json)
+    
+    socket.emit("valid_location/" + type,JSON.stringify(json))
   }
 
   useEffect(() => {
     socket.on("valid_location/roads", data => {
-      console.log("CLICKABLE TILES:\n" + data)
+      console.log("CLICKABLE TILES:\n" + data.toString())
       setClickableTiles(data)
     })
 
@@ -101,10 +101,11 @@ function App() {
       game_idR.current = data.game_id;
       setBoardState(data.board_state)
       setGameStarted(!gameStarted);
-      console.log(game_idR.current)
-      console.log(boardState)
+      // console.log(game_idR.current)
+      // console.log(boardState)
       // console.log(data.game_id)
       // console.log(gameID);
+      getClickableTiles("settlements")
 
     })
 
@@ -117,12 +118,11 @@ function App() {
     }
   })
 
-  const getPlayerResources = (gameID: string, player: string) => {
+  const getPlayerResources = () => {
     const json = {
-      game_id: gameID,
-      player_colour: idToPlayer.get(player)
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
     }
-    idToPlayer.get(player)
     socket.emit("player_resources", json)
   }
 
