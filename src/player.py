@@ -26,8 +26,6 @@ from resources import (
     monopoly,
 )
 
-import random
-
 
 def join(ll):
     return [i for k in ll for i in k]

@@ -206,12 +206,15 @@ def get_valid_locations(
 
 @app.get("/current_player")
 def get_current_player(game_id: str):
+    """
+    Get the player whose turn it is
+    """
     try:
         game = games[game_id]
     except KeyError:
         return {"error": "game not found"}
 
-    return {"player_colour": game.current_player}
+    return {"player_colour": game.current_player.color}
 
 
 @app.post("/build/{infrastructures}")
