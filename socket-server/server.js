@@ -467,7 +467,20 @@ io.on('connection', socket => {
         });
     })
     
-    // Leaderboard - todo
+    socket.on("leaderboard", (req) => {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/leaderboard?' + queryParams, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            io.emit("leaderboard", data);
+        });
+    })
 
 
   socket.on('disconnect', () => {
