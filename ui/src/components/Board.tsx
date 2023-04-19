@@ -3,7 +3,7 @@ import { Container } from "@pixi/react";
 import { IntersectionComponent } from "./Intersection";
 import { PathComponent } from "./Path";
 import { ResourceTileComponent } from "./Resource";
-import { KnightComponent } from "./knight";
+import { KnightComponent } from "./Knight";
 import { useState } from "react";
 
 interface BoardComponentProps {

@@ -33,10 +33,12 @@ interface Resources{
 const socket = io('http://localhost:3001');
 
 function App() {
+  const game_idR = useRef('');
+  const board_stateR = useRef('')
   const [menuActive, setMenuActive] = useState<boolean>(true)
   const [hasJoined, setHasJoined] = useState(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false)
-  const [gameID, setGameID] = useState<string>("")
+  const [gameID, setGameID] = useState("GAME ID")
   const [players, setPlayers] = useState<Players>({"red":"AI","blue":"AI","green":"AI","yellow":"AI"})
   const [socketID, setSocketID] = useState<string>("")
   const [idToPlayer, setIdToPlayer] = useState<Map<string, string>>(new Map<string, string>())
@@ -48,7 +50,6 @@ function App() {
     height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
     width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16)
   })
-  const cardContainer = useRef(null);
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
  
@@ -66,61 +67,22 @@ function App() {
       console.log("CLICKABLE TILES:\n" + data)
       setClickableTiles(data)
     })
-    return () => {
-      socket.off("valid_location/roads")
-    }
-  })
 
-  useEffect(() => {
     socket.on("valid_location/cities", data => {
       console.log("CLICKABLE TILES:\n" + data)
       setClickableTiles(data)
     })
-    return () => {
-      socket.off("valid_location/cities")
-    }
-  })
 
-  useEffect(() => {
     socket.on("valid_location/settlements", data => {
       console.log("CLICKABLE TILES:\n" + data)
       setClickableTiles(data)
     })
-    return () => {
-      socket.off("valid_location/settlements")
-    }
-  })
 
-
-
-  const getPlayerResources = (gameID: string, player: string) => {
-    const json = {
-      game_id: gameID,
-      player_colour: idToPlayer.get(player)
-    }
-    idToPlayer.get(player)
-    socket.emit("player_resources", json)
-  }
-
-  useEffect(() => {
     socket.on("player_resources", data => {
       console.log("PLAYER RESOURCES:\n" + data)
       setResources(data)
     })
-    return () => {
-      socket.off("player_resources")
-    }
-  })
 
-
-  const handleJoinGame = () => {
-    socket.emit("join_room")
-    
-    setHasJoined(!hasJoined);
-  }
-
-  useEffect(() => {
-    // just a listener
     socket.on("join_room", data => {
       console.log("Joining room...")
       const p = JSON.parse(data)
@@ -132,38 +94,48 @@ function App() {
       idToPlayer.set(p.green, "green")
       idToPlayer.set(p.yellow, "yellow")  
       setIdToPlayer(idToPlayer)
+    })
+
+    socket.on("start_game", data => {
+      game_idR.current = data.game_id;
+      setBoardState(data.board_state)
+      setGameStarted(!gameStarted);
+      console.log(game_idR.current)
+      console.log(boardState)
+      // console.log(data.game_id)
+      // console.log(gameID);
+
+    })
 
     return () => {
-      socket.off("join_room")
-    }})
+      socket.off("valid_location/roads");
+      socket.off("valid_location/cities");
+      socket.off("valid_location/settlements");
+      socket.off("player_resources");
+      socket.off('start_game')
+    }
   })
-  
+
+  const getPlayerResources = (gameID: string, player: string) => {
+    const json = {
+      game_id: gameID,
+      player_colour: idToPlayer.get(player)
+    }
+    idToPlayer.get(player)
+    socket.emit("player_resources", json)
+  }
+
+  const handleJoinGame = () => {
+    socket.emit("join_room")
+    setHasJoined(!hasJoined);
+  }
+
   const handleStartGame = () => {
       console.log('Starting the game...')
       socket.emit("start_game") 
   }
   
-  useEffect(() => {
-    socket.on("start_game", data => {
-      setBoardState(data.board_state)
-      // console.log(data.game_id)
-      setGameID(data.game_id)
-      // console.log(typeof(data.game_id))
-      // console.log(gameID)
-      setGameStarted(!gameStarted)
-      // const json = {
-      //   game_id: data.game_id,
-      //   player_colour: idToPlayer.get(socket.id)
-      // }
-      // console.log("JSON:\n" + json.game_id + "\n" + json.player_colour)
-      // console.log(boardState)
-      // getPlayerResources(data.game_id, socketID)
-    })
 
-    return () => {
-      socket.off("start_game")
-    }
-  })
   // const [boardPosition, setBoardPosition] = useState({ x: 0, y:0});
     
   useEffect(()=>{
