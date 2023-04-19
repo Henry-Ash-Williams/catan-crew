@@ -157,6 +157,8 @@ io.on('connection', socket => {
         });
     })
 
+
+
     socket.on("end_turn", (player_info) => {
         fetch('http://localhost:8000/end_turn', {
             method: 'GET',
@@ -169,6 +171,22 @@ io.on('connection', socket => {
         .then(data => {
             console.log(data);
             io.emit("end_turn", data);
+        });
+    })
+
+    // todo - current player
+    socket.on("current_player", (req) => {
+        const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/current_player?' + queryParams, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            io.emit("current_player", data);
         });
     })
 
