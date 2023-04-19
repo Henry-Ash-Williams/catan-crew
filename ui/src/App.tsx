@@ -49,21 +49,64 @@ function App() {
     width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16)
   })
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
-  const [dev]
+  const [devcards, setDevCards] = useState()
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
- 
-  const getClickableTiles = (gameID: string, player: string, type: string) => {
+  // Type can be "roads", "cities", "settlements"
+  
+  const getClickableTiles = (type: string) => {
     const json = {
-      game_id: gameID,
-      player_colour: idToPlayer.get(player)
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
     }
     console.log("JSON:\n" + json.game_id + "\n" + json.player_colour)
+    
     socket.emit("valid_location/" + type, json)
   }
 
+  const getCurrentPlayer = () => {
+    const json = {
+      game_id: game_idR.current,
+    }
+    socket.emit("current_player", json)
+  }
+
+  const getAvailableActions = () => {
+    const json = {
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
+    }
+    socket.emit("available_actions", json)
+  }
+
+  const endTurn = () => {
+    const json = {
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
+    }
+    socket.emit("end_turn", json)
+  }
+
   useEffect(() => {
+    socket.on("end_turn", data => {
+      console.log("END TURN:\n" + data)
+      // todo: add logic to check end turn is valid
+      // todo: on confirmation, make all actions unavailable
+      getCurrentPlayer()
+    })
+
+    socket.on("current_player", data => {
+      console.log("CURRENT PLAYER:\n" + data)
+      if(data === idToPlayer.get(socketID)){
+        getAvailableActions()
+      }
+    })
+
+    socket.on("available_actions", data => {
+      console.log("AVAILABLE ACTIONS:\n" + data)
+    })
+    
     socket.on("valid_location/roads", data => {
-      console.log("CLICKABLE TILES:\n" + data)
+      console.log("CLICKABLE TILES:\n" + data.toString())
       setClickableTiles(data)
     })
 
@@ -99,9 +142,17 @@ function App() {
       game_idR.current = data.game_id;
       setBoardState(data.board_state)
       setGameStarted(!gameStarted);
+      // console.log(game_idR.current)
+      // console.log(boardState)
+      // console.log(data.game_id)
+      // console.log(gameID);
+      // getClickableTiles("settlements")
+      getCurrentPlayer()
     })
 
     return () => {
+      socket.off("current_player");
+      socket.off("available_actions")
       socket.off("valid_location/roads");
       socket.off("valid_location/cities");
       socket.off("valid_location/settlements");
@@ -110,12 +161,11 @@ function App() {
     }
   })
 
-  const getPlayerResources = (gameID: string, player: string) => {
+  const getPlayerResources = () => {
     const json = {
-      game_id: gameID,
-      player_colour: idToPlayer.get(player)
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
     }
-    idToPlayer.get(player)
     socket.emit("player_resources", json)
   }
 
@@ -143,7 +193,7 @@ function App() {
    return () => {
     window.removeEventListener('resize', handleResize)
    }
-  })
+  },[])
 
   
 

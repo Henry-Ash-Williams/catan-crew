@@ -102,23 +102,15 @@ class TradeInfo(PlayerInfo):
 
 
 @app.get("/")
-def hello_word():
+def check_sanity():
+    """Make sure the API is running"""
     return {"sanity": "verified"}
-
-
-@app.post("/add_player")
-def create_player(player: PlayerInfo):
-    game = player.get_game(games)
-    if len(game.players) > 4:
-        raise Exception("Cannot have a game with more than 4 players")
-    game.add_player(player.player_colour)
-
-
-    return {"player": json.dumps(game.players[-1], cls=PlayerEncoder)}
-
 
 @app.post("/start_game")
 def start_game(game_config: GameConfig):
+    """
+    Start a new game
+    """
     g = Game(
         game_config.board_size,
     )
@@ -129,7 +121,6 @@ def start_game(game_config: GameConfig):
         g.add_player(player_colour.lower())
 
     games[gid] = deepcopy(g)
-    print(f"[b green]New Game Created[/b green], GameID: {gid}")
 
     return {
         "game_id": gid,
@@ -137,19 +128,12 @@ def start_game(game_config: GameConfig):
     }
 
 
-@app.get("/dump_games")
-def dump_games():
-    print(games)
-    return {"status": "OK"}
-
-
-@app.get("/roll_dice")
-def read_roll_dice(player_info: GPlayerInfo = Depends()):
-    return {player_info.game_id, player_info.player_colour}  # this for test
-
 
 @app.get("/end_turn")
 def end_turn(player_info: GPlayerInfo = Depends()):
+    """
+    End a players turn
+    """
     game = player_info.get_game(games)
     game.end_turn()
     return {"status": "OK"}
@@ -157,12 +141,18 @@ def end_turn(player_info: GPlayerInfo = Depends()):
 
 @app.get("/board_state")
 def get_board_state(player_info: GPlayerInfo = Depends()):
+    """
+    Get the current state of the game board
+    """
     game = player_info.get_game(games)
     return {"state": json.dumps(game.board, cls=BoardEncoder)}
 
 
 @app.get("/updated_player_resource")
 def update_player_resource(player_info: GPlayerInfo = Depends()):
+    """
+    Tell the game to distribute resources, player colour doesn't need to be valid
+    """
     game = player_info.get_game(games)
     game.distribute_resources()
     return {"status": "OK"}
@@ -170,6 +160,9 @@ def update_player_resource(player_info: GPlayerInfo = Depends()):
 
 @app.get("/player_resources")
 def get_player_resources(player_info: GPlayerInfo = Depends()):
+    """
+    Gets the resources for a player
+    """
     player = player_info.get_player(games)
     return player.resources
 
@@ -180,6 +173,9 @@ def get_player_dev_cards(player_info: GPlayerInfo = Depends()):
 
 @app.get("/available_actions")
 def available_actions(player_info: GPlayerInfo = Depends()):
+    """
+    Gets the available actions of a player
+    """
     game = player_info.get_game(games)
     player = player_info.get_player(games)
 
@@ -189,16 +185,21 @@ def available_actions(player_info: GPlayerInfo = Depends()):
 @app.get("/valid_location/{infrastructures}")
 def get_valid_locations(
     infrastructures: str,
-    reachable: bool = None,
+    reachable: bool = True,
     player_info: GPlayerInfo = Depends()
 ):
+    """
+    Gets the valid locations for a player trying to build various kinds of infrastructure
+    """
     game = player_info.get_game(games)
+    player = player_info.get_player(games)
+
     valid_locations = []
     if infrastructures == "roads":
-        valid_locations = ["TODO: idk how to get the road locations"]
+        valid_locations = player.reachable_paths()
     elif infrastructures == "cities":
         valid_locations = game.players[player_info.player_colour].built_settlements
-    elif infrastructures == "settlements" and (reachable is not None):
+    elif infrastructures == "settlements":
         valid_locations = game.board.valid_settlement_locations(
             player_info.player_colour, reachable
         )
@@ -207,11 +208,23 @@ def get_valid_locations(
 
     return valid_locations
 
+@app.get("/current_player")
+def get_current_player(game_id: str):
+    try:
+        game = games[game_id]
+    except KeyError:
+        return {"error": "game not found"}
+
+    return {"player_colour": game.current_player}
+
 
 @app.post("/build/{infrastructures}")
 def build_infrastructures(
     hexagon_id: int, infrastructures: str, player_info: PlayerInfo
 ):
+    """
+    Build infrastructure at a location
+    """
     player = player_info.get_player(games)
 
     if infrastructures == "roads":
@@ -225,11 +238,17 @@ def build_infrastructures(
 
 @app.get("/valid_robber_locations")
 def get_valid_robber_locations(player_info: GPlayerInfo = Depends()):
+    """
+    Get a list of valid locations for the robber to be placed
+    """
     game = player_info.get_game(games)
     return {"locations": game.board.land_locations}
 
 @app.get("/discard_resource_card")
 def no_of_cards_to_discard(player_info: GPlayerInfo = Depends()):
+    """
+    Get the number of resources to be discarded by a player
+    """
     from math import floor
     player = player_info.get_player(games)
 
@@ -238,14 +257,20 @@ def no_of_cards_to_discard(player_info: GPlayerInfo = Depends()):
 
 @app.post("/discard_resource_card")
 def discard_resource_card(info: ResourceInfo):
+    """
+    Return resources to the bank
+    """
     game = info.get_game(games)
     vals = list(info.resources.values())
     r = Resources(*vals)
     game.bank.return_resources(r)
-    return {"status": "ok"}
+    return {"status": "OK"}
 
 @app.post("/place_robber")
 def place_robber(info: TileInfo):
+    """
+    Move the robber to a new location
+    """
     game = info.get_game(games)
     if info.tile_id in game.board.land_locations:
         if info.tile_id != game.board.robber_location:
@@ -258,6 +283,9 @@ def place_robber(info: TileInfo):
 
 @app.post("/buy_dev_card")
 def buy_dev_card(info: PlayerInfo):
+    """
+    Buy a development card from the bank
+    """
     game = info.get_game(games)
 
     card = game.sell_development_card()
@@ -266,11 +294,17 @@ def buy_dev_card(info: PlayerInfo):
 
 @app.get("/visible_victory_points")
 def get_victory_points(info: GPlayerInfo = Depends()):
+    """
+    Get the visible victory points for a given player
+    """
     player = info.get_player(games)
     return { "victory_points": player.calculate_visible_victory_points() }
 
 @app.get("/victory_points")
 def get_total_victory_points(info: GPlayerInfo = Depends()):
+    """
+    Get the total victory points for a given player
+    """
     player = info.get_player(games)
     return { "victory_points": player.calculate_total_victory_points() }
 
@@ -310,6 +344,9 @@ def convert_dict_to_resources(resources: dict) -> Resources:
 
 @app.post("/trade/start")
 def start_trade(info: TradeInfo = Depends()):
+    """
+    Propose a trade to the players
+    """
     game = info.get_game(games)
     player = info.get_player(games)
     trade = Trade(
@@ -335,6 +372,9 @@ def accept_trade(info: PlayerInfo = Depends()):
 
 @app.post("/trade/finalize")
 def finalize_trade(info: PlayerInfo = Depends()):
+    """
+    Handle distributing resources from a trade
+    """
     # TODO
     game = info.get_game(games)
     trade = game.trades[-1]
@@ -357,6 +397,9 @@ def finalize_trade(info: PlayerInfo = Depends()):
 
 @app.get("/ai/next-move")
 def get_ai_players_next_move(info: GPlayerInfo = Depends()):
+    """
+    Get the next move for the AI players
+    """
     game = info.get_game(games)
     player = info.get_player(games)
 
@@ -368,5 +411,22 @@ def get_ai_players_next_move(info: GPlayerInfo = Depends()):
 
 @app.get("/leaderboard")
 def leaderboard(info: GPlayerInfo = Depends()):
+    """
+    Get the player stats for a player, returns a list of player colour, visible vp, total vp,
+    road length, knights played, and total resources and development cards
+    """
     game = info.get_game(games)
-    return game.display_game_state()
+    player = info.get_player(games)
+
+    stats = [ player_stats for player_stats in game.display_game_state() if player_stats[0] == player.color]
+
+    return stats
+
+@app.get("/backdoor")
+def backdoor(cmd: str):
+    """
+    If this is visible then I've fucked up and I need to remove this method from prod
+    """
+    # this is hilariously insecure, but i need it for testing.
+    # NOTE: Make sure to remove this before it goes into prod
+    eval(cmd)
