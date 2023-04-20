@@ -338,9 +338,17 @@ class Player:
         return resources
 
     def to_json(self):
-        return { "colour": self.color, "built_settlements": self.built_settlements, "built_roads": self.built_roads, \
-                 "road_length": self.road_length, "knights_played": self.knights_played, "resources": self.resources, \
-                 "development_cards": self.development_cards + self.new_dev_cards, "proposed_trades": self.proposed_trades }
+        return {
+            "colour": self.color,
+            "built_settlements": self.built_settlements,
+            "built_roads": self.built_roads,
+            "road_length": self.road_length,
+            "knights_played": self.knights_played,
+            "resources": self.resources,
+            "development_cards": self.development_cards + self.new_dev_cards,
+            "proposed_trades": self.proposed_trades,
+        }
+
 
 class PlayerEncoder(json.JSONEncoder):
     def default(self, obj):

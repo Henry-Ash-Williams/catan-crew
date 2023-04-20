@@ -49,7 +49,6 @@ class PlayerInfo(BaseModel):
         ][0]
 
 
-
 class GameConfig(BaseModel):
     num_of_human_player: int
     num_of_ai_player: int
@@ -100,12 +99,13 @@ class TradeInfo(PlayerInfo):
     accepted_by: list
 
 
-
 @app.get("/")
 def check_sanity():
     """Make sure the API is running"""
     import sys
+
     return {"sanity": "verified", "version": sys.version}
+
 
 @app.post("/start_game")
 def start_game(game_config: GameConfig):
@@ -127,7 +127,6 @@ def start_game(game_config: GameConfig):
         "game_id": gid,
         "board_state": board_state,
     }
-
 
 
 @app.get("/end_turn")
@@ -167,10 +166,12 @@ def get_player_resources(player_info: GPlayerInfo = Depends()):
     player = player_info.get_player(games)
     return player.resources
 
+
 @app.get("/player_dev_cards")
 def get_player_dev_cards(player_info: GPlayerInfo = Depends()):
     player = player_info.get_player(games)
     return player.development_cards
+
 
 @app.get("/available_actions")
 def available_actions(player_info: GPlayerInfo = Depends()):
@@ -185,9 +186,7 @@ def available_actions(player_info: GPlayerInfo = Depends()):
 
 @app.get("/valid_location/{infrastructures}")
 def get_valid_locations(
-    infrastructures: str,
-    reachable: bool = True,
-    player_info: GPlayerInfo = Depends()
+    infrastructures: str, reachable: bool = True, player_info: GPlayerInfo = Depends()
 ):
     """
     Gets the valid locations for a player trying to build various kinds of infrastructure
@@ -208,6 +207,7 @@ def get_valid_locations(
         raise Exception("Invalid path")
 
     return valid_locations
+
 
 @app.get("/current_player")
 def get_current_player(game_id: str):
@@ -240,6 +240,7 @@ def build_infrastructures(
 
     return {"status": "OK"}
 
+
 @app.get("/valid_robber_locations")
 def get_valid_robber_locations(player_info: GPlayerInfo = Depends()):
     """
@@ -248,15 +249,21 @@ def get_valid_robber_locations(player_info: GPlayerInfo = Depends()):
     game = player_info.get_game(games)
     return {"locations": game.board.land_locations}
 
+
 @app.get("/discard_resource_card")
 def no_of_cards_to_discard(player_info: GPlayerInfo = Depends()):
     """
     Get the number of resources to be discarded by a player
     """
     from math import floor
+
     player = player_info.get_player(games)
 
-    return {"no_of_cards_to_discard": floor(player.resources.total() / 2) if player.resources.total() > 7 else 0}
+    return {
+        "no_of_cards_to_discard": floor(player.resources.total() / 2)
+        if player.resources.total() > 7
+        else 0
+    }
 
 
 @app.post("/discard_resource_card")
@@ -269,6 +276,7 @@ def discard_resource_card(info: ResourceInfo):
     r = Resources(*vals)
     game.bank.return_resources(r)
     return {"status": "OK"}
+
 
 @app.post("/place_robber")
 def place_robber(info: TileInfo):
@@ -294,8 +302,8 @@ def buy_dev_card(info: PlayerInfo):
 
     card = game.sell_development_card()
 
-
     return {"card": card}
+
 
 @app.get("/visible_victory_points")
 def get_victory_points(info: GPlayerInfo = Depends()):
@@ -303,7 +311,8 @@ def get_victory_points(info: GPlayerInfo = Depends()):
     Get the visible victory points for a given player
     """
     player = info.get_player(games)
-    return { "victory_points": player.calculate_visible_victory_points() }
+    return {"victory_points": player.calculate_visible_victory_points()}
+
 
 @app.get("/victory_points")
 def get_total_victory_points(info: GPlayerInfo = Depends()):
@@ -311,7 +320,8 @@ def get_total_victory_points(info: GPlayerInfo = Depends()):
     Get the total victory points for a given player
     """
     player = info.get_player(games)
-    return { "victory_points": player.calculate_total_victory_points() }
+    return {"victory_points": player.calculate_total_victory_points()}
+
 
 def convert_dict_to_resources(resources: dict) -> Resources:
     """
@@ -340,11 +350,10 @@ def convert_dict_to_resources(resources: dict) -> Resources:
 
     # remove all entries from dictionary where keys aren't
     # instances of ResourceKind object
-    for key,value in resources.keys():
-        if not isinstance(key,ResourceKind):
+    for key, value in resources.keys():
+        if not isinstance(key, ResourceKind):
             del resources[key]
     return Resources(resources)
-
 
 
 @app.post("/trade/start")
@@ -361,6 +370,7 @@ def start_trade(info: TradeInfo = Depends()):
         info.offered_to,
     )
     game.add_trade(trade)
+
 
 @app.post("/trade/accept")
 def accept_trade(info: PlayerInfo = Depends()):
@@ -385,9 +395,13 @@ def finalize_trade(info: PlayerInfo = Depends()):
     trade = game.trades[-1]
 
     # Find players that match the given player color
-    trade_partner = [player for player in game.players if player.color==info.player_colour]
-    if len(trade_partner)==0:
-        return {"status": f"Error: could not find player with color f{info.player_colour}"}
+    trade_partner = [
+        player for player in game.players if player.color == info.player_colour
+    ]
+    if len(trade_partner) == 0:
+        return {
+            "status": f"Error: could not find player with color f{info.player_colour}"
+        }
 
     # If someone matches the given color, that's the chosen trade partner
     trade_partner = trade_partner[0]
@@ -399,6 +413,7 @@ def finalize_trade(info: PlayerInfo = Depends()):
     # Give resources recipients
     trade_partner.resources += outgoing
     game.current_player.resources += incoming
+
 
 @app.get("/ai/next-move")
 def get_ai_players_next_move(info: GPlayerInfo = Depends()):
@@ -413,6 +428,7 @@ def get_ai_players_next_move(info: GPlayerInfo = Depends()):
 
     action_labels = game.get_available_actions(player)
     return player.prompt_action(action_labels)
+
 
 @app.get("/roll_dice")
 def read_roll_dice(player_info: GPlayerInfo = Depends()):
@@ -429,6 +445,7 @@ def leaderboard(info: GPlayerInfo = Depends()):
     game = info.get_game(games)
 
     return game.display_game_state()
+
 
 @app.get("/backdoor")
 def backdoor(cmd: str):

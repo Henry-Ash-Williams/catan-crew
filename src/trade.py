@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 class Trade:
     def __init__(self, sender, resources_offered, resources_requested, proposees):
         self.sender = sender
