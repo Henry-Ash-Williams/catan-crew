@@ -25,17 +25,17 @@ function ResourceTileComponent(props: ResourceTileProps){
     let tile : React.ReactElement[] = []
 
     if (props.resource == "brick") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/brick/dirt_N.png"}interactive={true} onclick={handleClick} />)
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/brick/dirt_N.png"} eventMode='static' onclick={handleClick} />)
     } else if (props.resource == "grain") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/grain/building_farm_N.png"}interactive={true} onclick={handleClick} />)
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/grain/building_farm_N.png"} eventMode='static' onclick={handleClick} />)
     } else if (props.resource == "lumber") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/lumber/grass_forest_N.png"}interactive={true} onclick={handleClick} />)
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/lumber/grass_forest_N.png"} eventMode='static' onclick={handleClick} />)
     } else if (props.resource == "ore") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/ore/stone_hill_N.png"}interactive={true} onclick={handleClick} />)
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/ore/stone_hill_N.png"} eventMode='static' onclick={handleClick} />)
     } else if (props.resource == "wool") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/wool/building_sheep_N.png"}interactive={true} onclick={handleClick} />)
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/wool/building_sheep_N.png"} eventMode='static' onclick={handleClick} />)
     } else if (props.resource == "desert") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/desert/sand_rocks_N.png"} interactive={true} onclick={handleClick} />)
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/desert/sand_rocks_N.png"} eventMode='static' onclick={handleClick} />)
     } else if (props.resource == "sea") {
         tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/sea/water_N.png"}/>)
     }

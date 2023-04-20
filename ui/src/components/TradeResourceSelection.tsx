@@ -46,8 +46,8 @@ export default function TradeResourceSelection(props: TradeResourceSelectionProp
                         <Sprite image={resource[1]} width={props.width * 0.035} height={props.height * 0.06} x={props.width * 0.007} y={props.height * 0.03}/>
                         <Container y={props.height * 0.12}>
                             <Text x={props.width * 0.02} y={props.height * -0.005} text={workingResources[resource[0]]}/>
-                            <Sprite image={'/assets/trade/arrowBlue_left.png'} interactive={true} onclick={()=>{handleArrowLeft(resource[0])}} alpha={workingResources[resource[0]] == 0 ? 0.5 : 1}/>
-                            <Sprite x={props.width * 0.036} image={'/assets/trade/arrowBlue_right.png'} interactive={true} onclick={()=>{handleArrowRight(resource[0])}} alpha={props.resources && workingResources[resource[0]] === props.resources[resource[0]] ? 0.5 : 1}/>
+                            <Sprite image={'/assets/trade/arrowBlue_left.png'} eventMode='static' onclick={()=>{handleArrowLeft(resource[0])}} alpha={workingResources[resource[0]] == 0 ? 0.5 : 1}/>
+                            <Sprite x={props.width * 0.036} image={'/assets/trade/arrowBlue_right.png'} eventMode='static' onclick={()=>{handleArrowRight(resource[0])}} alpha={props.resources && workingResources[resource[0]] === props.resources[resource[0]] ? 0.5 : 1}/>
                         </Container>
                     </Container>
                 )
