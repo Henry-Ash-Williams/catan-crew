@@ -52,8 +52,15 @@ function App() {
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
   const [leaderBoardState, setLeaderBoardState] = useState<any>()
   const [boardState, setBoardState] = useState<string>("")
-  // Type can be "roads", "cities", "settlements"
-  
+
+  const rollDice = () => {
+    const json = {
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
+    }
+    socket.emit("roll_dice", json)
+  }
+
   const getClickableTiles = (type: string) => {
     const json = {
       game_id: game_idR.current,
@@ -63,13 +70,38 @@ function App() {
     
     socket.emit("valid_location/" + type, json)
   }
-
-  const getBoardState = () => {
+  
+  // this must be called after every dice roll
+  const updatedPlayerResources = () => {
     const json = {
       game_id: game_idR.current,
       player_colour: idToPlayer.get(socketID)
     }
+    console.log("RESOURCES:\n", resources)
+    socket.emit("updated_player_resources", json)
+  }
+
+  const getBoardState = () => {
+    console.log("GETTING BOARD STATE")
+    const json = {
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
+    }
+    console.log(resources)
+    // console.log("JSON:\n" + json.game_id + "\n" + json.player_colour)
     socket.emit("board_state", json)
+  }
+
+  const getLeaderboard = () => {
+    console.log("GETTING LEADERBOARD", socketID, idToPlayer)
+    console.log("PLAYER:\n", idToPlayer.get(socketID), typeof(idToPlayer.get(socketID)))
+    
+
+    const json = {
+      game_id: game_idR.current,
+      player_colour: "red"
+    }
+    socket.emit("leaderboard", json)
   }
 
   const getCurrentPlayer = () => {
@@ -81,6 +113,8 @@ function App() {
   }
 
   const getAvailableActions = () => {
+    console.log("GETTING AVAILABLE ACTIONS")
+    console.log("Player resources:\n", resources)
     const json = {
       game_id: game_idR.current,
       player_colour: idToPlayer.get(socketID)
@@ -96,6 +130,25 @@ function App() {
     socket.emit("end_turn", json)
   }
 
+  const getPlayerResources = () => {
+    const json = {
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
+    }
+    socket.emit("player_resources", json)
+  }
+
+  const handleJoinGame = () => {
+    socket.emit("join_room")
+    setHasJoined(!hasJoined);
+  }
+
+  const handleStartGame = () => {
+      console.log('Starting the game...')
+      socket.emit("start_game") 
+  }
+  
+
   useEffect(() => {
     socket.on("end_turn", data => {
       console.log("END TURN:\n", data)
@@ -104,8 +157,10 @@ function App() {
       getCurrentPlayer()
     })
 
+
     socket.on("board_state", data => {
       console.log("BOARD STATE:\n", data)
+      setBoardState(data)
     })
 
     socket.on("current_player", data => {
@@ -113,6 +168,9 @@ function App() {
       if(data.player_colour == idToPlayer.get(socketID)){
         getAvailableActions()
       }
+      getPlayerResources()
+      getBoardState()
+      updatedPlayerResources()
     })
 
     socket.on("available_actions", data => {
@@ -135,31 +193,55 @@ function App() {
     })
 
     socket.on("player_resources", data => {
-      console.log("PLAYER RESOURCES:\n", data)
-      setResources(data)
+      console.log("PLAYER RESOURCES:\n", data['0'], data['1'], data['2'], data['3'], data['4'])
+      const resources: Resources = {
+        ore: data['2'],
+        wool: data['4'],
+        grain: data['3'],
+        lumber: data['1'],
+        brick: data['0'],
+      }
+
+      setResources(resources)
+    })
+
+    socket.on("updated_player_resources", data => {
+      console.log("UPDATED PLAYER RESOURCES:\n", data)
+      const resources: Resources = {
+        ore: data['2'],
+        wool: data['4'],
+        grain: data['3'],
+        lumber: data['1'],
+        brick: data['0'],
+      }
+      setResources(resources)
     })
 
     socket.on("join_room", data => {
       console.log("Joining room...")
+      console.log("Players: ", data)
       const p = JSON.parse(data)
       setPlayers(p) // currently connected players socket IDs and associated colours
       setSocketID(socket.id) // This client's socket ID
-      const idToPlayer = new Map<string, string>()
-      idToPlayer.set(p.red, "red")
-      idToPlayer.set(p.blue, "blue")
-      idToPlayer.set(p.green, "green")
-      idToPlayer.set(p.yellow, "yellow")  
-      setIdToPlayer(idToPlayer)
+      const idTo = new Map<string, string>()
+      idTo.set(p.red, "red")
+      idTo.set(p.blue, "blue")
+      idTo.set(p.green, "green")
+      idTo.set(p.yellow, "yellow")  
+      console.log(idTo)
+      setIdToPlayer(idTo)
     })
 
     socket.on("start_game", data => {
       game_idR.current = data.game_id;
       setBoardState(data.board_state)
       setGameStarted(!gameStarted);
-      socket.emit('leaderboard', {
-        game_id: game_idR.current,
-        player_colour: idToPlayer.get(socketID)
-      })
+      console.log(players)
+      // socket.emit('leaderboard', {
+      //   game_id: game_idR.current,
+      //   player_colour: idToPlayer.get(socketID)
+      // })
+      getLeaderboard()
       // console.log(game_idR.current)
       // console.log(boardState)
       // console.log(data.game_id)
@@ -171,7 +253,6 @@ function App() {
     socket.on('leaderboard', data => {
       console.log("LEADERBOARD",data[0])
       setLeaderBoardState(data[0])
-      getAvailableActions()
     })
 
     return () => {
@@ -187,26 +268,9 @@ function App() {
       socket.off('board_state');
       socket.off('end_turn');
     }
-  })
+  },[idToPlayer, resources])
 
-  const getPlayerResources = () => {
-    const json = {
-      game_id: game_idR.current,
-      player_colour: idToPlayer.get(socketID)
-    }
-    socket.emit("player_resources", json)
-  }
 
-  const handleJoinGame = () => {
-    socket.emit("join_room")
-    setHasJoined(!hasJoined);
-  }
-
-  const handleStartGame = () => {
-      console.log('Starting the game...')
-      socket.emit("start_game") 
-  }
-  
 
   // const [boardPosition, setBoardPosition] = useState({ x: 0, y:0});
     
