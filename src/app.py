@@ -416,7 +416,8 @@ def get_ai_players_next_move(info: GPlayerInfo = Depends()):
 
 @app.get("/roll_dice")
 def read_roll_dice(player_info: GPlayerInfo = Depends()):
-    return {player_info.game_id, player_info.player_colour}  # this for test
+    game = player_info.get_game(games)
+    return {"dice_val": game.dice}  # this for test
 
 
 @app.get("/leaderboard")
