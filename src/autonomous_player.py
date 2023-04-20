@@ -24,7 +24,7 @@ class AutonomousPlayer(Player):
         other_players = [p for p in player.game.players if not (p is player)]
         proposees = random.sample(other_players, random.randint(1, len(other_players)))
         # rich.print(
-            # f"{player} proposes a trade of {resources_offered} for {resources_requested} to {proposees}"
+        # f"{player} proposes a trade of {resources_offered} for {resources_requested} to {proposees}"
         # )
         return Trade(player, resources_offered, resources_requested, proposees)
 
@@ -34,7 +34,7 @@ class AutonomousPlayer(Player):
         else:
             decision = False
         # rich.print(
-            # f"{player} {['rejects','accepts'][decision]} trade proposed by {trade.sender}"
+        # f"{player} {['rejects','accepts'][decision]} trade proposed by {trade.sender}"
         # )
         return decision
 
