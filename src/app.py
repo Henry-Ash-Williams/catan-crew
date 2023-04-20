@@ -370,6 +370,7 @@ def start_trade(info: TradeInfo = Depends()):
         info.offered_to,
     )
     game.add_trade(trade)
+    # todo -  need to return a json of plauers being offered to, and the resources being offered
 
 
 @app.post("/trade/accept")
