@@ -116,12 +116,15 @@ def start_game(game_config: GameConfig):
         game_config.board_size,
     )
     gid = g.get_game_id()
-    board_state = json.loads(json.dumps(g.board, cls=BoardEncoder))
 
     for player_colour in game_config.color_of_player:
         g.add_player(player_colour.lower())
 
     games[gid] = deepcopy(g)
+
+    g.debugging_set_up_board()
+    
+    board_state = json.loads(json.dumps(g.board, cls=BoardEncoder))
 
     return {
         "game_id": gid,
@@ -145,7 +148,7 @@ def get_board_state(player_info: GPlayerInfo = Depends()):
     Get the current state of the game board
     """
     game = player_info.get_game(games)
-    return {"state": json.dumps(game.board, cls=BoardEncoder)}
+    return {"board_state": game.board.to_json()}
 
 
 @app.get("/updated_player_resource")

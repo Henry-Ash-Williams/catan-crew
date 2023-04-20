@@ -162,8 +162,8 @@ class Game:
             self.current_player = self.players[0]
         else:
             raise GameException("Cannot have a game with no players")
-        # self.set_up_board()
-        self.debugging_set_up_board()
+        #self.set_up_board()
+        #self.debugging_set_up_board()
         self.game_loop()
 
     def debugging_set_up_board(self):

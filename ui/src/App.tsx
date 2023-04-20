@@ -159,6 +159,10 @@ function App() {
 
     socket.on("roll_dice", data => {
       console.log("ROLL DICE:\n", data)
+      const d1 = Math.floor(data.dice_val/2)
+      setNumbersToDisplay([d1, data.dice_val - d1])
+      setCanRoll(false)
+      updatedPlayerResources()
     })
 
     socket.on("board_state", data => {
@@ -169,6 +173,7 @@ function App() {
     socket.on("current_player", data => {
       console.log("CURRENT PLAYER:\n", data)
       if(data.player_colour == idToPlayer.get(socketID)){
+        setCanRoll(true)
         getAvailableActions()
       }
       getPlayerResources()
