@@ -4,7 +4,6 @@ from random import randint
 from dill import Pickler, Unpickler
 from rich.console import Console
 from rich.rule import Rule
-from rich.table import Table
 from rich.panel import Panel
 from rich import print
 
@@ -110,18 +109,18 @@ class Game:
         )
         c.print(r)
 
-    def display_game_state(self):
+    def display_game_state(self, player_for_visible_vp: str):
         # clear()
         player_data = [
-            (
-                player.color,
-                player.calculate_visible_victory_points(),
-                player.calculate_total_victory_points(),
-                player.road_length,
-                player.knights_played,
-                player.resources.total(),
-                player.development_cards.total(),
-            )
+            {
+                "player": player.color,
+                "visible_vp": player.calculate_visible_victory_points(),
+                "total_vp": player.calculate_total_victory_points() if player == player_for_visible_vp else None,
+                "road_len": player.road_length,
+                "knights_played": player.knights_played,
+                "total_resources": player.resources.total(),
+                "total_dev_card": player.development_cards.total(),
+            }
             for player in self.players
         ]
         # player_data.append(player_data)
@@ -191,14 +190,14 @@ class Game:
         while not self.is_won:
             self.do_turn()
             table = self.display_game_state()
-            c.print(table, justify="center")
-            c.print(
-                Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center"
-            )
-            c.print(
-                Panel(f"Largest Army:\n{self.check_largest_army()}"), justify="center"
-            )  # self.getter("Press any key to continue")
-            clear()
+            # c.print(table, justify="center")
+            # c.print(
+                # Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center"
+            # )
+            # c.print(
+                # Panel(f"Largest Army:\n{self.check_largest_army()}"), justify="center"
+            #)
+            # clear()
 
         print(f"\n\n{str(self.current_player).upper()} WINS!!")
 
@@ -217,7 +216,7 @@ class Game:
                     other_player.resources -= resources_robbed
                     self.bank.return_resources(resources_robbed)
     def get_available_actions(self, player):
-        player.get_player_state()
+        # player.get_player_state()
 
         available_actions = []
 
@@ -347,7 +346,7 @@ class Game:
         self.bank.return_resources(cost)
         dev_card = self.bank.distribute_dev_card()
         self.current_player.gets_development_cards(dev_card)
-        self.current_player.message(f"Congrats, you got [b]{str(dev_card)}[/b]")
+        #self.current_player.message(f"Congrats, you got [b]{str(dev_card)}[/b]")
         return dev_card
 
     def upgrade_settlement(self):

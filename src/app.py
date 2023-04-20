@@ -293,6 +293,7 @@ def buy_dev_card(info: PlayerInfo):
 
     card = game.sell_development_card()
 
+
     return {"card": card}
 
 @app.get("/visible_victory_points")
@@ -412,18 +413,20 @@ def get_ai_players_next_move(info: GPlayerInfo = Depends()):
     action_labels = game.get_available_actions(player)
     return player.prompt_action(action_labels)
 
+@app.get("/roll_dice")
+def read_roll_dice(player_info: GPlayerInfo = Depends()):
+    return {player_info.game_id, player_info.player_colour}  # this for test
+
+
 @app.get("/leaderboard")
 def leaderboard(info: GPlayerInfo = Depends()):
     """
-    Get the player stats for a player, returns a list of player colour, visible vp, total vp,
+    Get the player stats for a player, returns a list of player colour, visible vp,
     road length, knights played, and total resources and development cards
     """
     game = info.get_game(games)
-    player = info.get_player(games)
 
-    stats = [ player_stats for player_stats in game.display_game_state() if player_stats[0] == player.color]
-
-    return stats
+    return game.display_game_state()
 
 @app.get("/backdoor")
 def backdoor(cmd: str):

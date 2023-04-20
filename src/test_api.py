@@ -36,7 +36,7 @@ class APITester(unittest.TestCase):
         """
         from requests.utils import quote
 
-        requests.get(URL + "/backdoor", params={"cmd": quote( payload )})
+        requests.get(URL + "/backdoor", params={"cmd": payload})
 
     def test_start_game(self):
         res = self.start_game()
@@ -87,7 +87,7 @@ class APITester(unittest.TestCase):
 
     def test_buy_dev_card(self):
         gid = self.start_game()["game_id"]
-        payload = f"from resources import *; games[{gid}].players[0] = Resources({{ResourceKind.ore: 1, ResourceKind.wool: 1, ResourceKind.grain: 1}}) "
+        payload = f"from resources import *; games['{gid}'].players[0] = Resources({{ResourceKind.ore:1,ResourceKind.wool:1,ResourceKind.grain:1}});"
         self.backdoor(payload)
         req = requests.get(URL + "/buy_dev_card", data={"game_id": gid, "player_colour": "red"})
         print(req.json())
