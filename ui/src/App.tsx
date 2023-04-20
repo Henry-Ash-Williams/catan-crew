@@ -41,7 +41,7 @@ function App() {
   const [socketID, setSocketID] = useState<string>("")
   const [idToPlayer, setIdToPlayer] = useState<Map<string, string>>(new Map<string, string>())
   const [trade, setTrade] = useState(false);
-  const [canRoll, setCanRoll] = useState(false);
+  const [canRoll, setCanRoll] = useState(true);
   const [numbersToDisplay, setNumbersToDisplay] = useState<[number, number]>([6, 6]);
   const [dimensions, setDimensions] = useState({
     height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
@@ -157,6 +157,9 @@ function App() {
       getCurrentPlayer()
     })
 
+    socket.on("roll_dice", data => {
+      console.log("ROLL DICE:\n", data)
+    })
 
     socket.on("board_state", data => {
       console.log("BOARD STATE:\n", data)
@@ -267,6 +270,7 @@ function App() {
       socket.off('current_player');
       socket.off('board_state');
       socket.off('end_turn');
+      socket.off('roll_dice');
     }
   },[idToPlayer, resources])
 
@@ -313,7 +317,7 @@ function App() {
 
           <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} state={leaderBoardState}/>
 
-          <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
+          <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} onClick={rollDice} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 
       <ActionsBar width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} methods={[[setTrade, trade]]}/>
 

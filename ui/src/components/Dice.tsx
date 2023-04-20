@@ -7,6 +7,7 @@ interface DiceComponentProps {
   canRoll: boolean;
   numbersToDisplay: [number, number];
   setNumbersToDisplay: (numbers: [number, number]) => void;
+  onClick: () => void;
   x: number;
   y: number;
   fontSize: number;
@@ -28,9 +29,10 @@ function DiceComponent(props: DiceComponentProps) {
   const handleClick = () => {
     if (props.canRoll) {
     //   sound.play('dice')
-      const randomNumber1 = Math.floor(Math.random() * 6) + 1;
-      const randomNumber2 = Math.floor(Math.random() * 6) + 1;
-      props.setNumbersToDisplay([randomNumber1, randomNumber2]);
+      // const randomNumber1 = Math.floor(Math.random() * 6) + 1;
+      // const randomNumber2 = Math.floor(Math.random() * 6) + 1;
+      // props.setNumbersToDisplay([randomNumber1, randomNumber2]);
+      props.onClick();
     }
   };
 
