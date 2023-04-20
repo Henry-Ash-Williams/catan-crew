@@ -40,7 +40,6 @@ function App() {
   const [players, setPlayers] = useState<Players>({"red":"AI","blue":"AI","green":"AI","yellow":"AI"})
   const [socketID, setSocketID] = useState<string>("")
   const [idToPlayer, setIdToPlayer] = useState<Map<string, string>>(new Map<string, string>())
-  const [boardState, setBoardState] = useState<string>("")
   const [trade, setTrade] = useState(false);
   const [canRoll, setCanRoll] = useState(false);
   const [numbersToDisplay, setNumbersToDisplay] = useState<[number, number]>([6, 6]);
@@ -51,6 +50,8 @@ function App() {
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
   const [devcards, setDevCards] = useState()
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
+  const [leaderBoardState, setLeaderBoardState] = useState<any>()
+  const [boardState, setBoardState] = useState<string>("")
   // Type can be "roads", "cities", "settlements"
   
   const getClickableTiles = (type: string) => {
@@ -63,7 +64,16 @@ function App() {
     socket.emit("valid_location/" + type, json)
   }
 
+  const getBoardState = () => {
+    const json = {
+      game_id: game_idR.current,
+      player_colour: idToPlayer.get(socketID)
+    }
+    socket.emit("board_state", json)
+  }
+
   const getCurrentPlayer = () => {
+    console.log("GETTING CURRENT PLAYER")
     const json = {
       game_id: game_idR.current,
     }
@@ -88,40 +98,44 @@ function App() {
 
   useEffect(() => {
     socket.on("end_turn", data => {
-      console.log("END TURN:\n" + data)
+      console.log("END TURN:\n", data)
       // todo: add logic to check end turn is valid
       // todo: on confirmation, make all actions unavailable
       getCurrentPlayer()
     })
 
+    socket.on("board_state", data => {
+      console.log("BOARD STATE:\n", data)
+    })
+
     socket.on("current_player", data => {
-      console.log("CURRENT PLAYER:\n" + data)
-      if(data === idToPlayer.get(socketID)){
+      console.log("CURRENT PLAYER:\n", data)
+      if(data.player_colour == idToPlayer.get(socketID)){
         getAvailableActions()
       }
     })
 
     socket.on("available_actions", data => {
-      console.log("AVAILABLE ACTIONS:\n" + data)
+      console.log("AVAILABLE ACTIONS:\n", data)
     })
     
     socket.on("valid_location/roads", data => {
-      console.log("CLICKABLE TILES:\n" + data.toString())
+      console.log("CLICKABLE TILES:\n", data.toString())
       setClickableTiles(data)
     })
 
     socket.on("valid_location/cities", data => {
-      console.log("CLICKABLE TILES:\n" + data)
+      console.log("CLICKABLE TILES:\n", data)
       setClickableTiles(data)
     })
 
     socket.on("valid_location/settlements", data => {
-      console.log("CLICKABLE TILES:\n" + data)
+      console.log("CLICKABLE TILES:\n", data)
       setClickableTiles(data)
     })
 
     socket.on("player_resources", data => {
-      console.log("PLAYER RESOURCES:\n" + data)
+      console.log("PLAYER RESOURCES:\n", data)
       setResources(data)
     })
 
@@ -142,6 +156,10 @@ function App() {
       game_idR.current = data.game_id;
       setBoardState(data.board_state)
       setGameStarted(!gameStarted);
+      socket.emit('leaderboard', {
+        game_id: game_idR.current,
+        player_colour: idToPlayer.get(socketID)
+      })
       // console.log(game_idR.current)
       // console.log(boardState)
       // console.log(data.game_id)
@@ -150,14 +168,24 @@ function App() {
       getCurrentPlayer()
     })
 
+    socket.on('leaderboard', data => {
+      console.log("LEADERBOARD",data[0])
+      setLeaderBoardState(data[0])
+      getAvailableActions()
+    })
+
     return () => {
-      socket.off("current_player");
-      socket.off("available_actions")
-      socket.off("valid_location/roads");
-      socket.off("valid_location/cities");
-      socket.off("valid_location/settlements");
-      socket.off("player_resources");
-      socket.off('start_game')
+      socket.off('start_game');
+      socket.off('leaderboard');
+      socket.off('join_room');
+      socket.off('player_resources');
+      socket.off('valid_location/roads');
+      socket.off('valid_location/cities');
+      socket.off('valid_location/settlements');
+      socket.off('available_actions');
+      socket.off('current_player');
+      socket.off('board_state');
+      socket.off('end_turn');
     }
   })
 
@@ -219,7 +247,7 @@ function App() {
             <Card resourceType='brick' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.64} amount={resources.brick} fontSize={dimensions.height / 9}/>
           </Container>
 
-          <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9}/>
+          <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} state={leaderBoardState}/>
 
           <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 

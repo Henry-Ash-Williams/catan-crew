@@ -3,6 +3,7 @@ import PlayerInfo from "./PlayerInfo";
 import info from './players.json'
 
 interface LeaderBoardProps{
+    state: any;
     width: number;
     height: number;
     fontSize: number;
