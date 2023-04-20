@@ -30,6 +30,14 @@ interface Resources{
   brick: number
 }
 
+interface AvailableActions{
+  buildRoad: boolean
+  buildSettlement: boolean
+  buildCity: boolean
+  buyDevCard: boolean
+  trade: false
+}
+
 const socket = io('http://localhost:3001');
 
 function App() {
@@ -53,6 +61,7 @@ function App() {
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
   const [leaderBoardState, setLeaderBoardState] = useState([])
   const [boardState, setBoardState] = useState<string>("")
+  const [availableActions, setAvailableActions] = useState<AvailableActions>({buildRoad: false, buildSettlement: false, buildCity: false, buyDevCard: false, trade: false})
 
   function action (type: string) {
     const json = {
@@ -104,8 +113,22 @@ function App() {
       const d1 = Math.floor(data.dice_val/2)
       setNumbersToDisplay([d1, data.dice_val - d1])
       setCanRoll(false)
-      updatedPlayerResources()
+      if(data.dice_val == 7){
+        action("discard_resource_card")
+        action("valid_robber_locations")
+      action("updated_player_resources")
+    }
+  })
+
+    socket.on("valid_robber_locations", data => {
+      console.log("VALID ROBBER LOCATIONS:\n", data)
+      setClickableTiles(data)
     })
+
+    socket.on("robber_location", data => {
+      console.log("ROBBER LOCATION:\n", data)
+    })
+
 
     socket.on("board_state", data => {
       console.log("BOARD STATE:\n", data)
@@ -121,6 +144,9 @@ function App() {
       action("player_resources");
       action("board_state");
       action("updated_player_resources");
+      action("valid_location/roads");
+      action("valid_location/settlements");
+      action("valid_location/cities");
     })
 
     socket.on("available_actions", data => {
@@ -244,7 +270,7 @@ function App() {
           <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} tint={0x00FFFF}></Sprite>
 
           {/* Board */}
-          <BoardComponent boardState={boardState} setBoardState={setBoardState} size={15} width={dimensions.width} height={dimensions.height}/>
+          <BoardComponent boardState={boardState} setBoardState={setBoardState} size={15} width={dimensions.width} height={dimensions.height} clickable={clickableTiles}/>
             {/* Cards */}
           <Container>
             <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={resources.ore} fontSize={dimensions.height / 9}/>

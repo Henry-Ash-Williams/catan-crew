@@ -287,6 +287,10 @@ class Game:
             available_actions.append(("Play Monopoly card", self.play_monopoly))
 
         available_actions.append(("End turn", self.end_turn))
+
+        # print(available_actions)
+        # input()
+
         return available_actions
 
     def do_turn(self):
