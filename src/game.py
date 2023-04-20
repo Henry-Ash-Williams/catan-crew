@@ -126,7 +126,6 @@ class Game:
             {
                 "player": player.color,
                 "visible_vp": player.calculate_visible_victory_points(),
-                "total_vp": player.calculate_total_victory_points() if player == player_for_visible_vp else None,
                 "road_len": player.road_length,
                 "knights_played": player.knights_played,
                 "total_resources": player.resources.total(),
