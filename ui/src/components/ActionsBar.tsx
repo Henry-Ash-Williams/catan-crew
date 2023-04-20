@@ -62,27 +62,27 @@ export default function ActionsBar(props: ActionBarProps){
             </Container>
             <Container x={props.width * 0.265} y={props.height * 0.01}>
                 <Container x={props.width * 0.08} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildRoad} interactive={true}/>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildRoad} eventMode="static"/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.08} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/road.png'}/>
                 </Container>
                 <Container x={0.145 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildSettlement} interactive={true}/>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildSettlement} eventMode='static'/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.08} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/house.png'}/>
                 </Container>
                 <Container x={0.21 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildCity} interactive={true}/>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildCity} eventMode='static'/>
                     <Sprite width={props.width * 0.06} height={props.height * 0.095} x={0} y={props.height * 0.014} image={'/assets/action-board/town.png'}/>
                 </Container>
                 <Container x={0.275 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buyDevCards} interactive={true}/>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buyDevCards} eventMode='static'/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.07} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/dev.png'}/>
                 </Container>
                 <Container x={0.34 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={trade} interactive={true}/>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={trade} eventMode='static'/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.07} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/trade.png'}/>
                 </Container>
                 <Container x={0.405 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={endTurn} interactive={true}/>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={endTurn} eventMode='static'/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.07} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/end.png'}/>
                 </Container>
             </Container>

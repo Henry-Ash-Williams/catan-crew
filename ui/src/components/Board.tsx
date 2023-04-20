@@ -44,11 +44,11 @@ interface Coordinates {
 
 
 function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordinates) => void) {
-    console.log(typeof(props.boardState))
-    console.log("BOARD STATE:\n", props.boardState + "\n")
+    // console.log(typeof(props.boardState))
+    // console.log("BOARD STATE:\n", props.boardState + "\n")
     const board = props.boardState as Board
-    console.log("SERIALISED:\n", board)
-    console.log(typeof(board))
+    // console.log("SERIALISED:\n", board)
+    // console.log(typeof(board))
     
     let tiles: Tile[] = (board.tiles as Array<
         { type: string
@@ -70,7 +70,7 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
             direction: tile.direction ? tile.direction : undefined
         }
         });
-    console.log(tiles.length)
+    // console.log(tiles.length)
 
     // x and y values for center tile
     let x0 = props.width/2;
@@ -199,7 +199,7 @@ function getCoordinatesFromKey(key: number, components: JSX.Element[]): {x: numb
 
 function BoardComponent(props: BoardComponentProps){
     const initBoard = () => {
-        console.log(props.boardState)
+        // console.log(props.boardState)
         let boardInit = initTiles(props, handleResourceClick)
         return boardInit
     }
