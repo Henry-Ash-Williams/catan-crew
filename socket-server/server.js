@@ -30,58 +30,6 @@ app.use(cors());
 io.on('connection', socket => {
     console.log('Client connected');
 
-//   socket.on('getNumber', () => {
-//     // const number = Math.floor(Math.random() * 100);
-//     // send request to game-logic server
-//     fetch('http://localhost:8000/')
-//       .then(response => response.json())
-//       .then(data => {
-//         console.log(data);
-//         io.emit('number', { number: data.number });
-//       })
-//     // console.log(`Generated number: ${number}`);
-//     // io.emit('number', { number });
-//     // socket emit sends to one client
-//     // io emit sends to all clients
-//   });
-
-
-    // Demo of sending data from client to server
-    // POST request demo
-//   socket.on('getNumber', (numberTest) => {
-//     console.log(numberTest);
-//     fetch('http://localhost:8000/getNumber', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(numberTest)
-//         })
-//         .then(response => response.json())
-//         .then(data => {
-//             console.log(data);
-//             io.emit(data);
-//         });
-//     })
-
-//    // GET request demo
-    // socket.on('getNumber', (numberTest) => {
-    //     console.log(numberTest);
-    //     fetch('http://localhost:8000/getNumber', {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'X-Game-Config': JSON.stringify(game_config)
-    //         }
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             console.log(data);
-    //             io.emit(data);
-    //         });
-    //     })
-
-
     // fixme - set at max 4 players, now is accepting the fith
     socket.on("join_room", () => {
         // map player color to socket id
@@ -89,25 +37,6 @@ io.on('connection', socket => {
         count_person += 1;
         io.emit("join_room", JSON.stringify(player_color_to_socket_id));
         console.log(player_color_to_socket_id)
-    })
-
-
-    socket.on("add_player", (playerInfo) => {
-        console.log(playerInfo)
-        fetch('http://localhost:8000/add_player', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        
-        body: JSON.stringify(playerInfo)
-        })
-        
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            io.emit("add_player", data);
-        });
     })
 
     socket.on("start_game", () => {
@@ -135,14 +64,6 @@ io.on('connection', socket => {
         });
     })
 
-    socket.on("dump_games", () => {
-        fetch('http://localhost:8000/dump_games', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-    })
 
     // todo - need to change it to get request format
     socket.on("roll_dice", (req) => {
@@ -266,7 +187,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("valid_location/roads", data);
+            socket.emit("valid_location/roads", data);
         });
     })
     
@@ -281,7 +202,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("valid_location/cities", data);
+            socket.emit("valid_location/cities", data);
         });
     })
 
@@ -296,7 +217,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("valid_location/settlements", data);
+            socket.emit("valid_location/settlements", data);
         });
     })
 
@@ -312,7 +233,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("build/roads", data);
+            socket.emit("build/roads", data);
         });
     })
     
@@ -327,7 +248,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("build/cities", data);
+            socket.emit("build/cities", data);
         });
     })
 
@@ -342,7 +263,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("build/settlements", data);
+            socket.emit("build/settlements", data);
         });
     })
     
@@ -358,7 +279,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("valid_robber_locations", data);
+            socket.emit("valid_robber_locations", data);
         });
     })
 
@@ -373,7 +294,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("num_discard_resource_card", data);
+            socket.emit("num_discard_resource_card", data);
         });
     })
 
@@ -388,7 +309,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("discard_resource_card", data);
+            socket.emit("discard_resource_card", data);
         });
     })
 
@@ -403,7 +324,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("place_robber", data);
+            socket.emit("place_robber", data);
         });
     })
 
@@ -418,7 +339,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("buy_dev_card", data);
+            socket.emit("buy_dev_card", data);
         });
     })
 
@@ -468,6 +389,40 @@ io.on('connection', socket => {
             io.emit("leaderboard", data);
         });
     })
+
+
+    // trade
+    socket.on("trade/start", (tradeInfo) => {
+        fetch('http://localhost:8000/trade/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(tradeInfo)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // need to parse data, and send to the specific player
+            players = data.players;
+            for (let index = 0; index < players.length; index++) {
+                io.to(player_color_to_socket_id[players[index]]).emit("trade/start", data)
+            };
+        });
+    })
+
+
+    socket.on("trade/accept", (tradeInfo) => {
+        fetch('http://localhost:8000/trade/accept', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            
 
 
   socket.on('disconnect', () => {
