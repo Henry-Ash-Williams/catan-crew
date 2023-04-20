@@ -49,8 +49,9 @@ function App() {
   })
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
   const [devcards, setDevCards] = useState()
+  const [availableActions, setAvailableActions] = useState<string[]>([])
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
-  const [leaderBoardState, setLeaderBoardState] = useState<any>()
+  const [leaderBoardState, setLeaderBoardState] = useState([])
   const [boardState, setBoardState] = useState<string>("")
 
   function action (type: string) {
@@ -60,6 +61,16 @@ function App() {
     }
     console.log('API CALLED', type)
     socket.emit(type, json)
+  }
+
+  function validLocationsFor (type: string, reachable: boolean) {
+    const json = {
+      game_id : game_idR.current,
+      player_colour: idToPlayer.get(socketID),
+      reachable: reachable
+    }
+    console.log('API CALLED', type, 'REACHABLE?', reachable)
+    socket.emit('valid_location/' + type, json)
   }
 
   const getCurrentPlayer = () => {
@@ -109,6 +120,7 @@ function App() {
 
     socket.on("available_actions", data => {
       console.log("AVAILABLE ACTIONS:\n", data)
+      setAvailableActions(data)
     })
     
     socket.on("valid_location/roads", data => {
@@ -176,8 +188,8 @@ function App() {
     })
 
     socket.on('leaderboard', data => {
-      console.log("LEADERBOARD",data[0])
-      setLeaderBoardState(data[0])
+      console.log("LEADERBOARD",data)
+      setLeaderBoardState(data)
     })
 
     return () => {
@@ -241,7 +253,7 @@ function App() {
 
           <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} onClick={() => {action('roll_dice')}} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 
-      <ActionsBar width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} methods={[[setTrade, trade]]}/>
+      <ActionsBar action={action} getLocationsFor={validLocationsFor} width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} availableActions={availableActions} tradeFunction={[setTrade, trade]}/>
 
       <Bank height={dimensions.height} width={dimensions.width} fontSize={dimensions.height / 9}/>
 
