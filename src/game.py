@@ -120,7 +120,7 @@ class Game:
         )
         c.print(r)
 
-    def display_game_state(self, player_for_visible_vp: str):
+    def display_game_state(self):
         # clear()
         player_data = [
             {
