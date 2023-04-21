@@ -124,7 +124,8 @@ class SeaTile(Tile):
         :type location: int
         :return: None
         """
-        # TODO: harbor logic
+
+        # harbors are set by the Board during initialization
         tile.harbor = None
         super().__init__(board, location)
     
@@ -136,6 +137,31 @@ class SeaTile(Tile):
         :rtype: str
         """
         return f'SeaTile(loc={tile.location})'
+
+class Harbor:
+    def __init__(harbor, tile: SeaTile, flavor: str = 'generic', resource: ResourceKind = None, ports: list[int] = []):
+        """
+        Constructor method.
+
+        :param tile: The SeaTile that this harbor belongs to.
+        :type tile: SeaTile
+        :param flavor: A string representing the type of harbor ('generic'/'special')
+        :type flavor: str
+        :param resource: The resource type of the harbor
+        :type resource: ResourceKind
+        :param ports: The locations of the ports (land intersections) that this harbor is connected to
+        :type ports: list[int]
+        :return: None
+        """
+        if type(tile) is not SeaTile:
+            raise HarborException("Can't build a harbor on a non-sea tile")
+        harbor.tile = tile
+        harbor.flavor = flavor
+        harbor.resource = resource
+        harbor.ports = ports
+
+    def __repr__(harbor):
+        return f'Harbor{harbor.tile.location}<type={harbor.flavor}, resource={harbor.resource}, ports={harbor.ports}>'
 
 class Path:
     def __init__(path, board, location):
@@ -486,6 +512,24 @@ class Board:
                                     any(isinstance(tile,LandTile) for tile in intersection.neighboring_tiles())}
         board.available_path_locations = {path.location for path in board.paths if len(set(path.neighboring_intersections())&board.land_intersections)==2}
         board.robber_location = random.choice(list(board.desert_locations))
+
+        board.harbor_locations = random.sample(list(board.sea_locations), 9)
+
+        board.generic_harbor_locations = board.harbor_locations[:4]
+        for location in board.generic_harbor_locations:
+            sea_tile = board.tiles[location]
+            sea_tile.harbor = Harbor(sea_tile)
+            port_intersections = random.sample(list(board.land_intersections & set(sea_tile.neighboring_intersections())), 2)
+            port_locations = [port_intersection.location for port_intersection in port_intersections]
+            sea_tile.harbor.ports = port_locations
+
+        board.special_harbor_locations = board.harbor_locations[4:]
+        for location, resource in zip(board.special_harbor_locations, [grain, wool, lumber, brick, ore]):
+            sea_tile = board.tiles[location]
+            sea_tile.harbor = Harbor(sea_tile, 'special', resource)
+            port_intersections = random.sample(list(board.land_intersections & set(sea_tile.neighboring_intersections())), 2)
+            port_locations = [port_intersection.location for port_intersection in port_intersections]
+            sea_tile.harbor.ports = port_locations
         
     def random_resource_kinds():
         """
@@ -588,7 +632,6 @@ class Board:
         settlement.intersection = intersection
         
         for harbor in intersection.harbors():
-            print(harbor)
             settlement.owner.update_exchange_rate(harbor.flavor=='special',harbor.resource)
     
     def get_settlements_and_cities(board):
@@ -710,3 +753,5 @@ class Board:
 class RoadBuildingException(Exception): pass
 
 class SettlementBuildingException(Exception): pass
+
+class HarborException(Exception): pass
