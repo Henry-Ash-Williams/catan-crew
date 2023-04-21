@@ -591,6 +591,10 @@ class Board:
         board.old_system_path_loc = old_system_path_loc
         board.old_system_intersection_loc = old_system_intersection_loc
 
+        board.new_system_tile_loc = {b:a for a,b in enumerate(old_system_tile_loc)}
+        board.new_system_path_loc = {b:a for a,b in enumerate(old_system_path_loc)}
+        board.new_system_intersection_loc = {b:a for a,b in enumerate(old_system_intersection_loc)}
+
     def random_resource_kinds():
         """
         A generator of ResourceKind objects. Ensures that they are produced randomly but still conforming to the proportions of different resources in the original Settlers board.

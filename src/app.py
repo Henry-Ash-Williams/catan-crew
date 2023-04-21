@@ -243,11 +243,25 @@ def build_infrastructures(
     player = player_info.get_player(games)
 
     if infrastructures == "roads":
-        player.build_road(hexagon_id)
+        try:
+            new_system_hexagon_id = player.game.board.new_system_path_loc[hexagon_id]
+        except KeyError:
+            raise Exception("hexagon_id is not a valid path location")
+        player.builds_road(hexagon_id)
+
     elif infrastructures == "cities":
-        player.upgrade_settlement(hexagon_id)
+        try:
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[hexagon_id]
+        except KeyError:
+            raise Exception("hexagon_id is not a valid intersection location")
+        player.upgrade_settlement(player.game.board.intersections[hexagon_id].settlement)
+
     elif infrastructures == "settlements":
-        player.build_settlement(hexagon_id)
+        try:
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[hexagon_id]
+        except KeyError:
+            raise Exception("hexagon_id is not a valid intersection location")
+        player.builds_settlement(hexagon_id)
 
     return {"status": "OK"}
 
