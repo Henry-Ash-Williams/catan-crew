@@ -28,7 +28,6 @@ class Tile:
         tile.cached_neighboring_intersections = None
         tile.cached_neighboring_settlements = None
 
-
     def neighbor(tile, direction):
         """
         Finds the tile neighboring the current tile in the given direction.
@@ -133,7 +132,8 @@ class SeaTile(Tile):
         :type location: int
         :return: None
         """
-        # TODO: harbor logic
+
+        # harbors are set by the Board during initialization
         tile.harbor = None
         super().__init__(board, location)
 
@@ -692,7 +692,6 @@ class Board:
         settlement.intersection = intersection
 
         for harbor in intersection.harbors():
-            print(harbor)
             settlement.owner.update_exchange_rate(harbor.flavor=='special',harbor.resource)
 
     def get_settlements_and_cities(board):

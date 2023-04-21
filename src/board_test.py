@@ -8,18 +8,17 @@ from human_player import HumanPlayer
 from game import *
 import unittest, pickle, random, sys
 
-past_results = {"resource_distributions": [], "token_distributions": []}
-
+past_results = {'resource_distributions': [], 'token_distributions': []}
 
 class BoardTester(unittest.TestCase):
     def setUp(test):
-        test.board = Board(size=3, seed=random.random())
+        test.board = Board(size = 3, seed = random.random())
 
     def test_init(test):
         test.assertTrue(type(test.board) is Board)
 
     def test_tile_count(test):
-        """Make sure number of tiles match expected"""
+        """ Make sure number of tiles match expected"""
 
         # Make sure total number of tiles is 37 (19 land + 18 sea)
         test.assertEqual(test.board.tile_count, 37)
@@ -29,30 +28,28 @@ class BoardTester(unittest.TestCase):
         test.assertEqual(test.board.land_tile_count, 19)
 
     def test_intersection_count(test):
-        test.assertEqual(len(test.board.intersections), 37 * 2)
+        test.assertEqual(len(test.board.intersections), 37*2)
 
     def test_path_count(test):
-        test.assertEqual(len(test.board.paths), 37 * 3)
+        test.assertEqual(len(test.board.paths), 37*3)
 
     def test_directions(test):
         """Make sure directions are configured properly"""
         n = test.board.tile_count
-        east, northeast, northwest, west, southwest, southeast = test.board.directions
+        east,northeast,northwest,west,southwest,southeast = test.board.directions
 
         # Make sure if you make a step in two opposite directions you end up where you started
-        test.assertEqual((east + west) % n, 0)
-        test.assertEqual((northeast + southwest) % n, 0)
-        test.assertEqual((northwest + southeast) % n, 0)
+        test.assertEqual((east + west)%n, 0)
+        test.assertEqual((northeast + southwest)%n, 0)
+        test.assertEqual((northwest + southeast)%n, 0)
 
         # Make sure making a step east, then northwest, then southwest you end up where you started
-        test.assertEqual((east + northwest + southwest) % n, 0)
+        test.assertEqual((east + northwest + southwest)%n, 0)
 
     def test_resource_randomness(test):
         resource_tiles = filter(lambda t: type(t) is ResourceTile, test.board.tiles)
         resource_distribution = tuple([tile.resource for tile in resource_tiles])
-        test.assertFalse(
-            resource_distribution in past_results["resource_distributions"]
-        )
+        test.assertFalse(resource_distribution in past_results["resource_distributions"])
         past_results["resource_distributions"].append(resource_distribution)
 
     def test_resource_type_count(test):
@@ -74,6 +71,60 @@ class BoardTester(unittest.TestCase):
         resource_tiles = filter(lambda t: type(t) is ResourceTile, test.board.tiles)
         tokens = tuple([tile.number_token for tile in resource_tiles])
         test.assertEqual(set(tokens), set([2, 3, 4, 5, 6, 8, 9, 10, 11, 12]))
+
+    def test_can_build_disconnected(test):
+        red = AutonomousPlayer('red')
+        settlement_token = Settlement(red)
+        location = random.choice(test.board.intersections).location
+        test.board.add_settlement(settlement_token, location, allow_disconnected_settlement=True)
+
+    def test_cant_build_disconnected(test):
+        red = AutonomousPlayer('red')
+        settlement_token = Settlement(red)
+        location = random.choice(test.board.intersections).location
+        with test.assertRaises(SettlementBuildingException) as e:
+            test.board.add_settlement(settlement_token, location, allow_disconnected_settlement=False)
+
+    def test_distance_rule(test):
+        red = AutonomousPlayer('red')
+        blue = AutonomousPlayer('blue')
+
+        settlement_token1 = Settlement(red)
+        intersection1 = random.choice(test.board.intersections)
+        location1 = intersection1.location
+        test.board.add_settlement(settlement_token1, location1, allow_disconnected_settlement=True)
+
+        settlement_token2 = Settlement(blue)
+        intersection2 = random.choice(intersection1.neighboring_intersections())
+        location2 = intersection2.location
+        with test.assertRaises(SettlementBuildingException) as e:
+            test.board.add_settlement(settlement_token2, location2, allow_disconnected_settlement=True)
+
+        all_placed_settlements = test.board.get_settlements_and_cities()
+        test.assertTrue(red in all_placed_settlements)
+        test.assertFalse(blue in all_placed_settlements)
+        test.assertEqual(len(all_placed_settlements[red]), 1)
+
+    def test_valid_intersections(test):
+        red = AutonomousPlayer('red')
+        valid_locations = test.board.valid_settlement_locations(red,False)
+        prev_valid_locations, cur_valid_locations = 1e400, len(valid_locations)
+        while valid_locations:
+            chosen_location = random.choice(valid_locations)
+            test.board.add_settlement(Settlement(red), chosen_location, allow_disconnected_settlement=True)
+            valid_locations = test.board.valid_settlement_locations(red,False)
+            prev_valid_locations, cur_valid_locations = cur_valid_locations, len(valid_locations)
+            test.assertTrue(cur_valid_locations < prev_valid_locations)
+
+    def test_harbors(test):
+        #print([test.board.tiles[loc].harbor for loc in test.board.generic_harbor_locations])
+        #print([test.board.tiles[loc].harbor for loc in test.board.special_harbor_locations])
+        harbors = set()
+        for intersection in test.board.land_intersections:
+            harbors |= set(intersection.harbors())
+        test.assertEqual(len(harbors), 9)
+        test.assertEqual(len([h for h in harbors if h.flavor=='special']), 5)
+        test.assertEqual(len([h for h in harbors if h.flavor=='generic']), 4)
 
     def tearDown(test):
         del test.board
