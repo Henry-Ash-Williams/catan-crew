@@ -72,42 +72,58 @@ class BoardTester(unittest.TestCase):
         test.assertEqual(set(tokens), set([2, 3, 4, 5, 6, 8, 9, 10, 11, 12]))
 
     def test_can_build_disconnected(test):
-        settlement_token = Settlement('black')
+        red = AutonomousPlayer('red')
+        settlement_token = Settlement(red)
         location = random.choice(test.board.intersections).location
         test.board.add_settlement(settlement_token, location, allow_disconnected_settlement=True)
 
     def test_cant_build_disconnected(test):
-        settlement_token = Settlement('black')
+        red = AutonomousPlayer('red')
+        settlement_token = Settlement(red)
         location = random.choice(test.board.intersections).location
         with test.assertRaises(SettlementBuildingException) as e:
             test.board.add_settlement(settlement_token, location, allow_disconnected_settlement=False)
 
     def test_distance_rule(test):
-        settlement_token1 = Settlement('black')
+        red = AutonomousPlayer('red')
+        blue = AutonomousPlayer('blue')
+
+        settlement_token1 = Settlement(red)
         intersection1 = random.choice(test.board.intersections)
         location1 = intersection1.location
         test.board.add_settlement(settlement_token1, location1, allow_disconnected_settlement=True)
 
-        settlement_token2 = Settlement('white')
+        settlement_token2 = Settlement(blue)
         intersection2 = random.choice(intersection1.neighboring_intersections())
         location2 = intersection2.location
         with test.assertRaises(SettlementBuildingException) as e:
             test.board.add_settlement(settlement_token2, location2, allow_disconnected_settlement=True)
 
         all_placed_settlements = test.board.get_settlements_and_cities()
-        test.assertTrue('black' in all_placed_settlements)
-        test.assertFalse('white' in all_placed_settlements)
-        test.assertEqual(len(all_placed_settlements['black']), 1)
+        test.assertTrue(red in all_placed_settlements)
+        test.assertFalse(blue in all_placed_settlements)
+        test.assertEqual(len(all_placed_settlements[red]), 1)
 
     def test_valid_intersections(test):
-        valid_locations = test.board.valid_settlement_locations('black',False)
+        red = AutonomousPlayer('red')
+        valid_locations = test.board.valid_settlement_locations(red,False)
         prev_valid_locations, cur_valid_locations = 1e400, len(valid_locations)
         while valid_locations:
             chosen_location = random.choice(valid_locations)
-            test.board.add_settlement(Settlement('black'), chosen_location, allow_disconnected_settlement=True)
-            valid_locations = test.board.valid_settlement_locations('black',False)
+            test.board.add_settlement(Settlement(red), chosen_location, allow_disconnected_settlement=True)
+            valid_locations = test.board.valid_settlement_locations(red,False)
             prev_valid_locations, cur_valid_locations = cur_valid_locations, len(valid_locations)
             test.assertTrue(cur_valid_locations < prev_valid_locations)
+
+    def test_harbors(test):
+        #print([test.board.tiles[loc].harbor for loc in test.board.generic_harbor_locations])
+        #print([test.board.tiles[loc].harbor for loc in test.board.special_harbor_locations])
+        harbors = set()
+        for intersection in test.board.land_intersections:
+            harbors |= set(intersection.harbors())
+        test.assertEqual(len(harbors), 9)
+        test.assertEqual(len([h for h in harbors if h.flavor=='special']), 5)
+        test.assertEqual(len([h for h in harbors if h.flavor=='generic']), 4)
 
     def tearDown(test):
         del test.board

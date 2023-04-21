@@ -237,7 +237,7 @@ class Game:
                     )
                     resources_robbed = other_player.get_valid_resources_to_give_up()
                     other_player.resources -= resources_robbed
-                    game.bank.return_resources(resources_robbed)
+                    self.bank.return_resources(resources_robbed)
         else:
             resources_before = player.resources.copy()
             self.distribute_resources()
