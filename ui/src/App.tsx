@@ -38,6 +38,24 @@ interface AvailableActions{
   trade: false
 }
 
+interface Tile {
+  type: string
+  location: number
+  harbor?: boolean //not implemented
+  resource?: string | undefined
+  number_token?: number | undefined 
+  owner?: string | undefined
+  isCity?: boolean | undefined
+  direction?: number | undefined
+}
+
+interface TileData {
+  tile: Tile,
+  x: number,
+  y: number,
+}
+
+
 const socket = io('http://localhost:3001');
 
 function App() {
@@ -58,10 +76,15 @@ function App() {
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
   const [devcards, setDevCards] = useState()
   const [availableActions, setAvailableActions] = useState<string[]>([])
-  const [clickableTiles, setClickableTiles] = useState<string[]>([])
+  const [clickableTiles, setClickableTiles] = useState<number[]>([])
   const [leaderBoardState, setLeaderBoardState] = useState([])
   const [boardState, setBoardState] = useState<string>("")
-  const [availableActions, setAvailableActions] = useState<AvailableActions>({buildRoad: false, buildSettlement: false, buildCity: false, buyDevCard: false, trade: false})
+
+
+  const [tileMap, setTileMap] = useState<Map<number, JSX.Element>>(new Map<number, JSX.Element>())
+
+
+  // const [availableActions, setAvailableActions] = useState<AvailableActions>({buildRoad: false, buildSettlement: false, buildCity: false, buyDevCard: false, trade: false})
 
   function action (type: string) {
     const json = {
@@ -80,6 +103,27 @@ function App() {
     }
     console.log('API CALLED', type, 'REACHABLE?', reachable)
     socket.emit('valid_location/' + type, json)
+  }
+
+  const placeRobber = (location: number) => {
+    const json = {
+      game_id : game_idR.current,
+      player_colour: idToPlayer.get(socketID),
+      hexagon_id: location
+    }
+    console.log('API CALLED', 'place_robber', 'LOCATION', location)
+    socket.emit('place_robber', json)
+  }
+
+  function build (type: string, location: number) {
+    const json = {
+      game_id : game_idR.current,
+      player_colour: idToPlayer.get(socketID),
+      hexagon_id: location
+    }
+
+    console.log('API CALLED', type, 'LOCATION', location)
+    socket.emit('build/' + type, json)
   }
 
   const getCurrentPlayer = () => {
@@ -106,6 +150,20 @@ function App() {
       // todo: add logic to check end turn is valid
       // todo: on confirmation, make all actions unavailable
       getCurrentPlayer()
+    })
+
+    socket.on("build/road", data => {
+      console.log("BUILD ROAD:\n", data)
+      action("updated_player_resources")
+      // action("board_state")
+    })
+
+    socket.on("build/settlement", data => {
+      console.log("BUILD SETTLEMENT:\n", data)
+    })
+
+    socket.on("build/city", data => {
+      console.log("BUILD CITY:\n", data)
     })
 
     socket.on("roll_dice", data => {
@@ -142,11 +200,11 @@ function App() {
         setCanRoll(true)
       }
       action("player_resources");
-      action("board_state");
+      // action("board_state");
       action("updated_player_resources");
-      action("valid_location/roads");
-      action("valid_location/settlements");
-      action("valid_location/cities");
+      // action("valid_location/roads");
+      // action("valid_location/settlements");
+      // action("valid_location/cities");
     })
 
     socket.on("available_actions", data => {
@@ -158,6 +216,7 @@ function App() {
       console.log("CLICKABLE TILES:\n", data.toString())
       setClickableTiles(data)
     })
+    
 
     socket.on("valid_location/cities", data => {
       console.log("CLICKABLE TILES:\n", data)
@@ -236,6 +295,16 @@ function App() {
       socket.off('board_state');
       socket.off('end_turn');
       socket.off('roll_dice');
+      socket.off('robber_location');
+      socket.off('valid_robber_locations');
+      socket.off('build_road');
+      socket.off('build_settlement');
+      socket.off('build_city');
+      socket.off('discard_resource_card');
+      socket.off('trade');
+      socket.off('trade_response');
+      socket.off('updated_player_resources');
+      socket.off('player_resources');
     }
   },[idToPlayer, resources])
 
@@ -270,7 +339,7 @@ function App() {
           <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} tint={0x00FFFF}></Sprite>
 
           {/* Board */}
-          <BoardComponent boardState={boardState} setBoardState={setBoardState} size={15} width={dimensions.width} height={dimensions.height} clickable={clickableTiles}/>
+          <BoardComponent boardStateJson={boardState} setBoardState={setBoardState} size={15} width={dimensions.width} height={dimensions.height} clickable={clickableTiles} build={build} setTileData={setTileMap} robber={placeRobber}/>
             {/* Cards */}
           <Container>
             <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={resources.ore} fontSize={dimensions.height / 9}/>

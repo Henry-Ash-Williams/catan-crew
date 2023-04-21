@@ -1,29 +1,35 @@
 import { Container, Sprite, Text } from '@pixi/react';
 import { TextStyle } from 'pixi.js';
-interface Coordinates {
-    x: number,
-    y: number
+
+interface TileData {
+    owner?: string
+    direction?: number
 }
 
 interface PathComponentProps {
+    tileIndex: number
     x: number,
     y: number,
     size: number
-    direction?: number,
-    owner?: string,
-    text: string
-    onClick: (coordinates: Coordinates) => void
+    tile: TileData
+    build: (args0: string, args1: number) => void
+    interactive: boolean
+
 }
 
 function PathComponent(props: PathComponentProps) {
-    let tile: React.ReactElement[] = [<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/tile/grass_N.png"}/>]
+    const handleClick = () => {
+        props.build("path", props.tileIndex)
+    }
+    
+    let tile: React.ReactElement[] = [<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/tile/grass_N.png"} interactive={props.interactive} onclick={handleClick} alpha={props.interactive? 0.5 : 1}/>]
 
-    if(props.direction == 3) {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/path_straight_N.png"} tint={props.owner} rotation={0}/>)
-    } else if(props.direction == 1) {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/path_NE.png"} tint={props.owner} rotation={0}/>)
-    } else if(props.direction == 2) {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/path_NW.png"} tint={props.owner} rotation={0}/>)
+    if(props.tile.direction == 3) {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/path_straight_N.png"} tint={props.tile.owner} rotation={0} alpha={props.interactive? 0.5 : 1}/>)
+    } else if(props.tile.direction == 1) {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/path_NE.png"} tint={props.tile.owner} rotation={0} alpha={props.interactive? 0.5 : 1}/>)
+    } else if(props.tile.direction == 2) {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/path_NW.png"} tint={props.tile.owner} rotation={0} alpha={props.interactive? 0.5 : 1}/>)
     }
     // tile.push(
     //     <Text

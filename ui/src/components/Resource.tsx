@@ -7,43 +7,49 @@ interface Coordinates {
     y: number
 }
 
+interface ResourceTile {
+    resource?: string
+    number_token?: number
+}
+
 interface ResourceTileProps{
+    tileIndex: number
     x: number
     y: number
     size: number
-    number_token?: number
-    resource?: string
-    onClick: (coordinates: Coordinates) => void
+    tile: ResourceTile
+    interactive: boolean
+    onClick: (coordinates: Coordinates, tileIndex: number) => void
 }
 
 function ResourceTileComponent(props: ResourceTileProps){
     const x = props.x
     const y = props.y
     const handleClick = () => {
-        props.onClick({ x, y  })
+        props.onClick({ x, y }, props.tileIndex)
     }
     let tile : React.ReactElement[] = []
 
-    if (props.resource == "brick") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/brick/dirt_N.png"} eventMode='static' onclick={handleClick} />)
-    } else if (props.resource == "grain") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/grain/building_farm_N.png"} eventMode='static' onclick={handleClick} />)
-    } else if (props.resource == "lumber") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/lumber/grass_forest_N.png"} eventMode='static' onclick={handleClick} />)
-    } else if (props.resource == "ore") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/ore/stone_hill_N.png"} eventMode='static' onclick={handleClick} />)
-    } else if (props.resource == "wool") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/wool/building_sheep_N.png"} eventMode='static' onclick={handleClick} />)
-    } else if (props.resource == "desert") {
-        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/desert/sand_rocks_N.png"} eventMode='static' onclick={handleClick} />)
-    } else if (props.resource == "sea") {
+    if (props.tile.resource == "brick") {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/brick/dirt_N.png"} interactive={props.interactive} onclick={handleClick} alpha={props.interactive? 0.5 : 1}/>)
+    } else if (props.tile.resource == "grain") {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/grain/building_farm_N.png"} interactive={props.interactive} onclick={handleClick} alpha={props.interactive? 0.5 : 1}/>)
+    } else if (props.tile.resource == "lumber") {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/lumber/grass_forest_N.png"} interactive={props.interactive} onclick={handleClick} alpha={props.interactive? 0.5 : 1}/>)
+    } else if (props.tile.resource == "ore") {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/ore/stone_hill_N.png"} interactive={props.interactive} onclick={handleClick} alpha={props.interactive? 0.5 : 1}/>)
+    } else if (props.tile.resource == "wool") {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/wool/building_sheep_N.png"} interactive={props.interactive} onclick={handleClick} alpha={props.interactive? 0.5 : 1}/>)
+    } else if (props.tile.resource == "desert") {
+        tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/desert/sand_rocks_N.png"} interactive={props.interactive} onclick={handleClick} alpha={props.interactive? 0.5 : 1}/>)
+    } else if (props.tile.resource == "sea") {
         tile.push(<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"/assets/board/resource/sea/water_N.png"}/>)
     }
 
-    if (props.number_token) {
+    if (props.tile.number_token) {
         tile.push(
             <Text
-                text={props.number_token.toString()}
+                text={props.tile.number_token.toString()}
                 anchor={0.5}
                 x={0}
                 y={-20}
