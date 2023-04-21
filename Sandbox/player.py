@@ -38,14 +38,11 @@ class PlayerException(Exception):  pass
 
 
 
-
-
-
 class Player:
     def __init__(player, color, getter=None):
         player.game = None
         player.color = color
-        player.get = getter if getter else input
+        player.get = getter
 
         player.available_settlements = [Settlement(player) for i in range(5)]
         player.available_cities = [City(player) for i in range(4)]
@@ -56,7 +53,7 @@ class Player:
         player.built_roads = []
 
         # TODO: calculate actual road length
-        player.road_length = random.randint(5,10)
+        player.road_length = 0
         player.knights_played = 0
 
         player.resources = Resources()
@@ -180,6 +177,7 @@ class Player:
         player.game.add_road(location, road)
         road.location = location
         player.built_roads.append(road)
+        player.road_length += 1
 
     # def play_knight(player, location):
     #    player.development_cards["knight"] -= 1
@@ -371,7 +369,7 @@ class HumanPlayer(Player):
         other_players = [p for p in player.game.players if not (p is player)]
 
         for index, proposee in enumerate(other_players, 1):
-            print(f"{index}. {proposees}")
+            print(f"{index}. {proposee}")
 
         prompt1 = "Who would you like to propose this trade to? "
         choices = [p.strip() for p in player.get(prompt1).split(",")]
@@ -454,7 +452,7 @@ class HumanPlayer(Player):
             choice in [settlement.location for settlement in player.built_settlements]
         ):
             choice = int(player.get("Pick one of your settlement to upgrade: "))
-        return player.game.board.cells[choice].settlement
+        return player.game.board.tiles[choice].settlement
 
     def prompt_knight(player):
         """Called when user plays knight card.

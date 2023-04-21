@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from dataclasses import dataclass
 from enum import Enum
 from collections import Counter
 from random import randint
@@ -41,10 +40,10 @@ class DevelopmentCards(Counter):
                 self[kind] -= 1
                 return DevelopmentCards([kind])
             else:
-                raise InsufficientDevelopmentCards("pop from empty stack of development cards")
+                raise InsufficientDevelopmentCard("pop from empty stack of development cards")
         total = self.total()
         if total == 0:
-            raise InsufficientDevelopmentCards("pop from empty stack of development cards")
+            raise InsufficientDevelopmentCard("pop from empty stack of development cards")
         choice = randint(0, total - 1)
         for resource_kind in self:
             if choice < self[resource_kind]:

@@ -130,9 +130,9 @@ class BoardTester(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #    unittest.main()
-    for iteration in range(1, 101):
-        print("\n\n" + "[" * 20 + "  Test #%i  " % (iteration) + "]" * 20)
-        wasSuccessful = unittest.main(exit=False).result.wasSuccessful()
-        if not wasSuccessful:
-            sys.exit(1)
+    unittest.main()
+    # for iteration in range(1, 101):
+        # print("\n\n" + "[" * 20 + "  Test #%i  " % (iteration) + "]" * 20)
+        # wasSuccessful = unittest.main(exit=False).result.wasSuccessful()
+        # if not wasSuccessful:
+            # sys.exit(1)

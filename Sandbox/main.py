@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from rich.prompt import Prompt, IntPrompt
 from rich.console import Console
+from rich import print
 from rich.rule import Rule
 from random import randint
 from os import system
@@ -9,6 +10,9 @@ from dataclasses import dataclass
 
 from game import Game
 
+def rich_input(s):
+    print(s)
+    return input()
 
 @dataclass
 class Colour:
@@ -42,8 +46,8 @@ def print_logo(logo, console):
 
 
 CATAN_CREW = """
- ▄████▄   ▄▄▄     ▄▄▄█████▓ ▄▄▄       ███▄    █
-▒██▀ ▀█  ▒████▄   ▓  ██▒ ▓▒▒████▄     ██ ▀█   █
+   ▄████▄   ▄▄▄     ▄▄▄█████▓ ▄▄▄       ███▄    █
+  ▒██▀ ▀█  ▒████▄   ▓  ██▒ ▓▒▒████▄     ██ ▀█   █
   ▒▓█    ▄ ▒██  ▀█▄ ▒ ▓██░ ▒░▒██  ▀█▄  ▓██  ▀█ ██▒
   ▒▓▓▄ ▄██▒░██▄▄▄▄██░ ▓██▓ ░ ░██▄▄▄▄██ ▓██▒  ▐▌██▒
   ▒ ▓███▀ ░ ▓█   ▓██▒ ▒██▒ ░  ▓█   ▓██▒▒██░   ▓██░
@@ -52,8 +56,8 @@ CATAN_CREW = """
   ░          ░   ▒    ░        ░   ▒      ░   ░ ░
   ░ ░            ░  ░              ░  ░         ░
   ░
-   ▄████▄   ██▀███  ▓█████  █     █░
-  ▒██▀ ▀█  ▓██ ▒ ██▒▓█   ▀ ▓█░ █ ░█░
+ ▄████▄   ██▀███  ▓█████  █     █░
+▒██▀ ▀█  ▓██ ▒ ██▒▓█   ▀ ▓█░ █ ░█░
 ▒▓█    ▄ ▓██ ░▄█ ▒▒███   ▒█░ █ ░█
 ▒▓▓▄ ▄██▒▒██▀▀█▄  ▒▓█  ▄ ░█░ █ ░█
 ▒ ▓███▀ ░░██▓ ▒██▒░▒████▒░░██▒██▓
@@ -78,11 +82,8 @@ def main():
     c = Console()
     print_logo(CATAN_CREW, console=c)
     input("press any key to continue")
-    g = Game(getter=input, has_human_players=True)
-    try:
-        g.start()
-    except Exception:
-        print("[b red]Exception in program, exiting...[/b red]")
+    g = Game(getter=rich_input, has_human_players=True)
+    g.start()
 
 
 if __name__ == "__main__":

@@ -203,6 +203,7 @@ class Game:
         c = Console()
         while not self.is_won:
             self.do_turn()
+
             table = self.display_game_state()
             c.print(table, justify="center")
             # input("Breakpoint")
@@ -211,7 +212,8 @@ class Game:
             )
             c.print(
                 Panel(f"Largest Army:\n{self.check_largest_army()}"), justify="center"
-            )  # self.getter("Press any key to continue")
+            )
+            self.getter("Press any key to continue")
             clear()
 
         print(f"\n\n{str(self.current_player).upper()} WINS!!")
