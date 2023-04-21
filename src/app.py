@@ -116,12 +116,18 @@ def start_game(game_config: GameConfig):
         game_config.board_size,
     )
     gid = g.get_game_id()
-    board_state = json.loads(json.dumps(g.board, cls=BoardEncoder))
 
     for player_colour in game_config.color_of_player:
         g.add_player(player_colour.lower())
 
-    games[gid] = deepcopy(g)
+    games[gid] = g
+
+    games[gid].debugging_set_up_board()
+    
+    board_state = json.loads(json.dumps(g.board, cls=BoardEncoder))
+    print(gid)
+    print(g)
+    print(g.get_available_actions(g.current_player))
 
     return {
         "game_id": gid,
@@ -145,7 +151,7 @@ def get_board_state(player_info: GPlayerInfo = Depends()):
     Get the current state of the game board
     """
     game = player_info.get_game(games)
-    return {"state": json.dumps(game.board, cls=BoardEncoder)}
+    return {"board_state": game.board.to_json()}
 
 
 @app.get("/updated_player_resource")
@@ -179,8 +185,11 @@ def available_actions(player_info: GPlayerInfo = Depends()):
     Gets the available actions of a player
     """
     game = player_info.get_game(games)
+    print(game)
     player = player_info.get_player(games)
-
+    print(player)
+    print(game.get_available_actions(player))
+    print(games)
     return [label for label, _ in game.get_available_actions(player)]
 
 
@@ -196,13 +205,15 @@ def get_valid_locations(
 
     valid_locations = []
     if infrastructures == "roads":
-        valid_locations = player.reachable_paths()
+        print(player.reachable_paths())
+        valid_locations = [game.board.old_system_path_loc[path_loc] for path_loc in player.reachable_paths()]
     elif infrastructures == "cities":
-        valid_locations = game.players[player_info.player_colour].built_settlements
+        valid_locations = [game.board.old_system_intersection_loc[settlement.location] for settlement in player.built_settlements]
+        # valid_locations = game.players[player_info.player_colour].built_settlements
     elif infrastructures == "settlements":
-        valid_locations = game.board.valid_settlement_locations(
+        valid_locations = [game.board.old_system_intersection_loc[intersection_loc] for intersection_loc in game.board.valid_settlement_locations(
             player_info.player_colour, reachable
-        )
+        )]
     else:
         raise Exception("Invalid infrastructure")
 

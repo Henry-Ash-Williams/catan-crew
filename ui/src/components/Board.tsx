@@ -12,6 +12,8 @@ interface BoardComponentProps {
     size: number,
     boardState: Object
     setBoardState: (boardState: string) => void,
+
+    clickable: string[]
 }
 
 export interface Board {
