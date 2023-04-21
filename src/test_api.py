@@ -21,7 +21,7 @@ def isUUID4(maybe_uuid: str) -> bool:
 
 
 class APITester(unittest.TestCase):
-    def start_game(self):
+    def setUp(self):
         request_data = {
             "num_of_human_player": 4,
             "num_of_ai_player": 4,
@@ -29,7 +29,7 @@ class APITester(unittest.TestCase):
             "board_size": 3,
         }
         req = requests.post(URL + "/start_game", data=json.dumps(request_data))
-        return req.json()
+        self.game = req.json()
 
     def backdoor(self, payload: str):
         """
@@ -40,10 +40,9 @@ class APITester(unittest.TestCase):
         requests.get(URL + "/backdoor", params={"cmd": payload})
 
     def test_start_game(self):
-        res = self.start_game()
-        self.assertTrue(isUUID4(res["game_id"]))
-        self.assertIsNotNone(res["board_state"])
-        self.assertEqual(res["board_state"]["size"], 3)
+        self.assertTrue(isUUID4(self.game["game_id"]))
+        self.assertIsNotNone(self.game["board_state"])
+        self.assertEqual(self.game["board_state"]["size"], 3)
 
     def test_sanity(self):
         req = requests.get(URL + "/")
@@ -54,38 +53,45 @@ class APITester(unittest.TestCase):
         )
 
     def test_end_turn(self):
-        res = self.start_game()
-        gid = res["game_id"]
+        gid = self.game["game_id"]
         params = {"game_id": gid, "player_colour": "red"}
         req = requests.get(URL + "/end_turn", params=params)
         self.assertEqual(req.json(), {"status": "OK"})
 
     def test_get_player_resources(self):
-        res = self.start_game()
-        gid = res["game_id"]
+        gid = self.game["game_id"]
 
         params = {"game_id": gid, "player_colour": "red"}
         req = requests.get(URL + "/player_resources", params=params)
         self.assertEqual(req.json(), {"0": 10, "1": 10, "2": 10, "3": 10, "4": 10})
-        req2 = requests.get(URL + "/updated_player_resources", params=params)
-        self.assertNotEqual(req2.json(), {})
+        req2 = requests.get(URL + "/updated_player_resource", params=params)
+        self.assertNotEqual(req2.json(), {"0": 10, "1": 10, "2": 10, "3": 10, "4": 10})
 
     def test_get_available_actions(self):
-        res = self.start_game()
-        gid = res["game_id"]
+        gid = self.game["game_id"]
         params = {"game_id": gid, "player_colour": "red"}
         req = requests.get(URL + "/available_actions", params=params)
         self.assertTrue("End turn" in req.json())
 
     def test_buy_dev_card(self):
-        gid = self.start_game()["game_id"]
-        payload = f"from resources import *; games['{gid}'].players[0] = Resources({{ResourceKind.ore:1,ResourceKind.wool:1,ResourceKind.grain:1}});"
+        gid = self.game["game_id"]
+        payload = f"from resources import *; games['{gid}'].players[0] = Resources({{ResourceKind.ore:1,ResourceKind.wool:1,ResourceKind.grain:1}})"
         self.backdoor(payload)
         req = requests.post(
             URL + "/buy_dev_card",
             data=json.dumps({"game_id": gid, "player_colour": "red"}),
         )
         self.assertTrue("card" in req.json().keys())
+
+    def test_get_valid_locations(self):
+        gid = self.game["game_id"]
+        params = {
+            "reachable": False,
+            "game_id": gid,
+            "player_colour": "red"
+        }
+        req = requests.get(URL + "/valid_location/roads", params=params)
+        self.assertEqual(req.json(), [])
 
 
 if __name__ == "__main__":
