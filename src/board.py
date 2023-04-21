@@ -1,5 +1,4 @@
-import random
-import json
+import random, json
 from resources import grain, wool, lumber, brick, ore, ResourceKind
 
 def join(ll): return [i for k in ll for i in k]
@@ -150,7 +149,36 @@ class SeaTile(Tile):
     def to_json(tile):
         #return {'type': 'SeaTile', 'location': tile.board.old_system_tile_loc[tile.location], 'harbor': tile.harbor}
         return {'type':'Resource', 'location': tile.board.old_system_tile_loc[tile.location], \
-                'number_token': 0, 'resource': 'sea'}
+                'number_token': 0, 'resource': 'sea', 'harbor': tile.harbor}
+
+class Harbor:
+    def __init__(harbor, tile: SeaTile, flavor: str = 'generic', resource: ResourceKind = None, ports: list[int] = []):
+        """
+        Constructor method.
+
+        :param tile: The SeaTile that this harbor belongs to.
+        :type tile: SeaTile
+        :param flavor: A string representing the type of harbor ('generic'/'special')
+        :type flavor: str
+        :param resource: The resource type of the harbor
+        :type resource: ResourceKind
+        :param ports: The locations of the ports (land intersections) that this harbor is connected to
+        :type ports: list[int]
+        :return: None
+        """
+        if type(tile) is not SeaTile:
+            raise HarborException("Can't build a harbor on a non-sea tile")
+        harbor.tile = tile
+        harbor.flavor = flavor
+        harbor.resource = resource
+        harbor.ports = ports
+
+    def __repr__(harbor):
+        return f'Harbor{harbor.tile.location}<type={harbor.flavor}, resource={harbor.resource}, ports={harbor.ports}>'
+
+    def to_json(harbor):
+        return {'type': harbor.flavor, 'resource': harbor.resource,
+                'ports': [harbor.tile.board.old_system_intersection_loc[loc] for loc in harbor.ports]}
 
 class Path:
     def __init__(path, board, location):
@@ -520,6 +548,24 @@ class Board:
         board.available_path_locations = {path.location for path in board.land_paths}
         board.robber_location = random.choice(list(board.desert_locations))
 
+        board.harbor_locations = random.sample(list(board.sea_locations), 9)
+
+        board.generic_harbor_locations = board.harbor_locations[:4]
+        for location in board.generic_harbor_locations:
+            sea_tile = board.tiles[location]
+            sea_tile.harbor = Harbor(sea_tile)
+            port_intersections = random.sample(list(board.land_intersections & set(sea_tile.neighboring_intersections())), 2)
+            port_locations = [port_intersection.location for port_intersection in port_intersections]
+            sea_tile.harbor.ports = port_locations
+
+        board.special_harbor_locations = board.harbor_locations[4:]
+        for location, resource in zip(board.special_harbor_locations, [grain, wool, lumber, brick, ore]):
+            sea_tile = board.tiles[location]
+            sea_tile.harbor = Harbor(sea_tile, 'special', resource)
+            port_intersections = random.sample(list(board.land_intersections & set(sea_tile.neighboring_intersections())), 2)
+            port_locations = [port_intersection.location for port_intersection in port_intersections]
+            sea_tile.harbor.ports = port_locations
+
         #print(json.dumps(board,cls=BoardEncoder,indent=4))
 
         # Translation of locations to old system
@@ -667,7 +713,16 @@ class Board:
 
 
     def valid_settlement_intersections(board, player, needs_to_be_reachable=True):
+        """
+        Generates a list of intersections at which the given player can build a settlement.
 
+        :param player: The player who is to build a settlement.
+        :type player: Player
+        :param needs_to_be_reachable: True if the newly built settlement needs to be connected to the player's existing roads, False otherwise.
+        :type needs_to_be_reachable: bool
+        :return: a list of intersections that the player can build a settlement at
+        :rtype: list[Intersection]
+        """
         occupied_intersections = [intersection for intersection in board.intersections if intersection.settlement]
 
         blocked_intersections = join([intersection.neighboring_intersections() for intersection in occupied_intersections])
@@ -682,26 +737,76 @@ class Board:
         return list(set(reachable_intersections) - unavailable_intersections)
 
     def valid_settlement_locations(board, player, needs_to_be_reachable=True):
+        """
+        Generates a list of intersection locations at which the given player can build a settlement.
+
+        :param player: The player who is to build a settlement.
+        :type player: Player
+        :param needs_to_be_reachable: True if the newly built settlement needs to be connected to the player's existing roads, False otherwise.
+        :type needs_to_be_reachable: bool
+        :return: a list of intersection locations that the player can build a settlement at
+        :rtype: list[int]
+        """
         return [intersection.location for intersection in board.valid_settlement_intersections(player,needs_to_be_reachable)]
 
     def new_intersection(board, location):
+        """
+        Adds a new Intersection object to the board at the given location.
+
+        :param location: The location of the new intersection.
+        :type location: int
+        :return: the newly created Intersection object
+        :rtype: Intersection
+        """
         board.intersections[location] = Intersection(board, location)
         return board.intersections[location]
 
     def new_path(board, location):
+        """
+        Adds a new Path object to the board at the given location.
+
+        :param location: The location of the new path.
+        :type location: int
+        :return: the newly created Path object
+        :rtype: Path
+        """
         board.paths[location] = Path(board, location)
         return board.paths[location]
 
     def new_resource_tile(board, location, resource_kind, number_token):
+        """
+        Adds a new ResourceTile object to the board at the given location.
+
+        :param location: The location of the new resource tile.
+        :type location: int
+        :return: the newly created ResourceTile object
+        :rtype: ResourceTile
+        """
         board.tiles[location] = ResourceTile(board, location, resource_kind, number_token)
         board.tiles_by_token[number_token].append(board.tiles[location])
         return board.tiles[location]
 
     def new_desert_tile(board, location):
+        """
+        Adds a new DesertTile object to the board at the given location.
+
+        :param location: The location of the new desert tile.
+        :type location: int
+        :return: the newly created DesertTile object
+        :rtype: DesertTile
+        """
         board.tiles[location] = DesertTile(board, location)
         return board.tiles[location]
 
     def new_sea_tile(board, location):
+        """
+        Adds a new SeaTile object to the board at the given location.
+
+        :param location: The location of the new sea tile.
+        :type location: int
+        :return: the newly created SeaTile object
+        :rtype: SeaTile
+        """
         board.tiles[location] = SeaTile(board, location)
         return board.tiles[location]
 
@@ -722,3 +827,5 @@ class BoardEncoder(json.JSONEncoder):
 class RoadBuildingException(Exception): pass
 
 class SettlementBuildingException(Exception): pass
+
+class HarborException(Exception): pass

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import random
+
 from board import *
 from player import *
 from human_player import HumanPlayer
