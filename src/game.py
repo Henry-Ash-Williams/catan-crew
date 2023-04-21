@@ -67,8 +67,6 @@ class Game:
         self.turn_count = 0
         self.dev_card_played = False
 
-
-
     def add_player(self, colour: str):
         temp_player = HumanPlayer(colour)
         temp_player.number = len(self.players) + 1
@@ -78,7 +76,7 @@ class Game:
 
         if self.current_player is None:
             self.current_player = self.players[-1]
-            
+
     def add_autonomous_player(self, colour: str):
         temp_player = AutonomousPlayer(colour)
         temp_player.number = len(self.players) + 1
@@ -109,7 +107,7 @@ class Game:
 
     def dice_roll(self):
         self.dice = random.randint(1, 6) + random.randint(1, 6)
-        #print(f"Dice rolled. Result: {self.dice}")
+        # print(f"Dice rolled. Result: {self.dice}")
         return self.dice
 
     def print_current_player(self):
@@ -143,15 +141,15 @@ class Game:
         # t.add_column("Development Cards")
 
         # for player in player_data:
-            # t.add_row(
-                # str(player[0]),
-                # str(player[1]),
-                # str(player[2]),
-                # str(player[3]),
-                # str(player[4]),
-                # str(player[5]),
-                # style=player[0],
-            # )
+        # t.add_row(
+        # str(player[0]),
+        # str(player[1]),
+        # str(player[2]),
+        # str(player[3]),
+        # str(player[4]),
+        # str(player[5]),
+        # style=player[0],
+        # )
         return player_data
 
     def set_turn(self, player):
@@ -165,29 +163,29 @@ class Game:
         else:
             raise GameException("Cannot have a game with no players")
         #self.set_up_board()
-        self.debugging_set_up_board()
+        #self.debugging_set_up_board()
         self.game_loop()
-        
+
     def debugging_set_up_board(self):
-    
         """Temporary method for setting up the board automatically, for debugging"""
-    
+
         # Iterate over all players twice
-        for player in self.players*2:
-        
+        for player in self.players * 2:
             # Make it this player's turn
             self.set_turn(player)
-        
+
             # Build a settlement at a random valid location for that player
-            valid_settlement_locations = self.board.valid_settlement_locations(player, needs_to_be_reachable=False)
+            valid_settlement_locations = self.board.valid_settlement_locations(
+                player, needs_to_be_reachable=False
+            )
             choice = random.choice(valid_settlement_locations)
-            player.builds_settlement(choice, for_free = True)
-            
+            player.builds_settlement(choice, for_free=True)
+
             # Build a road at a random valid location for that player
             valid_road_locations = player.reachable_paths()
             choice = random.choice(valid_road_locations)
-            player.builds_road(choice, for_free = True)
-            
+            player.builds_road(choice, for_free=True)
+
         # Set the next player to be red
         self.set_turn(self.players[0])
 
@@ -226,29 +224,30 @@ class Game:
             table = self.display_game_state()
             # c.print(table, justify="center")
             # c.print(
-                # Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center"
+            # Panel(f"Longest Road:\n{self.check_longest_road()}"), justify="center"
             # )
             # c.print(
-                # Panel(f"Largest Army:\n{self.check_largest_army()}"), justify="center"
-            #)
+            # Panel(f"Largest Army:\n{self.check_largest_army()}"), justify="center"
+            # )
             # clear()
 
         print(f"\n\n{str(self.current_player).upper()} WINS!!")
 
     def handle_robber(self):
-            # self.current_player.message(
-                # f"You rolled a 7. Any player with more than {ROBBING_THRESHOLD} resource cards now has to give up half of them!\n"
-            # )
-            for other_player in self.players:
-                player_wealth = other_player.resources.total()
-                if player_wealth > ROBBING_THRESHOLD:
-                    # other_player.message(
-                        # f"[b {other_player.color}]{other_player}[/b {other_player.color}]: a 7 has been rolled. "
-                        # + f"You have {player_wealth} resource cards. You have to give up {amount_robbed} of them."
-                    # )
-                    resources_robbed = other_player.get_valid_resources_to_give_up()
-                    other_player.resources -= resources_robbed
-                    self.bank.return_resources(resources_robbed)
+        # self.current_player.message(
+        # f"You rolled a 7. Any player with more than {ROBBING_THRESHOLD} resource cards now has to give up half of them!\n"
+        # )
+        for other_player in self.players:
+            player_wealth = other_player.resources.total()
+            if player_wealth > ROBBING_THRESHOLD:
+                # other_player.message(
+                # f"[b {other_player.color}]{other_player}[/b {other_player.color}]: a 7 has been rolled. "
+                # + f"You have {player_wealth} resource cards. You have to give up {amount_robbed} of them."
+                # )
+                resources_robbed = other_player.get_valid_resources_to_give_up()
+                other_player.resources -= resources_robbed
+                self.bank.return_resources(resources_robbed)
+
     def get_available_actions(self, player):
         # player.get_player_state()
 
@@ -264,9 +263,7 @@ class Game:
             available_actions.append(("Build a settlement", self.build_settlement))
 
         if player.can_upgrade_settlement():
-            available_actions.append(
-                ("Upgrade a settlement", self.upgrade_settlement)
-            )
+            available_actions.append(("Upgrade a settlement", self.upgrade_settlement))
 
         if player.can_buy_dev_card():
             available_actions.append(
@@ -290,6 +287,10 @@ class Game:
             available_actions.append(("Play Monopoly card", self.play_monopoly))
 
         available_actions.append(("End turn", self.end_turn))
+
+        # print(available_actions)
+        # input()
+
         return available_actions
 
     def do_turn(self):
@@ -380,7 +381,7 @@ class Game:
         self.bank.return_resources(cost)
         dev_card = self.bank.distribute_dev_card()
         self.current_player.gets_development_cards(dev_card)
-        #self.current_player.message(f"Congrats, you got [b]{str(dev_card)}[/b]")
+        # self.current_player.message(f"Congrats, you got [b]{str(dev_card)}[/b]")
         return dev_card
 
     def upgrade_settlement(self):
@@ -528,4 +529,5 @@ class Game:
         Randomly generate a game ID,
         """
         import uuid
+
         return str(uuid.uuid4())

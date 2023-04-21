@@ -34,11 +34,7 @@ def print_logo(logo, console):
         beta = 1 - alpha
         this_line_colour = start_colour * alpha + end_colour * beta
 
-        console.print(
-            current_line,
-            style=str(this_line_colour),
-            justify="center"
-        )
+        console.print(current_line, style=str(this_line_colour), justify="center")
 
 
 CATAN_CREW = """

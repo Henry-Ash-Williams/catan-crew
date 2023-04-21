@@ -1,8 +1,8 @@
 import './styles/App.css';
 
-import { io, Socket } from 'socket.io-client';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Container, Graphics, Sprite, Stage, useApp, useTick, InteractionEvents } from '@pixi/react';
+import { io } from 'socket.io-client';
+import { useEffect, useRef, useState } from 'react';
+import { Container, Sprite, Stage } from '@pixi/react';
 import { Texture } from 'pixi.js';
 
 import Trade from './components/Trade';
@@ -30,6 +30,14 @@ interface Resources{
   brick: number
 }
 
+interface AvailableActions{
+  buildRoad: boolean
+  buildSettlement: boolean
+  buildCity: boolean
+  buyDevCard: boolean
+  trade: false
+}
+
 const socket = io('http://localhost:3001');
 
 function App() {
@@ -49,93 +57,37 @@ function App() {
   })
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
   const [devcards, setDevCards] = useState()
+  const [availableActions, setAvailableActions] = useState<string[]>([])
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
-  const [leaderBoardState, setLeaderBoardState] = useState<any>()
+  const [leaderBoardState, setLeaderBoardState] = useState([])
   const [boardState, setBoardState] = useState<string>("")
+  const [availableActions, setAvailableActions] = useState<AvailableActions>({buildRoad: false, buildSettlement: false, buildCity: false, buyDevCard: false, trade: false})
 
-  const rollDice = () => {
+  function action (type: string) {
     const json = {
-      game_id: game_idR.current,
+      game_id : game_idR.current,
       player_colour: idToPlayer.get(socketID)
     }
-    socket.emit("roll_dice", json)
+    console.log('API CALLED', type)
+    socket.emit(type, json)
   }
 
-  const getClickableTiles = (type: string) => {
+  function validLocationsFor (type: string, reachable: boolean) {
     const json = {
-      game_id: game_idR.current,
-      player_colour: idToPlayer.get(socketID)
+      game_id : game_idR.current,
+      player_colour: idToPlayer.get(socketID),
+      reachable: reachable
     }
-    console.log("JSON:\n" + json.game_id + "\n" + json.player_colour)
-    
-    socket.emit("valid_location/" + type, json)
-  }
-  
-  // this must be called after every dice roll
-  const updatedPlayerResources = () => {
-    const json = {
-      game_id: game_idR.current,
-      player_colour: idToPlayer.get(socketID)
-    }
-    console.log("RESOURCES:\n", resources)
-    socket.emit("updated_player_resources", json)
-  }
-
-  const getBoardState = () => {
-    console.log("GETTING BOARD STATE")
-    const json = {
-      game_id: game_idR.current,
-      player_colour: idToPlayer.get(socketID)
-    }
-    console.log(resources)
-    // console.log("JSON:\n" + json.game_id + "\n" + json.player_colour)
-    socket.emit("board_state", json)
-  }
-
-  const getLeaderboard = () => {
-    console.log("GETTING LEADERBOARD", socketID, idToPlayer)
-    console.log("PLAYER:\n", idToPlayer.get(socketID), typeof(idToPlayer.get(socketID)))
-    
-
-    const json = {
-      game_id: game_idR.current,
-      player_colour: "red"
-    }
-    socket.emit("leaderboard", json)
+    console.log('API CALLED', type, 'REACHABLE?', reachable)
+    socket.emit('valid_location/' + type, json)
   }
 
   const getCurrentPlayer = () => {
-    console.log("GETTING CURRENT PLAYER")
+    console.log("API CALLED current_player")
     const json = {
       game_id: game_idR.current,
     }
     socket.emit("current_player", json)
-  }
-
-  const getAvailableActions = () => {
-    console.log("GETTING AVAILABLE ACTIONS")
-    console.log("Player resources:\n", resources)
-    const json = {
-      game_id: game_idR.current,
-      player_colour: idToPlayer.get(socketID)
-    }
-    socket.emit("available_actions", json)
-  }
-
-  const endTurn = () => {
-    const json = {
-      game_id: game_idR.current,
-      player_colour: idToPlayer.get(socketID)
-    }
-    socket.emit("end_turn", json)
-  }
-
-  const getPlayerResources = () => {
-    const json = {
-      game_id: game_idR.current,
-      player_colour: idToPlayer.get(socketID)
-    }
-    socket.emit("player_resources", json)
   }
 
   const handleJoinGame = () => {
@@ -147,7 +99,6 @@ function App() {
       console.log('Starting the game...')
       socket.emit("start_game") 
   }
-  
 
   useEffect(() => {
     socket.on("end_turn", data => {
@@ -159,7 +110,25 @@ function App() {
 
     socket.on("roll_dice", data => {
       console.log("ROLL DICE:\n", data)
+      const d1 = Math.floor(data.dice_val/2)
+      setNumbersToDisplay([d1, data.dice_val - d1])
+      setCanRoll(false)
+      if(data.dice_val == 7){
+        action("discard_resource_card")
+        action("valid_robber_locations")
+      action("updated_player_resources")
+    }
+  })
+
+    socket.on("valid_robber_locations", data => {
+      console.log("VALID ROBBER LOCATIONS:\n", data)
+      setClickableTiles(data)
     })
+
+    socket.on("robber_location", data => {
+      console.log("ROBBER LOCATION:\n", data)
+    })
+
 
     socket.on("board_state", data => {
       console.log("BOARD STATE:\n", data)
@@ -167,17 +136,22 @@ function App() {
     })
 
     socket.on("current_player", data => {
-      console.log("CURRENT PLAYER:\n", data)
+      // console.log("CURRENT PLAYER:\n", data)
       if(data.player_colour == idToPlayer.get(socketID)){
-        getAvailableActions()
+        action('available_actions')
+        setCanRoll(true)
       }
-      getPlayerResources()
-      getBoardState()
-      updatedPlayerResources()
+      action("player_resources");
+      action("board_state");
+      action("updated_player_resources");
+      action("valid_location/roads");
+      action("valid_location/settlements");
+      action("valid_location/cities");
     })
 
     socket.on("available_actions", data => {
       console.log("AVAILABLE ACTIONS:\n", data)
+      setAvailableActions(data)
     })
     
     socket.on("valid_location/roads", data => {
@@ -239,23 +213,14 @@ function App() {
       game_idR.current = data.game_id;
       setBoardState(data.board_state)
       setGameStarted(!gameStarted);
-      console.log(players)
-      // socket.emit('leaderboard', {
-      //   game_id: game_idR.current,
-      //   player_colour: idToPlayer.get(socketID)
-      // })
-      getLeaderboard()
-      // console.log(game_idR.current)
-      // console.log(boardState)
-      // console.log(data.game_id)
-      // console.log(gameID);
-      // getClickableTiles("settlements")
+      console.log('Started game with these players' ,players)
+      action("leaderboard")
       getCurrentPlayer()
     })
 
     socket.on('leaderboard', data => {
-      console.log("LEADERBOARD",data[0])
-      setLeaderBoardState(data[0])
+      console.log("LEADERBOARD",data)
+      setLeaderBoardState(data)
     })
 
     return () => {
@@ -305,7 +270,7 @@ function App() {
           <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} tint={0x00FFFF}></Sprite>
 
           {/* Board */}
-          <BoardComponent boardState={boardState} setBoardState={setBoardState} size={15} width={dimensions.width} height={dimensions.height}/>
+          <BoardComponent boardState={boardState} setBoardState={setBoardState} size={15} width={dimensions.width} height={dimensions.height} clickable={clickableTiles}/>
             {/* Cards */}
           <Container>
             <Card resourceType='ore' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0} amount={resources.ore} fontSize={dimensions.height / 9}/>
@@ -317,9 +282,9 @@ function App() {
 
           <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} state={leaderBoardState}/>
 
-          <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} onClick={rollDice} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
+          <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} onClick={() => {action('roll_dice')}} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 
-      <ActionsBar width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} methods={[[setTrade, trade]]}/>
+      <ActionsBar action={action} getLocationsFor={validLocationsFor} width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} availableActions={availableActions} tradeFunction={[setTrade, trade]}/>
 
       <Bank height={dimensions.height} width={dimensions.width} fontSize={dimensions.height / 9}/>
 

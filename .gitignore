@@ -17,3 +17,5 @@ src/todo.org
 /socket-server/node_modules/*
 
 ui/node_modules/*
+
+src/.coverage

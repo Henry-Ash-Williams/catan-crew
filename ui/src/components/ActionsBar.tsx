@@ -4,10 +4,13 @@ import { useCallback, useState } from "react";
 import Card from "./Card";
 
 interface ActionBarProps{
+    getLocationsFor: Function;
+    action: Function;
+    tradeFunction : [Function, boolean];
     width: number;
     height: number;
     fontSize: number;
-    methods: any;
+    availableActions: string[];
 }
 
 export default function ActionsBar(props: ActionBarProps){
@@ -20,20 +23,25 @@ export default function ActionsBar(props: ActionBarProps){
         'road' : 0,
         'knight' : 0,
     })
+    const actions : any = {} 
+    props.availableActions.forEach((action: string) => {
+        actions[action] = true;
+    })
+
     const buildRoad = ()=>{
-        console.log("built")
+        props.getLocationsFor('roads', true)
     }
     const buildSettlement = ()=>{
-        
+        props.getLocationsFor('settlements', true)
     }
     const buildCity = ()=>{
-        
+        props.getLocationsFor('cities', true)
     }
     const trade = ()=>{
-        props.methods[0][0](!props.methods[0][1])
+        props.tradeFunction[0](!props.tradeFunction[1])
     }
     const endTurn = ()=>{
-        
+        props.action('end_turn')
     }
     const buyDevCards = ()=>{
         
@@ -61,28 +69,28 @@ export default function ActionsBar(props: ActionBarProps){
                 <Card resourceType='knight' width={props.width} height={props.height} x={props.width * 0.274} y={0} amount={devAmounts['knight']} fontSize={props.fontSize}/>
             </Container>
             <Container x={props.width * 0.265} y={props.height * 0.01}>
-                <Container x={props.width * 0.08} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildRoad} interactive={true}/>
+                <Container x={props.width * 0.08} y={props.height * 0.015} alpha={actions['Build a road'] ? 1 : 0.5}>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildRoad} eventMode={actions['Build a road'] ? "static" : 'none'}/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.08} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/road.png'}/>
                 </Container>
-                <Container x={0.145 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildSettlement} interactive={true}/>
+                <Container x={0.145 * props.width} y={props.height * 0.015} alpha={actions['Build a settlement'] ? 1 : 0.5}>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildSettlement} eventMode={actions['Build a settlement'] ? "static" : 'none'}/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.08} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/house.png'}/>
                 </Container>
-                <Container x={0.21 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildCity} interactive={true}/>
+                <Container x={0.21 * props.width} y={props.height * 0.015} alpha={actions['Upgrade a settlement'] ? 1 : 0.5}>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buildCity} eventMode={actions['Upgrade a settlement'] ? "static" : 'none'}/>
                     <Sprite width={props.width * 0.06} height={props.height * 0.095} x={0} y={props.height * 0.014} image={'/assets/action-board/town.png'}/>
                 </Container>
-                <Container x={0.275 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buyDevCards} interactive={true}/>
+                <Container x={0.275 * props.width} y={props.height * 0.015} alpha={actions['Buy a development card'] ? 1 : 0.5}>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={buyDevCards} eventMode={actions['Buy a development card'] ? "static" : 'none'}/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.07} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/dev.png'}/>
                 </Container>
-                <Container x={0.34 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={trade} interactive={true}/>
+                <Container x={0.34 * props.width} y={props.height * 0.015} alpha={actions['Propose a trade'] ? 1 : 0.5}>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={trade} eventMode={actions['Propose a trade'] ? "static" : 'none'}/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.07} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/trade.png'}/>
                 </Container>
-                <Container x={0.405 * props.width} y={props.height * 0.015}>
-                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={endTurn} interactive={true}/>
+                <Container x={0.405 * props.width} y={props.height * 0.015} alpha={actions['End turn'] ? 1 : 0.5}>
+                    <Sprite width={props.width * 0.06} height={props.height * 0.11} image={'/assets/menu/panel_brown.png'} onclick={endTurn} eventMode={actions['End turn'] ? "static" : 'none'}/>
                     <Sprite width={props.width * 0.05} height={props.height * 0.07} x={props.width * 0.005} y={props.height * 0.014} image={'/assets/action-board/end.png'}/>
                 </Container>
             </Container>

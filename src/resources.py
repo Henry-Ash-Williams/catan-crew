@@ -17,7 +17,8 @@ class ResourceKind(Enum):
     def __repr__(self):
         return str(self)
 
-    def to_json(self): return str(self)
+    def to_json(self):
+        return str(self)
 
 
 globals().update(ResourceKind.__members__)
@@ -116,9 +117,18 @@ class Resources(Counter):
 
 RESOURCE_REQUIREMENTS = {
     "road": Resources({ResourceKind.brick: 1, ResourceKind.lumber: 1}),
-    "settlement": Resources({ResourceKind.brick: 1, ResourceKind.lumber: 1, ResourceKind.wool: 1, ResourceKind.grain: 1}),
+    "settlement": Resources(
+        {
+            ResourceKind.brick: 1,
+            ResourceKind.lumber: 1,
+            ResourceKind.wool: 1,
+            ResourceKind.grain: 1,
+        }
+    ),
     "city": Resources({ResourceKind.ore: 3, ResourceKind.grain: 2}),
-    "development_card": Resources({ResourceKind.ore: 1, ResourceKind.wool: 1, ResourceKind.grain: 1}),
+    "development_card": Resources(
+        {ResourceKind.ore: 1, ResourceKind.wool: 1, ResourceKind.grain: 1}
+    ),
 }
 
 NO_RESOURCES = Resources()

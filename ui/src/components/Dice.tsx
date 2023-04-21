@@ -59,7 +59,7 @@ function DiceComponent(props: DiceComponentProps) {
         y={props.y * 0.1}
         image={'/assets/menu/buttonLong_beige.png'}
         alpha={diceOpacity}
-        interactive={props.canRoll}
+        eventMode={props.canRoll ? 'static' : 'none'}
         onclick={handleClick}
       />
       <Text

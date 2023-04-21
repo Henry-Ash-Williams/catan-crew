@@ -36,7 +36,7 @@ export default function TradeParticipants(props: TradeParticipantsProps){
                 })
                 xOffset += props.width * 0.07;
                 return (
-                    <Container x={xOffset} alpha={alphaVal[p]} interactive={true} onclick={()=>{handleClick(p)}}>
+                    <Container x={xOffset} alpha={alphaVal[p]} eventMode='static' onclick={()=>{handleClick(p)}}>
                         <Graphics draw={draw} alpha={alphaVal[p]}/>
                         <Sprite image={'/assets/leaderboard-icons/player.png'} width={props.width * 0.08} height={props.height * 0.15}/>
                     </Container>

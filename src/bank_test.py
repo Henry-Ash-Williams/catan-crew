@@ -14,23 +14,23 @@ class BankTester(unittest.TestCase):
 
         # Ensure that the bank distributes the correct number of resources
         # and that the total resource tracker is updated accordingly
-        self.assertEqual(brick, Resources({brick:3}))
+        self.assertEqual(brick, Resources({brick: 3}))
         self.assertEqual(bank.available_resources, Resources(16, 19, 19, 19, 19))
 
         lumber = bank.distribute(4, ResourceKind.lumber)
-        self.assertEqual(lumber, Resources({lumber:4}))
+        self.assertEqual(lumber, Resources({lumber: 4}))
         self.assertEqual(bank.available_resources, Resources(16, 15, 19, 19, 19))
 
         ore = bank.distribute(1, ResourceKind.ore)
-        self.assertEqual(ore, Resources({ore:1}))
+        self.assertEqual(ore, Resources({ore: 1}))
         self.assertEqual(bank.available_resources, Resources(16, 15, 18, 19, 19))
 
         grain = bank.distribute(2, ResourceKind.grain)
-        self.assertEqual(grain, Resources({grain:2}))
+        self.assertEqual(grain, Resources({grain: 2}))
         self.assertEqual(bank.available_resources, Resources(16, 15, 18, 17, 19))
 
         wool = bank.distribute(3, ResourceKind.wool)
-        self.assertEqual(wool, Resources({wool:3}))
+        self.assertEqual(wool, Resources({wool: 3}))
         self.assertEqual(bank.available_resources, Resources(16, 15, 18, 17, 16))
 
     def test_bank_return(self):
