@@ -61,7 +61,6 @@ function App() {
   const [clickableTiles, setClickableTiles] = useState<string[]>([])
   const [leaderBoardState, setLeaderBoardState] = useState([])
   const [boardState, setBoardState] = useState<string>("")
-  const [availableActions, setAvailableActions] = useState<AvailableActions>({buildRoad: false, buildSettlement: false, buildCity: false, buyDevCard: false, trade: false})
 
   function action (type: string) {
     const json = {
