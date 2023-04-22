@@ -236,7 +236,7 @@ def get_current_player(game_id: str):
 
 @app.post("/build/{infrastructures}")
 def build_infrastructures(
-    hexagon_id: int, infrastructures: str, player_info: PlayerInfo
+    infrastructures: str, player_info: TileInfo
 ):
     """
     Build infrastructure at a location
@@ -245,24 +245,24 @@ def build_infrastructures(
 
     if infrastructures == "roads":
         try:
-            new_system_hexagon_id = player.game.board.new_system_path_loc[hexagon_id]
+            new_system_hexagon_id = player.game.board.new_system_path_loc[player_info.hexagon_id]
         except KeyError:
             raise Exception("hexagon_id is not a valid path location")
-        player.builds_road(hexagon_id)
+        player.builds_road(player_info.hexagon_id)
 
     elif infrastructures == "cities":
         try:
-            new_system_hexagon_id = player.game.board.new_system_intersection_loc[hexagon_id]
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[player_info.hexagon_id]
         except KeyError:
             raise Exception("hexagon_id is not a valid intersection location")
-        player.upgrade_settlement(player.game.board.intersections[hexagon_id].settlement)
+        player.upgrade_settlement(player.game.board.intersections[player_info.hexagon_id].settlement)
 
     elif infrastructures == "settlements":
         try:
-            new_system_hexagon_id = player.game.board.new_system_intersection_loc[hexagon_id]
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[player_info.hexagon_id]
         except KeyError:
             raise Exception("hexagon_id is not a valid intersection location")
-        player.builds_settlement(hexagon_id)
+        player.builds_settlement(player_info.hexagon_id)
 
     return {"status": "OK"}
 
@@ -486,6 +486,9 @@ def backdoor(cmd: str):
 
 @app.get("/bank_resources")
 def bank_resources(game_id: str):
+    """
+    Get the resources currently available to the bank
+    """
     try:
         g = games[game_id]
     except KeyError:
