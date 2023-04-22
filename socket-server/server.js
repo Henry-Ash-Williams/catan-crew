@@ -225,7 +225,7 @@ io.on('connection', socket => {
     socket.on("build/roads", (req) => {
         const queryParams = new URLSearchParams(req).toString();
         fetch('http://localhost:8000/build/roads?' + queryParams, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -242,7 +242,7 @@ io.on('connection', socket => {
         const queryParams = new URLSearchParams(req).toString();
         console.log(queryParams)
         fetch('http://localhost:8000/build/cities?' + queryParams, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -257,7 +257,7 @@ io.on('connection', socket => {
     socket.on("build/settlements", (req) => {
         const queryParams = new URLSearchParams(req).toString();
         fetch('http://localhost:8000/build/settlements?' + queryParams, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -428,7 +428,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
-})})});
+});
     
 
 
