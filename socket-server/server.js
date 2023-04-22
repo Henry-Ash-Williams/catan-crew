@@ -345,6 +345,21 @@ io.on('connection', socket => {
         });
     })
 
+    socket.on("player_dev_cards", (player_info) => {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/player_dev_cards?' + queryParams, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            io.emit("player_dev_cards",data);
+        });
+    })
+
     socket.on("visible_victory_points", (player_info) => {
         const queryParams = new URLSearchParams(player_info).toString();
         fetch('http://localhost:8000/visible_victory_points?' + queryParams, {
@@ -428,7 +443,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
-})})});
+});
     
 
 

@@ -22,7 +22,7 @@ interface Players{
   yellow: string
 }
 
-interface Resources{
+export interface Resources{
   ore: number
   wool: number
   grain: number
@@ -74,7 +74,7 @@ function App() {
     width: 16 * Math.min(window.innerHeight / 9, window.innerWidth / 16)
   })
   const [resources, setResources] = useState<Resources>({ore: 0, wool: 0, grain: 0, lumber: 0, brick: 0})
-  const [devcards, setDevCards] = useState()
+  // const [devcards, setDevCards] = useState()
   const [availableActions, setAvailableActions] = useState<string[]>([])
   const [clickableTiles, setClickableTiles] = useState<number[]>([])
   const [leaderBoardState, setLeaderBoardState] = useState([])
@@ -193,6 +193,16 @@ function App() {
       setBoardState(data)
     })
 
+    socket.on('buy_dev_card', data => {
+      console.log("DEVELOPMENT CARD BOUGHT", data.card)
+      action("player_dev_cards")
+      action("updated_player_resource");
+    })
+
+    socket.on("player_dev_cards", data => {
+      console.log("DEV CARDS", data)
+    })
+
     socket.on("current_player", data => {
       // console.log("CURRENT PLAYER:\n", data)
       if(data.player_colour == idToPlayer.get(socketID)){
@@ -305,6 +315,8 @@ function App() {
       socket.off('trade_response');
       socket.off('updated_player_resources');
       socket.off('player_resources');
+      socket.off('buy_dev_card')
+      socket.off("player_dev_cards")
     }
   },[idToPlayer, resources])
 
@@ -357,7 +369,7 @@ function App() {
 
       <Bank height={dimensions.height} width={dimensions.width} fontSize={dimensions.height / 9}/>
 
-      <Trade height={dimensions.height} width={dimensions.width} visible={trade} fontSize={dimensions.height / 9}/>
+      <Trade resourcesAvailable={resources} height={dimensions.height} width={dimensions.width} visible={trade} fontSize={dimensions.height / 9}/>
 
         </Stage>
       </div>
