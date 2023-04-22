@@ -170,7 +170,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("available_actions", data);
+            socket.emit("available_actions", data);
         });
     })
     
