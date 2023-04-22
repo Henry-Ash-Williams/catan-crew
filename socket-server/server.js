@@ -241,10 +241,11 @@ io.on('connection', socket => {
         
         const queryParams = new URLSearchParams(req).toString();
         console.log(queryParams)
-        fetch('http://localhost:8000/build/cities?' + queryParams, {
+        fetch('http://localhost:8000/build/cities?', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'body': JSON.stringify(req)
             }
         })
         .then(response => response.json())
