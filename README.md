@@ -27,3 +27,9 @@ Source files for Software Engineering 2023 at the University of Sussex
        14  15  16  17  18
          4   5   6   7
 ```
+
+# Statistics 
+- 3051 lines of code in python 
+- 1449 lines of code in typescript 
+- 1062 lines of code in javascript
+- 5562 total LOC 

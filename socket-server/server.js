@@ -170,7 +170,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            io.emit("available_actions", data);
+            socket.emit("available_actions", data);
         });
     })
     
@@ -238,7 +238,9 @@ io.on('connection', socket => {
     })
     
     socket.on("build/cities", (req) => {
+        
         const queryParams = new URLSearchParams(req).toString();
+        console.log(queryParams)
         fetch('http://localhost:8000/build/cities?' + queryParams, {
             method: 'GET',
             headers: {
@@ -426,7 +428,8 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
-});
+})})});
+    
 
 
 

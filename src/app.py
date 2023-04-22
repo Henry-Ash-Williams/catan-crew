@@ -11,9 +11,9 @@ from rich import print
 
 from game import Game
 from board import BoardEncoder
-from player import Player, PlayerEncoder
+from player import Player
 from autonomous_player import AutonomousPlayer
-from resources import Resources, ResourceKind
+from resources import Resources, ResourceKind, DevelopmentCardKind
 from trade import Trade
 
 ###########
@@ -215,7 +215,7 @@ def get_valid_locations(
             player_info.player_colour, reachable
         )]
     else:
-        raise Exception("Invalid path")
+        raise Exception("Invalid infrastructure")
 
     return valid_locations
 
@@ -243,11 +243,25 @@ def build_infrastructures(
     player = player_info.get_player(games)
 
     if infrastructures == "roads":
-        player.build_road(hexagon_id)
+        try:
+            new_system_hexagon_id = player.game.board.new_system_path_loc[hexagon_id]
+        except KeyError:
+            raise Exception("hexagon_id is not a valid path location")
+        player.builds_road(hexagon_id)
+
     elif infrastructures == "cities":
-        player.upgrade_settlement(hexagon_id)
+        try:
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[hexagon_id]
+        except KeyError:
+            raise Exception("hexagon_id is not a valid intersection location")
+        player.upgrade_settlement(player.game.board.intersections[hexagon_id].settlement)
+
     elif infrastructures == "settlements":
-        player.build_settlement(hexagon_id)
+        try:
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[hexagon_id]
+        except KeyError:
+            raise Exception("hexagon_id is not a valid intersection location")
+        player.builds_settlement(hexagon_id)
 
     return {"status": "OK"}
 
@@ -312,8 +326,9 @@ def buy_dev_card(info: PlayerInfo):
     game = info.get_game(games)
 
     card = game.sell_development_card()
+    kind = str(list(card.keys())[0])
 
-    return {"card": card}
+    return {"card": kind}
 
 
 @app.get("/visible_victory_points")

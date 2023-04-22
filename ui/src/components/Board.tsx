@@ -4,16 +4,18 @@ import { IntersectionComponent } from "./Intersection";
 import { PathComponent } from "./Path";
 import { ResourceTileComponent } from "./Resource";
 import { KnightComponent } from "./Knight";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface BoardComponentProps {
     height: number,
     width: number,
     size: number,
-    boardState: Object
+    boardStateJson: Object
     setBoardState: (boardState: string) => void,
-
-    clickable: string[]
+    clickable: number[]
+    build: (args0: string, args1: number) => void
+    setTileData: Function
+    robber: (args0: number) => void
 }
 
 export interface Board {
@@ -35,8 +37,11 @@ interface Tile {
 
 interface TileData {
     tile: Tile,
+    key: number,
     x: number,
     y: number,
+    interactive: boolean
+    build: (args0: string, args1: number) => void
 }
 
 interface Coordinates {
@@ -45,10 +50,10 @@ interface Coordinates {
 }
 
 
-function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordinates) => void) {
+function initTiles(props: BoardComponentProps) {
     // console.log(typeof(props.boardState))
     // console.log("BOARD STATE:\n", props.boardState + "\n")
-    const board = props.boardState as Board
+    const board = props.boardStateJson as Board
     // console.log("SERIALISED:\n", board)
     // console.log(typeof(board))
     
@@ -86,7 +91,7 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
 
     let n = tiles.length; // number of tiles
 
-    let tile_map = new Map();
+    // let tile_map = new Map();
     let tileDatas: Map<number, TileData> = new Map();
 
     // q will be the number of layers of tiles around the center tile
@@ -107,11 +112,14 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
             let y = y0 - j*(radius/2.6);  // This used to be radius/2.4 , but I think 2.6 works better
             let ctx = (i*east + j*northEast + n) % n;
             // add them to tileDatas
-            tileDatas.set(ctx, {tile: tiles[ctx], x: x, y: y});
+            console.log(ctx)
+            tileDatas.set(ctx, {tile: tiles[ctx], key: structuredClone(ctx), x: x, y: y, interactive: false, build: props.build});
         }
     }
 
     // console.log(tileDatas)
+
+    // if tile is a resource tile, set its surrounding tiles type to ChildResource
     tileDatas.forEach(function(value, key) {
         if (value.tile.type == "Resource") {
             for (let i = 0; i < 6; i++) {
@@ -126,55 +134,58 @@ function initTiles(props: BoardComponentProps, handleClick: (coordinates: Coordi
         }
     })
 
-    let knight = {x: x0, y: y0}
-    tileDatas.forEach(function(value, key) {
-        if(value.tile.type == "Intersection") {
-            tile_map.set(key, <IntersectionComponent
-                key={key.toString()}
-                x={value.x}
-                y={value.y}
-                size={radius}
-                direction={value.tile.direction? value.tile.direction : undefined}
-                owner={value.tile.owner}
-                isCity={value.tile.isCity}
-                />)
-        } else if(value.tile.type == "PathTile") {
-            tile_map.set(key, <PathComponent
-                key={key}
-                x={value.x}
-                y={value.y}
-                size={radius}
-                direction={value.tile.direction}
-                text={key.toString()}
-                onClick={handleClick}
-                owner={value.tile.owner}
-                />)
-        } else if(value.tile.type == "Resource") {
-            tile_map.set(key, <ResourceTileComponent
-                key={key}
-                x={value.x}
-                y={value.y}
-                size={radius}
-                number_token={value.tile.number_token}
-                resource={value.tile.resource}
-                onClick={handleClick}
-                />)
-            if(value.tile.resource == "desert") {
-                knight = {x: value.x, y: value.y}
-            }
-        } else if(value.tile.type == "ChildResource") {
-            tile_map.set(key, <ResourceTileComponent
-                key={key}
-                x={value.x}
-                y={value.y}
-                size={radius}
-                resource={value.tile.resource}
-                onClick={handleClick}
-                />)
-        }
-    })
+    // let knight = {x: x0, y: y0}
+    // tileDatas.forEach(function(value, key) {
+    //     if(value.tile.type == "Intersection") {
+    //         tile_map.set(key, <IntersectionComponent
+    //             key={key}
+    //             x={value.x}
+    //             y={value.y}
+    //             size={radius}
+    //             direction={value.tile.direction? value.tile.direction : undefined}
+    //             owner={value.tile.owner}
+    //             isCity={value.tile.isCity}
+    //             interactive={props.clickable.includes(key)? true : false}
+    //             />)
+    //     } else if(value.tile.type == "PathTile") {
+    //         tile_map.set(key, <PathComponent
+    //             key={key}
+    //             x={value.x}
+    //             y={value.y}
+    //             size={radius}
+    //             direction={value.tile.direction}
+    //             text={key.toString()}
+    //             interactive={props.clickable.includes(key)? true : false}
+    //             onClick={props.build}
+    //             owner={value.tile.owner}
+    //             />)
+    //     } else if(value.tile.type == "Resource") {
+    //         tile_map.set(key, <ResourceTileComponent
+    //             key={key}
+    //             x={value.x}
+    //             y={value.y}
+    //             size={radius}
+    //             number_token={value.tile.number_token}
+    //             resource={value.tile.resource}
+    //             onClick={handleClick}
+    //             />)
+    //         if(value.tile.resource == "desert") {
+    //             knight = {x: value.x, y: value.y}
+    //         }
+    //     } else if(value.tile.type == "ChildResource") {
+    //         tile_map.set(key, <ResourceTileComponent
+    //             key={key}
+    //             x={value.x}
+    //             y={value.y}
+    //             size={radius}
+    //             resource={value.tile.resource}
+    //             onClick={handleClick}
+    //             />)
+    //     }
+    // })
+   
 
-    return {tiles: tile_map, knight}
+    return tileDatas
 } 
 
 function sortMap(map: Map<number, TileData>): Map<number, TileData> {
@@ -202,23 +213,90 @@ function getCoordinatesFromKey(key: number, components: JSX.Element[]): {x: numb
 function BoardComponent(props: BoardComponentProps){
     const initBoard = () => {
         // console.log(props.boardState)
-        let boardInit = initTiles(props, handleResourceClick)
+        let boardInit = initTiles(props)
         return boardInit
     }
-    const handleResourceClick = (coordinates: Coordinates) => {
+    const handleResourceClick = (coordinates: Coordinates, tileIndex: number) => {
         console.log(coordinates)
-        setKnightPosition(coordinates)
+        props.robber(tileIndex)
+        // setKnightPosition(coordinates)
     }
 
-    const [boardState, setBoardState] = useState<{ tiles: Map<Number, JSX.Element>, knight: Coordinates }>(initBoard)
-    const [knightPosition, setKnightPosition] = useState<Coordinates>(boardState.knight)
+    let clickable = structuredClone(props.clickable)
 
+    useEffect (() => {
+        if(clickable != props.clickable) {
+            console.log("clickable changed")
+            props.clickable.map((c: number) => {
+                console.log(c)
+                // boardState.set(c, {...boardState.get(c)!, tile.interactive: true})
+                let a = boardState.get(c)!
+                a.interactive = true
+                boardState.set(c, a)
+            })
+            clickable = structuredClone(props.clickable)
+            return
+        }
+    })
+
+    const [boardState, setBoardState] = useState<Map<number, TileData>>(initBoard)
+
+    // const [knightPosition, setKnightPosition] = useState<Coordinates>(boardState.knight)
+
+    // props.setTileData(boardState.tiles)
+    
     return (
         <Container>
-            {(Array.from(boardState.tiles.keys())).map((key) => (
-                <>{boardState.tiles.get(key)}</>
-             ))}
-            <KnightComponent x={knightPosition.x} y={knightPosition.y} size={50}/>
+            {Array.from(boardState).map((t) => {
+                switch (t[1].tile.type){
+                    case 'Intersection':
+                        return <IntersectionComponent
+                            tileIndex={t[1].key}
+                            x={t[1].x}
+                            y={t[1].y}
+                            tile={t[1].tile}
+                            size = {50}
+                            interactive={t[1].interactive}
+                            build={t[1].build}/>
+                        break;
+                    case 'PathTile':
+                        return <PathComponent
+                            tileIndex={t[1].key}
+                            x={t[1].x}
+                            y={t[1].y}
+                            tile={t[1].tile}
+                            size = {50}
+                            interactive={t[1].interactive}
+                            build={t[1].build}/>
+                        break;
+                    case 'Resource':
+                        return <ResourceTileComponent
+                            tileIndex={t[1].key}
+                            x={t[1].x}
+                            y={t[1].y}
+                            tile={t[1].tile}
+                            size = {50}
+                            interactive={t[1].interactive}
+                            onClick = {handleResourceClick}
+                            />
+                        break;
+                    case 'ChildResource':
+                        return <ResourceTileComponent
+                            tileIndex={t[1].key}
+                            x={t[1].x}
+                            y={t[1].y}
+                            tile={t[1].tile}
+                            size = {50}
+                            interactive={t[1].interactive}
+                            onClick = {handleResourceClick}
+                            />
+                        break;
+                    default:
+                        return <></>
+                }
+            }
+             )}
+            {/* <KnightComponent x={knightPosition.x} y={knightPosition.y} size={50}/> */}
         </Container>
     )
 } 
