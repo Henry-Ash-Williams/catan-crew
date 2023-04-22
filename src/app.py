@@ -5,6 +5,7 @@ from enum import Enum
 import json
 
 from fastapi import FastAPI, Depends, Query
+from fastapi.openapi.utils import get_openapi
 from pydantic import BaseModel
 from rich.console import Console
 from rich import print
@@ -491,3 +492,22 @@ def bank_resources(game_id: str):
         return {"error": "cannot find game with that ID"}
 
     return {"bank_resources": g.bank.resources}
+
+#### non-api-oriented
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="Catan REST API Doc",
+        version="2.5.0",
+        description="This is a very custom OpenAPI schema",
+        routes=app.routes,
+    )
+    openapi_schema["info"]["x-logo"] = {
+        "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
+    }
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
