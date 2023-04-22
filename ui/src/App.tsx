@@ -149,12 +149,13 @@ function App() {
       console.log("END TURN:\n", data)
       // todo: add logic to check end turn is valid
       // todo: on confirmation, make all actions unavailable
+      setAvailableActions([])
       getCurrentPlayer()
     })
 
     socket.on("build/road", data => {
       console.log("BUILD ROAD:\n", data)
-      action("updated_player_resources")
+      // action("updated_player_resources")
       // action("board_state")
     })
 
@@ -172,15 +173,16 @@ function App() {
       setNumbersToDisplay([d1, data.dice_val - d1])
       setCanRoll(false)
       if(data.dice_val == 7){
-        action("discard_resource_card")
-        action("valid_robber_locations")
+        // action("discard_resource_card")
+        // action("valid_robber_locations")
       action("updated_player_resources")
     }
+    action("available_actions")
   })
 
     socket.on("valid_robber_locations", data => {
       console.log("VALID ROBBER LOCATIONS:\n", data)
-      setClickableTiles(data)
+      // setClickableTiles(data)
     })
 
     socket.on("robber_location", data => {
@@ -190,18 +192,21 @@ function App() {
 
     socket.on("board_state", data => {
       console.log("BOARD STATE:\n", data)
-      setBoardState(data)
+      // setBoardState(data)
     })
 
     socket.on("current_player", data => {
       // console.log("CURRENT PLAYER:\n", data)
       if(data.player_colour == idToPlayer.get(socketID)){
-        action('available_actions')
+        // action('available_actions')
         setCanRoll(true)
+        if(canRoll !== true){
+          // action("available_actions")
+        }
       }
-      action("player_resources");
+      // action("player_resources");
       // action("board_state");
-      action("updated_player_resources");
+      // action("updated_player_resources");
       // action("valid_location/roads");
       // action("valid_location/settlements");
       // action("valid_location/cities");
@@ -349,7 +354,7 @@ function App() {
             <Card resourceType='brick' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.64} amount={resources.brick} fontSize={dimensions.height / 9}/>
           </Container>
 
-          <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} state={leaderBoardState}/>
+          {/* <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} state={leaderBoardState}/> */}
 
           <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} onClick={() => {action('roll_dice')}} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 
