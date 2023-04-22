@@ -482,3 +482,12 @@ def backdoor(cmd: str):
     # this is hilariously insecure, but i need it for testing.
     # NOTE: Make sure to remove this before it goes into prod
     eval(cmd)
+
+@app.get("/bank_resources")
+def bank_resources(game_id: str):
+    try:
+        g = games[game_id]
+    except KeyError:
+        return {"error": "cannot find game with that ID"}
+
+    return {"bank_resources": g.bank.resources}
