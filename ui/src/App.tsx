@@ -109,7 +109,7 @@ function App() {
     const json = {
       game_id : game_idR.current,
       player_colour: idToPlayer.get(socketID),
-      hexagon_id: location
+      tile_id: location
     }
     console.log('API CALLED', 'place_robber', 'LOCATION', location)
     socket.emit('place_robber', json)
@@ -119,7 +119,7 @@ function App() {
     const json = {
       game_id : game_idR.current,
       player_colour: idToPlayer.get(socketID),
-      hexagon_id: location
+      tile_id: location
     }
 
     console.log('API CALLED', type, 'LOCATION', location)

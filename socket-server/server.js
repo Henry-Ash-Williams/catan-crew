@@ -223,12 +223,13 @@ io.on('connection', socket => {
 
     // {infrastucture} as roads, settlements, cities for build 
     socket.on("build/roads", (req) => {
-        const queryParams = new URLSearchParams(req).toString();
-        fetch('http://localhost:8000/build/roads?' + queryParams, {
+        // const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/build/roads', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            body: JSON.stringify(req)
         })
         .then(response => response.json())
         .then(data => {
@@ -239,14 +240,14 @@ io.on('connection', socket => {
     
     socket.on("build/cities", (req) => {
         
-        const queryParams = new URLSearchParams(req).toString();
-        console.log(queryParams)
-        fetch('http://localhost:8000/build/cities?', {
+        // const queryParams = new URLSearchParams(req).toString();
+        console.log(req)
+        fetch('http://localhost:8000/build/cities', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'body': JSON.stringify(req)
-            }
+            },
+            body: JSON.stringify(req)
         })
         .then(response => response.json())
         .then(data => {
@@ -256,12 +257,13 @@ io.on('connection', socket => {
     })
 
     socket.on("build/settlements", (req) => {
-        const queryParams = new URLSearchParams(req).toString();
-        fetch('http://localhost:8000/build/settlements?' + queryParams, {
+        // const queryParams = new URLSearchParams(req).toString();
+        fetch('http://localhost:8000/build/settlements', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
+            body: JSON.stringify(req)
         })
         .then(response => response.json())
         .then(data => {
