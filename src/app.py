@@ -46,7 +46,7 @@ class PlayerInfo(BaseModel):
         return [
             player
             for idx, player in enumerate(self.get_game(games).players)
-            if player.color.lower() == self.player_colour.default.lower()
+            if player.color.lower() == self.player_colour.lower()
         ][0]
 
 
@@ -236,33 +236,33 @@ def get_current_player(game_id: str):
 
 @app.post("/build/{infrastructures}")
 def build_infrastructures(
-    infrastructures: str, player_info: TileInfo
+    infrastructures: str, tile_info: TileInfo
 ):
     """
     Build infrastructure at a location
     """
-    player = player_info.get_player(games)
+    player = tile_info.get_player(games)
 
     if infrastructures == "roads":
         try:
-            new_system_hexagon_id = player.game.board.new_system_path_loc[player_info.hexagon_id]
+            new_system_hexagon_id = player.game.board.new_system_path_loc[tile_info.hexagon_id]
         except KeyError:
             raise Exception("hexagon_id is not a valid path location")
-        player.builds_road(player_info.hexagon_id)
+        player.builds_road(tile_info.hexagon_id)
 
     elif infrastructures == "cities":
         try:
-            new_system_hexagon_id = player.game.board.new_system_intersection_loc[player_info.hexagon_id]
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[tile_info.hexagon_id]
         except KeyError:
             raise Exception("hexagon_id is not a valid intersection location")
-        player.upgrade_settlement(player.game.board.intersections[player_info.hexagon_id].settlement)
+        player.upgrade_settlement(player.game.board.intersections[tile_info.hexagon_id].settlement)
 
     elif infrastructures == "settlements":
         try:
-            new_system_hexagon_id = player.game.board.new_system_intersection_loc[player_info.hexagon_id]
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[tile_info.hexagon_id]
         except KeyError:
             raise Exception("hexagon_id is not a valid intersection location")
-        player.builds_settlement(player_info.hexagon_id)
+        player.builds_settlement(tile_info.hexagon_id)
 
     return {"status": "OK"}
 
