@@ -19,7 +19,7 @@ interface PathComponentProps {
 
 function PathComponent(props: PathComponentProps) {
     const handleClick = () => {
-        props.build("path", props.tileIndex)
+        props.build("roads", props.tileIndex)
     }
     
     let tile: React.ReactElement[] = [<Sprite x={0} y={0} width={props.size} height={props.size} anchor={0.5} image={"../assets/board/path/tile/grass_N.png"} interactive={props.interactive} onclick={handleClick} alpha={props.interactive? 0.5 : 1}/>]

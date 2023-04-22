@@ -223,6 +223,7 @@ function BoardComponent(props: BoardComponentProps){
     }
 
     let clickable = structuredClone(props.clickable)
+    let boardCopy = structuredClone(props.boardStateJson)
 
     useEffect (() => {
         if(clickable != props.clickable) {
@@ -235,6 +236,12 @@ function BoardComponent(props: BoardComponentProps){
                 boardState.set(c, a)
             })
             clickable = structuredClone(props.clickable)
+            return
+        }
+        if(boardCopy != props.boardStateJson) {
+            console.log("board changed")
+            let boardInit = initTiles(props)
+            setBoardState(boardInit)
             return
         }
     })

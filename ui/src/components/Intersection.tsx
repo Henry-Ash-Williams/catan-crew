@@ -27,7 +27,7 @@ function IntersectionComponent(props: IntersectionComponentProps) {
             props.build("cities", props.tileIndex)
         } else {
             console.log("Clicked on empty intersection", props.tileIndex)
-            props.build("settlement", props.tileIndex)
+            props.build("settlements", props.tileIndex)
 
 
         }

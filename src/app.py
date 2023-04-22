@@ -5,6 +5,7 @@ from enum import Enum
 import json
 
 from fastapi import FastAPI, Depends, Query
+from fastapi.openapi.utils import get_openapi
 from pydantic import BaseModel
 from rich.console import Console
 from rich import print
@@ -45,7 +46,7 @@ class PlayerInfo(BaseModel):
         return [
             player
             for idx, player in enumerate(self.get_game(games).players)
-            if player.color.lower() == self.player_colour.default.lower()
+            if player.color.lower() == self.player_colour.lower()
         ][0]
 
 
@@ -235,33 +236,33 @@ def get_current_player(game_id: str):
 
 @app.post("/build/{infrastructures}")
 def build_infrastructures(
-    hexagon_id: int, infrastructures: str, player_info: PlayerInfo
+    infrastructures: str, tile_info: TileInfo
 ):
     """
     Build infrastructure at a location
     """
-    player = player_info.get_player(games)
+    player = tile_info.get_player(games)
 
     if infrastructures == "roads":
         try:
-            new_system_hexagon_id = player.game.board.new_system_path_loc[hexagon_id]
+            new_system_hexagon_id = player.game.board.new_system_path_loc[tile_info.hexagon_id]
         except KeyError:
             raise Exception("hexagon_id is not a valid path location")
-        player.builds_road(hexagon_id)
+        player.builds_road(tile_info.hexagon_id)
 
     elif infrastructures == "cities":
         try:
-            new_system_hexagon_id = player.game.board.new_system_intersection_loc[hexagon_id]
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[tile_info.hexagon_id]
         except KeyError:
             raise Exception("hexagon_id is not a valid intersection location")
-        player.upgrade_settlement(player.game.board.intersections[hexagon_id].settlement)
+        player.upgrade_settlement(player.game.board.intersections[tile_info.hexagon_id].settlement)
 
     elif infrastructures == "settlements":
         try:
-            new_system_hexagon_id = player.game.board.new_system_intersection_loc[hexagon_id]
+            new_system_hexagon_id = player.game.board.new_system_intersection_loc[tile_info.hexagon_id]
         except KeyError:
             raise Exception("hexagon_id is not a valid intersection location")
-        player.builds_settlement(hexagon_id)
+        player.builds_settlement(tile_info.hexagon_id)
 
     return {"status": "OK"}
 
@@ -482,3 +483,34 @@ def backdoor(cmd: str):
     # this is hilariously insecure, but i need it for testing.
     # NOTE: Make sure to remove this before it goes into prod
     eval(cmd)
+
+@app.get("/bank_resources")
+def bank_resources(game_id: str):
+    """
+    Get the resources currently available to the bank
+    """
+    try:
+        g = games[game_id]
+    except KeyError:
+        return {"error": "cannot find game with that ID"}
+
+    return {"bank_resources": g.bank.resources}
+
+#### non-api-oriented
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="Catan REST API Doc",
+        version="2.5.0",
+        description="This is a very custom OpenAPI schema",
+        routes=app.routes,
+    )
+    openapi_schema["info"]["x-logo"] = {
+        "url": "https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
+    }
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
