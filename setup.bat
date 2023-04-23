@@ -24,10 +24,10 @@ for /f "tokens=2 delims=v." %%v in ('node -v 2^>^&1') do (
 )
 
 :: Create virtual environment
-:: cd src
-:: python -m venv venv
-:: call venv\Scripts\activate.bat
-:: pip install rich fastapi pydantic watchfiles
+cd src
+python -m venv venv
+call venv\Scripts\activate.bat
+pip install rich fastapi pydantic watchfiles
 
 cd socket-server
 npm install
@@ -36,11 +36,11 @@ cd ../ui
 npm install
 
 :: Run the server
-cd ../src
-start "" /b cmd /c "uvicorn app:app --reload"
+:: cd ../src
+:: start "" /b cmd /c "uvicorn app:app --reload"
 
 :: Run the socket server in a new terminal
-start "" /b cmd /c "cd ../socket-server & node server.js"
+:: start "" /b cmd /c "cd ../socket-server & node server.js"
 
 :: Run the UI on a separate terminal
-start "" /b cmd /c "cd ../ui & npm start"
+:: start "" /b cmd /c "cd ../ui & npm start"
