@@ -1,19 +1,43 @@
 # Catan Crew
 Source files for Software Engineering 2023 at the University of Sussex
 
-## Install
+## Installation
+> Make sure you are always in `/catan-crew` dir
 
-1. `$ git clone git@github.com:Henry-Ash-Williams/catan-crew`
-2. `$ cd catan-crew/src`
-3. `$ pip install rich fastapi pydantic watchfiles`
+### Install API
+1. `git clone git@github.com:Henry-Ash-Williams/catan-crew`
+2. `cd src`
+3. `pip install rich fastapi pydantic watchfiles uvicorn`
+4. `sudo apt install uvicorn` if you are on ubuntu, you don't need to pip install uvicorn
 
-## Running the API
+### Install Socket Server
+1. `cd socket-server`
+2. `npm install`
 
-1. `$ sudo apt install uvicorn`
-2. `$ uvicorn src/app:app --reload`
+### Install the ui
+1. `cd ui`
+2. `npm install`
+
+## Run the whole Web Application
+### Running the API server
+#### If on windows
+1. `cd src`
+2. `python3 uvicorn src/app:app --reload` or `python uvicorn src/app:app --reload`
+
+#### If on Linux
+1. `cd src`
+2. `uvicorn src/app:app --reload`
+
+### Run the socket server
+1. `cd socket-server`
+2. `node server.js`
+
+### Run the client
+1. `cd ui`
+2. `npm start`
 
 ## Running the game in the terminal
-
+1. `cd src`
 1. `$ python3.10 main.py `
 
 ## The coordinate system:
@@ -27,6 +51,9 @@ Source files for Software Engineering 2023 at the University of Sussex
        14  15  16  17  18
          4   5   6   7
 ```
+
+## Architecture
+![[Simplified System Design.png]]
 
 # Statistics 
 - 3051 lines of code in python 
