@@ -67,7 +67,7 @@ function App() {
   const [socketID, setSocketID] = useState<string>("")
   const [idToPlayer, setIdToPlayer] = useState<Map<string, string>>(new Map<string, string>())
   const [trade, setTrade] = useState(false);
-  const [canRoll, setCanRoll] = useState(true);
+  const [canRoll, setCanRoll] = useState(false);
   const [numbersToDisplay, setNumbersToDisplay] = useState<[number, number]>([6, 6]);
   const [dimensions, setDimensions] = useState({
     height: 9 * Math.min(window.innerHeight / 9, window.innerWidth / 16),
@@ -201,10 +201,10 @@ function App() {
         // action('available_actions')
         setCanRoll(true)
         if(canRoll !== true){
-          // action("available_actions")
+          action("available_actions")
         }
       }
-      // action("player_resources");
+      action("player_resources");
       // action("board_state");
       // action("updated_player_resources");
       // action("valid_location/roads");
@@ -222,7 +222,6 @@ function App() {
       setClickableTiles(data)
     })
     
-
     socket.on("valid_location/cities", data => {
       console.log("CLICKABLE TILES:\n", data)
       setClickableTiles(data)
@@ -231,6 +230,35 @@ function App() {
     socket.on("valid_location/settlements", data => {
       console.log("CLICKABLE TILES:\n", data)
       setClickableTiles(data)
+    })
+
+    socket.on("build/roads", data => {
+      console.log("BUILD ROAD:\n", data)
+      setClickableTiles([])
+      action("player_resources")
+      console.log(clickableTiles)
+
+      // action("board_state")
+      action("available_actions")
+    })
+
+    socket.on("build/settlements", data => {
+      console.log("BUILD SETTLEMENT:\n", data)
+      setClickableTiles([])
+      action("player_resources")
+      console.log(clickableTiles)
+      // action("board_state")
+      action("available_actions")
+    })
+
+    socket.on("build/cities", data => {
+      console.log("BUILD CITY:\n", data)
+      setClickableTiles([])
+      action("player_resources")
+      console.log(clickableTiles)
+
+      // action("board_state")
+      action("available_actions")
     })
 
     socket.on("player_resources", data => {
@@ -279,6 +307,7 @@ function App() {
       setGameStarted(!gameStarted);
       console.log('Started game with these players' ,players)
       action("leaderboard")
+      action("player_resources")
       getCurrentPlayer()
     })
 
@@ -302,14 +331,11 @@ function App() {
       socket.off('roll_dice');
       socket.off('robber_location');
       socket.off('valid_robber_locations');
-      socket.off('build_road');
-      socket.off('build_settlement');
-      socket.off('build_city');
       socket.off('discard_resource_card');
       socket.off('trade');
       socket.off('trade_response');
       socket.off('updated_player_resources');
-      socket.off('player_resources');
+
     }
   },[idToPlayer, resources])
 
@@ -338,7 +364,12 @@ function App() {
     {!hasJoined ? 
       <Menu onShow={handleJoinGame}/>
     : !gameStarted ?  <LobbyComponent socketID={socketID} players={players} idToPlayer={idToPlayer} onStartGame={handleStartGame}/> :
+      <div>
+          <h1>u r {idToPlayer.get(socketID)}</h1>
+      
       <div style={{display: "flex", height: "100vh", justifyContent: "center", alignItems: "center"}}>
+        
+        
         <Stage width={dimensions.width} height={dimensions.height}>
             {/* Background */}
           <Sprite width={dimensions.width} height={dimensions.height} texture={Texture.WHITE} tint={0x00FFFF}></Sprite>
@@ -354,7 +385,7 @@ function App() {
             <Card resourceType='brick' width={dimensions.width} height={dimensions.height} y={dimensions.height * 0.64} amount={resources.brick} fontSize={dimensions.height / 9}/>
           </Container>
 
-          {/* <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} state={leaderBoardState}/> */}
+          <LeaderBoard width={dimensions.width} height={dimensions.height} fontSize={dimensions.height / 9} state={leaderBoardState}/>
 
           <DiceComponent canRoll={canRoll} numbersToDisplay={numbersToDisplay} setNumbersToDisplay={setNumbersToDisplay} onClick={() => {action('roll_dice')}} x={dimensions.width*0.735} y={dimensions.height*0.86} fontSize={dimensions.height / 9}/>
 
@@ -365,6 +396,7 @@ function App() {
       <Trade height={dimensions.height} width={dimensions.width} visible={trade} fontSize={dimensions.height / 9}/>
 
         </Stage>
+      </div>
       </div>
       
     }
