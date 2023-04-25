@@ -163,6 +163,7 @@ io.on('connection', socket => {
     socket.on("available_actions", (player_info) => {
         console.log("COLOUR: ",player_info.player_colour)
         console.log("ID: ",player_color_to_socket_id[player_info.player_colour])
+        const sender = socket.id
         const queryParams = new URLSearchParams(player_info).toString();
         fetch('http://localhost:8000/available_actions?' + queryParams, {
             method: 'GET',
@@ -173,7 +174,7 @@ io.on('connection', socket => {
         .then(response => response.json())
         .then(data => {
             console.log("DATA: ",data);
-            socket.emit("available_actions", data)//to(player_color_to_socket_id[player_info.player_colour]).emit("available_actions", data);
+            socket.emit("available_actions", data)//to(sender).emit("available_actions", data);
         });
     })
     

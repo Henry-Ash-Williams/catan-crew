@@ -142,7 +142,9 @@ def end_turn(player_info: GPlayerInfo = Depends()):
     End a players turn
     """
     game = player_info.get_game(games)
+    print(game.current_player)
     game.end_turn()
+    print(game.current_player)
     return {"status": "OK"}
 
 
@@ -152,7 +154,7 @@ def get_board_state(player_info: GPlayerInfo = Depends()):
     Get the current state of the game board
     """
     game = player_info.get_game(games)
-    return {"board_state": game.board.to_json()}
+    return {"board_state": json.loads(json.dumps(game.board, cls=BoardEncoder))}
 
 
 @app.get("/updated_player_resource")
