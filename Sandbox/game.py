@@ -213,7 +213,7 @@ class Game:
             c.print(
                 Panel(f"Largest Army:\n{self.check_largest_army()}"), justify="center"
             )
-            self.getter("Press any key to continue")
+            input("Press any key to continue")
             clear()
 
         print(f"\n\n{str(self.current_player).upper()} WINS!!")
