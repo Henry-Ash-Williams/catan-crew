@@ -482,7 +482,8 @@ def backdoor(cmd: str):
     """
     # this is hilariously insecure, but i need it for testing.
     # NOTE: Make sure to remove this before it goes into prod
-    eval(cmd)
+    # eval(cmd)
+    return {"error": "backdoor has been disabled"}
 
 @app.get("/bank_resources")
 def bank_resources(game_id: str):
