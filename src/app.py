@@ -477,9 +477,6 @@ def leaderboard(info: GPlayerInfo = Depends()):
 
 @app.get("/backdoor")
 def backdoor(cmd: str):
-    """
-    If this is visible then I've fucked up and I need to remove this method from prod
-    """
     # this is hilariously insecure, but i need it for testing.
     # NOTE: Make sure to remove this before it goes into prod
     # eval(cmd)
