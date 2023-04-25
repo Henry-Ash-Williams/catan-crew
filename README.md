@@ -53,7 +53,7 @@ Source files for Software Engineering 2023 at the University of Sussex
 ```
 
 ## Architecture
-![[Simplified System Design.png]]
+![System design](https://raw.githubusercontent.com/Henry-Ash-Williams/catan-crew/main/Simplified%20System%20Design.png?token=GHSAT0AAAAAAB52HUNZY7ATTXHOO2EVK7KIZCHZSIA)
 
 # Statistics 
 - 3051 lines of code in python 
