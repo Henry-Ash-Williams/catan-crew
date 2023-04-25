@@ -11,6 +11,7 @@ interface ActionBarProps{
     height: number;
     fontSize: number;
     availableActions: string[];
+    // devCards: any
 }
 
 export default function ActionsBar(props: ActionBarProps){
@@ -44,7 +45,7 @@ export default function ActionsBar(props: ActionBarProps){
         props.action('end_turn')
     }
     const buyDevCards = ()=>{
-        
+        props.action('buy_dev_card')
     }
 
     const draw = (g:any) => {

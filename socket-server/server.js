@@ -115,6 +115,7 @@ io.on('connection', socket => {
     })
 
     socket.on("board_state", (player_info) => {
+        console.log(player_info)
         const queryParams = new URLSearchParams(player_info).toString();
         fetch('http://localhost:8000/board_state?' + queryParams, {
             method: 'GET',
@@ -160,6 +161,8 @@ io.on('connection', socket => {
     })
 
     socket.on("available_actions", (player_info) => {
+        console.log("COLOUR: ",player_info.player_colour)
+        console.log("ID: ",player_color_to_socket_id[player_info.player_colour])
         const queryParams = new URLSearchParams(player_info).toString();
         fetch('http://localhost:8000/available_actions?' + queryParams, {
             method: 'GET',
@@ -169,8 +172,8 @@ io.on('connection', socket => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            socket.emit("available_actions", data);
+            console.log("DATA: ",data);
+            socket.emit("available_actions", data)//to(player_color_to_socket_id[player_info.player_colour]).emit("available_actions", data);
         });
     })
     
@@ -223,7 +226,6 @@ io.on('connection', socket => {
 
     // {infrastucture} as roads, settlements, cities for build 
     socket.on("build/roads", (req) => {
-        // const queryParams = new URLSearchParams(req).toString();
         fetch('http://localhost:8000/build/roads', {
             method: 'POST',
             headers: {
@@ -239,8 +241,6 @@ io.on('connection', socket => {
     })
     
     socket.on("build/cities", (req) => {
-        
-        // const queryParams = new URLSearchParams(req).toString();
         console.log(req)
         fetch('http://localhost:8000/build/cities', {
             method: 'POST',
@@ -257,7 +257,6 @@ io.on('connection', socket => {
     })
 
     socket.on("build/settlements", (req) => {
-        // const queryParams = new URLSearchParams(req).toString();
         fetch('http://localhost:8000/build/settlements', {
             method: 'POST',
             headers: {
@@ -345,6 +344,21 @@ io.on('connection', socket => {
         .then(data => {
             console.log(data);
             socket.emit("buy_dev_card", data);
+        });
+    })
+
+    socket.on("player_dev_cards", (player_info) => {
+        const queryParams = new URLSearchParams(player_info).toString();
+        fetch('http://localhost:8000/player_dev_cards?' + queryParams, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            io.emit("player_dev_cards",data);
         });
     })
 

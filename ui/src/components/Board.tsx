@@ -112,7 +112,7 @@ function initTiles(props: BoardComponentProps) {
             let y = y0 - j*(radius/2.6);  // This used to be radius/2.4 , but I think 2.6 works better
             let ctx = (i*east + j*northEast + n) % n;
             // add them to tileDatas
-            console.log(ctx)
+            // console.log(ctx)
             tileDatas.set(ctx, {tile: tiles[ctx], key: structuredClone(ctx), x: x, y: y, interactive: false, build: props.build});
         }
     }
