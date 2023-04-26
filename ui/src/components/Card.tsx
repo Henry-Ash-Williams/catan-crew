@@ -30,7 +30,7 @@ export default function Card(props: CardProps){
         <Container x={(props.x? props.x : 2)} y={props.y}>
             <Sprite image={'/assets/menu/panel_beige.png'} width={props.width * 1/15} height={props.height * 0.15} tint={resourceDict[props.resourceType][1]}/>
             <Sprite image={resourceDict[props.resourceType][0]} width={props.width * 0.05} height={props.height * 0.08} x={props.width * 0.007} y={props.height * 0.045}/>
-            <Text text={props.amount.toString()} x={5} y={5} style={new TextStyle({fontSize: props.fontSize * 0.3})}/>
+            <Text text={props.amount !== undefined ? props.amount.toString() : "-1"} x={5} y={5} style={new TextStyle({fontSize: props.fontSize * 0.3})}/>
         </Container>
     )
 }

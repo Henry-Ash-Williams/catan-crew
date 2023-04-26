@@ -25,7 +25,7 @@ export default function ActionsBar(props: ActionBarProps){
         'knight' : 0,
     })
     const actions : any = {} 
-    props.availableActions.forEach((action: string) => {
+    Array.prototype.forEach.call(props.availableActions, (action: string) => {
         actions[action] = true;
     })
 

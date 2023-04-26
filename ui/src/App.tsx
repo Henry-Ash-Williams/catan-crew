@@ -176,6 +176,7 @@ function App() {
         // action("discard_resource_card")
         // action("valid_robber_locations")
       action("updated_player_resources")
+      action("leaderboard")
     }
     action("available_actions")
   })
@@ -199,6 +200,7 @@ function App() {
       console.log("DEVELOPMENT CARD BOUGHT", data.card)
       action("player_dev_cards")
       action("updated_player_resource");
+      action("leaderboard")
     })
 
     socket.on("player_dev_cards", data => {
