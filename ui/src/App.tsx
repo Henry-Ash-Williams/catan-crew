@@ -247,7 +247,7 @@ function App() {
     socket.on("build/roads", data => {
       console.log("BUILD ROAD:\n", data)
       setClickableTiles([])
-      // action("player_resources")
+      action("player_resources")
       console.log(clickableTiles)
 
       // action("board_state")
@@ -257,7 +257,7 @@ function App() {
     socket.on("build/settlements", data => {
       console.log("BUILD SETTLEMENT:\n", data)
       setClickableTiles([])
-      // action("player_resources")
+      action("player_resources")
       console.log(clickableTiles)
       // action("board_state")
       action("available_actions")
@@ -266,7 +266,7 @@ function App() {
     socket.on("build/cities", data => {
       console.log("BUILD CITY:\n", data)
       setClickableTiles([])
-      // action("player_resources")
+      action("player_resources")
       console.log(clickableTiles)
 
       // action("board_state")
