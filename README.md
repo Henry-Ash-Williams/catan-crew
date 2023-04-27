@@ -22,11 +22,11 @@ Source files for Software Engineering 2023 at the University of Sussex
 ### Running the API server
 #### If on windows
 1. `cd src`
-2. `python3 uvicorn src/app:app --reload` or `python uvicorn src/app:app --reload`
+2. `python3 uvicorn app:app --reload` or `python uvicorn app:app --reload`
 
 #### If on Linux
 1. `cd src`
-2. `uvicorn src/app:app --reload`
+2. `uvicorn app:app --reload`
 
 ### Run the socket server
 1. `cd socket-server`
@@ -37,8 +37,9 @@ Source files for Software Engineering 2023 at the University of Sussex
 2. `npm start`
 
 ## Running the game in the terminal
-1. `cd src`
-1. `$ python3.10 main.py `
+1. `git checkout cli-testing`
+2. `cd Sandbox`
+3. `python3.10 main.py `
 
 ## The coordinate system:
 
